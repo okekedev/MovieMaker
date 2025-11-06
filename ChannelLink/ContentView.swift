@@ -10,7 +10,7 @@ enum AppScreen {
 struct ContentView: View {
     @State private var currentScreen: AppScreen = .mediaSelection
     @State private var selectedMedia: [MediaItem] = []
-    @State private var settings = SlideshowSettings()
+    @State private var settings = VideoCompilationSettings()
     @State private var outputURL: URL?
 
     var body: some View {
@@ -55,7 +55,7 @@ struct ContentView: View {
                         videoURL: outputURL,
                         onCreateAnother: {
                             selectedMedia = []
-                            settings = SlideshowSettings()
+                            settings = VideoCompilationSettings()
                             outputURL = nil
                             currentScreen = .mediaSelection
                         }

@@ -3,14 +3,13 @@ import Photos
 
 struct SettingsView: View {
     let selectedMedia: [MediaItem]
-    @Binding var settings: SlideshowSettings
+    @Binding var settings: VideoCompilationSettings
     let onBack: () -> Void
     let onCreate: () -> Void
 
     @State private var showingWarning = false
     @State private var warningMessage = ""
     @State private var orientationExpanded = false
-    @State private var durationExpanded = false
     @State private var loopExpanded = false
     @State private var showingPaywall = false
     @State private var apiKeyExpanded = false
@@ -21,16 +20,11 @@ struct SettingsView: View {
     @EnvironmentObject var storeManager: StoreManager
 
     private var totalDuration: Double {
+        // Calculate total video duration
         var duration: Double = 0
-
-        // Add intro if present
-        if !settings.introText.isEmpty {
-            duration += 4 // 4 seconds for intro
+        for item in selectedMedia {
+            duration += item.asset.duration
         }
-
-        // Calculate total media duration (photos only)
-        duration += Double(selectedMedia.count) * settings.photoDuration
-
         return duration
     }
 
@@ -71,32 +65,6 @@ struct SettingsView: View {
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
-                    // Intro Title
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Intro Slide (Optional)")
-                            .font(.headline)
-
-                        TextField("Title", text: $settings.introText)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .onChange(of: settings.introText) { newValue in
-                                if newValue.count > 100 {
-                                    settings.introText = String(newValue.prefix(100))
-                                }
-                            }
-
-                        Text("\(settings.introText.count)/100 characters")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-
-                        if !settings.introText.isEmpty {
-                            Text("Intro will display with white background")
-                                .font(.caption)
-                                .foregroundColor(.blue)
-                        }
-                    }
-
-                    Divider()
-
                     // Orientation
                     if storeManager.isPro {
                         DisclosureGroup(
@@ -247,7 +215,7 @@ struct SettingsView: View {
                                     .cornerRadius(8)
 
                                     if settings.loopDuration != .noLoop {
-                                        Text("Your slideshow is \(formattedDuration). Loop for \(Int(settings.loopDuration.hours)) hour\(settings.loopDuration.hours == 1 ? "" : "s") = plays ~\(loopCount) time\(loopCount == 1 ? "" : "s")")
+                                        Text("Your video is \(formattedDuration). Loop for \(Int(settings.loopDuration.hours)) hour\(settings.loopDuration.hours == 1 ? "" : "s") = plays ~\(loopCount) time\(loopCount == 1 ? "" : "s")")
                                             .font(.callout)
                                             .foregroundColor(.secondary)
                                             .padding(12)
@@ -289,16 +257,20 @@ struct SettingsView: View {
 
                     Divider()
 
-                    // Gemini API Key Section (for YouTube uploads)
+                    // Advanced Settings
                     DisclosureGroup(
                         isExpanded: $apiKeyExpanded,
                         content: {
-                            VStack(alignment: .leading, spacing: 12) {
+                            VStack(alignment: .leading, spacing: 16) {
+                                Text("AI Metadata Generation")
+                                    .font(.subheadline)
+                                    .fontWeight(.semibold)
+
                                 Text("Enter your Gemini API key to enable AI-powered metadata generation for YouTube uploads")
                                     .font(.caption)
                                     .foregroundColor(.secondary)
 
-                                SecureField("API Key", text: $geminiAPIKey)
+                                SecureField("Gemini API Key", text: $geminiAPIKey)
                                     .textFieldStyle(RoundedBorderTextFieldStyle())
                                     .autocapitalization(.none)
                                     .autocorrectionDisabled()
@@ -327,12 +299,12 @@ struct SettingsView: View {
                         },
                         label: {
                             HStack {
-                                Text("Gemini API Key")
+                                Text("Advanced Settings")
                                     .font(.headline)
                                 Spacer()
                                 if geminiAPIKey.isEmpty {
-                                    Image(systemName: "exclamationmark.triangle.fill")
-                                        .foregroundColor(.orange)
+                                    Image(systemName: "gear")
+                                        .foregroundColor(.secondary)
                                         .font(.subheadline)
                                 } else {
                                     Image(systemName: "checkmark.circle.fill")
@@ -383,7 +355,7 @@ struct SettingsView: View {
                 HStack {
                     Image(systemName: "tv")
                         .font(.title3)
-                    Text("Create Slideshow")
+                    Text("Create Video Compilation")
                         .font(.headline)
                 }
                 .foregroundColor(.white)

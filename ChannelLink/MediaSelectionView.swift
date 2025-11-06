@@ -51,7 +51,7 @@ struct MediaSelectionView: View {
                             .foregroundColor(.secondary)
                             .multilineTextAlignment(.center)
                 } else {
-                    Text("Tap and hold to rearrange photos")
+                    Text("Tap and hold to rearrange videos")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                 }

@@ -25,7 +25,7 @@ class NotificationManager {
 
     func sendVideoCompleteNotification() {
         let content = UNMutableNotificationContent()
-        content.title = "Slideshow Ready!"
+        content.title = "Video Compilation Ready!"
         content.body = "Your video has been saved to Photos"
         content.sound = .default
 

@@ -22,7 +22,7 @@ struct CompletionView: View {
             }
 
             VStack(spacing: 8) {
-                Text("Slideshow Created!")
+                Text("Video Compilation Created!")
                     .font(.title)
                     .fontWeight(.bold)
 
@@ -40,7 +40,7 @@ struct CompletionView: View {
                     Button(action: {
                         showingShareSheet = true
                     }) {
-                        Label("Share Slideshow", systemImage: "square.and.arrow.up")
+                        Label("Share Video", systemImage: "square.and.arrow.up")
                             .font(.headline)
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
@@ -82,7 +82,7 @@ struct CompletionView: View {
                 }
 
                 Button(action: onCreateAnother) {
-                    Text("Create Another Slideshow")
+                    Text("Create Another Video")
                         .font(.headline)
                         .foregroundColor(.blue)
                         .frame(maxWidth: .infinity)

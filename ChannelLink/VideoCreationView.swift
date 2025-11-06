@@ -2,7 +2,7 @@ import SwiftUI
 
 struct VideoCreationView: View {
     let selectedMedia: [MediaItem]
-    let settings: SlideshowSettings
+    let settings: VideoCompilationSettings
     let onComplete: (URL) -> Void
     let onError: () -> Void
 
@@ -43,7 +43,7 @@ struct VideoCreationView: View {
             }
 
             VStack(spacing: 8) {
-                Text("Creating your slideshow...")
+                Text("Creating your video compilation...")
                     .font(.title2)
                     .fontWeight(.semibold)
 
@@ -85,9 +85,9 @@ struct VideoCreationView: View {
     }
 
     private func startCreation() {
-        status = "Processing media..."
+        status = "Compiling videos..."
 
-        VideoComposer.createSlideshow(
+        VideoCompiler.compileVideos(
             media: selectedMedia,
             settings: settings,
             progressHandler: { progressValue in
@@ -95,7 +95,7 @@ struct VideoCreationView: View {
                     self.progress = progressValue * 0.7 // Reserve 0.7-1.0 for saving
 
                     if progressValue < 0.5 {
-                        status = "Adding photos..."
+                        status = "Adding videos..."
                     } else if progressValue < 0.8 {
                         status = "Composing video..."
                     } else {
@@ -121,7 +121,7 @@ struct VideoCreationView: View {
             progress = 0.8
         }
 
-        VideoComposer.saveToPhotoLibrary(videoURL: url) { result in
+        VideoCompiler.saveToPhotoLibrary(videoURL: url) { result in
             DispatchQueue.main.async {
                 progress = 1.0
 

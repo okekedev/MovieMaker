@@ -3,9 +3,7 @@ import Photos
 import UIKit
 import AVFoundation
 
-struct SlideshowSettings {
-    var introText: String = ""
-    var photoDuration: Double = 5.0
+struct VideoCompilationSettings {
     var loopDuration: LoopDuration = .noLoop
     var orientation: VideoOrientation = .landscape
     var musicAsset: AVURLAsset?

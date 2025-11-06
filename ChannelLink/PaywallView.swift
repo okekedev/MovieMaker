@@ -50,17 +50,17 @@ struct PaywallView: View {
                             .font(.system(size: 32, weight: .bold))
                             .foregroundColor(.white)
 
-                        Text("Create unlimited slideshows")
+                        Text("Create unlimited video compilations")
                             .font(.system(size: 18))
                             .foregroundColor(.white.opacity(0.9))
                     }
 
                     // Feature list
                     VStack(alignment: .leading, spacing: 20) {
-                        FeatureRow(icon: "infinity", title: "Unlimited Photos", description: "Create slideshows with as many photos as you want")
+                        FeatureRow(icon: "infinity", title: "Unlimited Videos", description: "Create compilations with as many videos as you want")
                         FeatureRow(icon: "rectangle.landscape.rotate", title: "Portrait & Landscape", description: "Choose your preferred video orientation")
-                        FeatureRow(icon: "timer", title: "Custom Photo Duration", description: "Set how long each photo displays (3-10 seconds)")
-                        FeatureRow(icon: "repeat", title: "Loop Settings", description: "Loop your slideshow for up to 2 hours")
+                        FeatureRow(icon: "music.note", title: "Background Music", description: "Add your own music that loops throughout the video")
+                        FeatureRow(icon: "repeat", title: "Loop Settings", description: "Loop your video compilation for up to 2 hours")
                     }
                     .padding(.horizontal, 40)
                     .padding(.vertical, 30)
