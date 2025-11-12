@@ -250,21 +250,15 @@ struct SettingsView: View {
                                             .tint(Color.brandAccent)
                                     }
 
-                                    Button(action: {
-                                        muteAllVideos()
-                                    }) {
-                                        HStack {
-                                            Image(systemName: "speaker.slash.fill")
-                                                .foregroundColor(.orange)
-                                            Text("Mute All Videos")
-                                                .foregroundColor(.primary)
+                                    Toggle("Background Music Only", isOn: Binding(
+                                        get: { selectedMedia.allSatisfy { $0.isMuted } },
+                                        set: { newValue in
+                                            for index in selectedMedia.indices {
+                                                selectedMedia[index].isMuted = newValue
+                                            }
                                         }
-                                        .font(.subheadline)
-                                        .padding(12)
-                                        .frame(maxWidth: .infinity)
-                                        .background(Color.orange.opacity(0.1))
-                                        .cornerRadius(8)
-                                    }
+                                    ))
+                                    .tint(Color.brandAccent)
 
                                     Button(action: {
                                         settings.musicAsset = nil
@@ -378,12 +372,6 @@ struct SettingsView: View {
                     showingMusicPicker = false
                 }
             )
-        }
-    }
-
-    private func muteAllVideos() {
-        for index in selectedMedia.indices {
-            selectedMedia[index].isMuted = true
         }
     }
 
