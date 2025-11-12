@@ -1,5 +1,6 @@
 import Foundation
 import AuthenticationServices
+import CryptoKit
 
 class YouTubeAuthManager: NSObject, ObservableObject {
     @Published var isAuthenticated = false
@@ -11,9 +12,18 @@ class YouTubeAuthManager: NSObject, ObservableObject {
     private let scope = "https://www.googleapis.com/auth/youtube.upload https://www.googleapis.com/auth/userinfo.email"
 
     private var webAuthSession: ASWebAuthenticationSession?
+    private var codeVerifier: String?
 
     func signIn(presentationAnchor: ASPresentationAnchor, completion: @escaping (Bool, Error?) -> Void) {
         let state = UUID().uuidString
+
+        // Generate PKCE parameters
+        let verifier = generateCodeVerifier()
+        self.codeVerifier = verifier
+        guard let challenge = generateCodeChallenge(from: verifier) else {
+            completion(false, NSError(domain: "YouTubeAuth", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to generate PKCE challenge"]))
+            return
+        }
 
         var components = URLComponents(string: "https://accounts.google.com/o/oauth2/v2/auth")!
         components.queryItems = [
@@ -21,7 +31,9 @@ class YouTubeAuthManager: NSObject, ObservableObject {
             URLQueryItem(name: "redirect_uri", value: redirectURI),
             URLQueryItem(name: "response_type", value: "code"),
             URLQueryItem(name: "scope", value: scope),
-            URLQueryItem(name: "state", value: state)
+            URLQueryItem(name: "state", value: state),
+            URLQueryItem(name: "code_challenge", value: challenge),
+            URLQueryItem(name: "code_challenge_method", value: "S256")
         ]
 
         guard let authURL = components.url else {
@@ -53,6 +65,11 @@ class YouTubeAuthManager: NSObject, ObservableObject {
     }
 
     private func exchangeCodeForToken(code: String, completion: @escaping (Bool, Error?) -> Void) {
+        guard let verifier = codeVerifier else {
+            completion(false, NSError(domain: "YouTubeAuth", code: -1, userInfo: [NSLocalizedDescriptionKey: "Missing code verifier"]))
+            return
+        }
+
         var request = URLRequest(url: URL(string: "https://oauth2.googleapis.com/token")!)
         request.httpMethod = "POST"
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
@@ -61,7 +78,8 @@ class YouTubeAuthManager: NSObject, ObservableObject {
             "code": code,
             "client_id": clientID,
             "redirect_uri": redirectURI,
-            "grant_type": "authorization_code"
+            "grant_type": "authorization_code",
+            "code_verifier": verifier
         ]
 
         request.httpBody = bodyParams.map { "\($0.key)=\($0.value)" }.joined(separator: "&").data(using: .utf8)
@@ -117,6 +135,29 @@ class YouTubeAuthManager: NSObject, ObservableObject {
         accessToken = nil
         isAuthenticated = false
         userEmail = nil
+        codeVerifier = nil
+    }
+
+    // MARK: - PKCE Helper Methods
+
+    private func generateCodeVerifier() -> String {
+        var buffer = [UInt8](repeating: 0, count: 32)
+        _ = SecRandomCopyBytes(kSecRandomDefault, buffer.count, &buffer)
+        return Data(buffer).base64EncodedString()
+            .replacingOccurrences(of: "+", with: "-")
+            .replacingOccurrences(of: "/", with: "_")
+            .replacingOccurrences(of: "=", with: "")
+            .trimmingCharacters(in: .whitespaces)
+    }
+
+    private func generateCodeChallenge(from verifier: String) -> String? {
+        guard let data = verifier.data(using: .utf8) else { return nil }
+        let hashed = SHA256.hash(data: data)
+        return Data(hashed).base64EncodedString()
+            .replacingOccurrences(of: "+", with: "-")
+            .replacingOccurrences(of: "/", with: "_")
+            .replacingOccurrences(of: "=", with: "")
+            .trimmingCharacters(in: .whitespaces)
     }
 }
 
