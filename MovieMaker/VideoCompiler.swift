@@ -181,6 +181,8 @@ class VideoCompiler {
 
                     // Insert and scale slow-mo part
                     try videoTrack.insertTimeRange(CMTimeRange(start: slowMoStartTime, duration: slowMoDuration), of: sourceVideoTrack, at: insertionPoint)
+                    videoTrack.scaleTimeRange(CMTimeRange(start: insertionPoint, duration: slowMoDuration), toDuration: scaledSlowMoDuration)
+
                     if !item.isMuted, let sourceAudioTrack = try await videoAsset.load(.tracks).first(where: { $0.mediaType == .audio }) {
                         try? audioTrack.insertTimeRange(CMTimeRange(start: slowMoStartTime, duration: slowMoDuration), of: sourceAudioTrack, at: insertionPoint)
                         audioTrack.scaleTimeRange(CMTimeRange(start: insertionPoint, duration: slowMoDuration), toDuration: scaledSlowMoDuration)
