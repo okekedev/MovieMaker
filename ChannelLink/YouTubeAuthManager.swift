@@ -9,7 +9,7 @@ class YouTubeAuthManager: NSObject, ObservableObject {
 
     private let clientID = "880243579911-95788vph5je6vjm2rnhvnqo8n6lk31gm.apps.googleusercontent.com"
     private let redirectURI = "com.googleusercontent.apps.880243579911-95788vph5je6vjm2rnhvnqo8n6lk31gm:/oauth2redirect"
-    private let scope = "https://www.googleapis.com/auth/youtube.upload https://www.googleapis.com/auth/userinfo.email"
+    private let scope = "https://www.googleapis.com/auth/youtube https://www.googleapis.com/auth/userinfo.email"
 
     private var webAuthSession: ASWebAuthenticationSession?
     private var codeVerifier: String?
