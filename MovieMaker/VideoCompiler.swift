@@ -49,12 +49,18 @@ class VideoCompiler {
         Task.detached(priority: .userInitiated) {
             await taskActor.begin()
 
-            await performCompilation(
-                media: media,
-                settings: settings,
-                progressHandler: progressHandler,
-                completion: completion
-            )
+            do {
+                try await performCompilation(
+                    media: media,
+                    settings: settings,
+                    progressHandler: progressHandler,
+                    completion: completion
+                )
+            } catch {
+                await MainActor.run {
+                    completion(.failure(error))
+                }
+            }
 
             await taskActor.end()
         }
@@ -65,7 +71,7 @@ class VideoCompiler {
         settings: VideoCompilationSettings,
         progressHandler: @escaping (Double) -> Void,
         completion: @escaping (Result<URL, Error>) -> Void
-    ) async {
+    ) async throws {
         do {
             let composition = AVMutableComposition()
 
@@ -140,11 +146,11 @@ class VideoCompiler {
 
                 let videoAsset = try await loadVideoAsset(for: item.asset)
 
-                guard let sourceVideoTrack = try await videoAsset.loadTracksAsync(withMediaType: .video).first else {
+                guard let sourceVideoTrack = try await videoAsset.load(.tracks).first(where: { $0.mediaType == .video }) else {
                     continue
                 }
 
-                let originalVideoDuration = try await videoAsset.loadDuration()
+                let originalVideoDuration = try await videoAsset.load(.duration)
 
                 // Calculate the actual time range to insert based on trimming
                 let actualStartTime = item.startTime
@@ -166,7 +172,7 @@ class VideoCompiler {
                     // Insert pre-slow-mo part
                     if preSlowMoDuration > .zero {
                         try videoTrack.insertTimeRange(CMTimeRange(start: actualStartTime, duration: preSlowMoDuration), of: sourceVideoTrack, at: insertionPoint)
-                        if !item.isMuted, let sourceAudioTrack = try await videoAsset.loadTracksAsync(withMediaType: .audio).first {
+                        if !item.isMuted, let sourceAudioTrack = try await videoAsset.load(.tracks).first(where: { $0.mediaType == .audio }) {
                             try? audioTrack.insertTimeRange(CMTimeRange(start: actualStartTime, duration: preSlowMoDuration), of: sourceAudioTrack, at: insertionPoint)
                         }
                         insertionPoint = CMTimeAdd(insertionPoint, preSlowMoDuration)
@@ -175,8 +181,7 @@ class VideoCompiler {
 
                     // Insert and scale slow-mo part
                     try videoTrack.insertTimeRange(CMTimeRange(start: slowMoStartTime, duration: slowMoDuration), of: sourceVideoTrack, at: insertionPoint)
-                    videoTrack.scaleTimeRange(CMTimeRange(start: insertionPoint, duration: slowMoDuration), toDuration: scaledSlowMoDuration)
-                    if !item.isMuted, let sourceAudioTrack = try await videoAsset.loadTracksAsync(withMediaType: .audio).first {
+                    if !item.isMuted, let sourceAudioTrack = try await videoAsset.load(.tracks).first(where: { $0.mediaType == .audio }) {
                         try? audioTrack.insertTimeRange(CMTimeRange(start: slowMoStartTime, duration: slowMoDuration), of: sourceAudioTrack, at: insertionPoint)
                         audioTrack.scaleTimeRange(CMTimeRange(start: insertionPoint, duration: slowMoDuration), toDuration: scaledSlowMoDuration)
                     }
@@ -186,7 +191,7 @@ class VideoCompiler {
                     // Insert post-slow-mo part
                     if postSlowMoDuration > .zero {
                         try videoTrack.insertTimeRange(CMTimeRange(start: slowMoEndTime, duration: postSlowMoDuration), of: sourceVideoTrack, at: insertionPoint)
-                        if !item.isMuted, let sourceAudioTrack = try await videoAsset.loadTracksAsync(withMediaType: .audio).first {
+                        if !item.isMuted, let sourceAudioTrack = try await videoAsset.load(.tracks).first(where: { $0.mediaType == .audio }) {
                             try? audioTrack.insertTimeRange(CMTimeRange(start: slowMoEndTime, duration: postSlowMoDuration), of: sourceAudioTrack, at: insertionPoint)
                         }
                         insertionPoint = CMTimeAdd(insertionPoint, postSlowMoDuration)
@@ -196,7 +201,7 @@ class VideoCompiler {
                 } else {
                     // Handle video without slow-mo (original trimming logic)
                     try videoTrack.insertTimeRange(CMTimeRange(start: actualStartTime, duration: currentClipDuration), of: sourceVideoTrack, at: insertionPoint)
-                    if !item.isMuted, let sourceAudioTrack = try await videoAsset.loadTracksAsync(withMediaType: .audio).first {
+                    if !item.isMuted, let sourceAudioTrack = try await videoAsset.load(.tracks).first(where: { $0.mediaType == .audio }) {
                         try? audioTrack.insertTimeRange(CMTimeRange(start: actualStartTime, duration: currentClipDuration), of: sourceAudioTrack, at: insertionPoint)
                     }
                     insertionPoint = CMTimeAdd(insertionPoint, currentClipDuration)
@@ -210,8 +215,8 @@ class VideoCompiler {
                 let layerInstruction = AVMutableVideoCompositionLayerInstruction(assetTrack: videoTrack)
 
                 // Calculate transform to fit target size
-                let naturalSize = try await sourceVideoTrack.loadNaturalSize()
-                let preferredTransform = try await sourceVideoTrack.loadPreferredTransform()
+                let naturalSize = try await sourceVideoTrack.load(.naturalSize)
+                let preferredTransform = try await sourceVideoTrack.load(.preferredTransform)
                 let transform = calculateTransform(
                     from: naturalSize,
                     to: settings.orientation.size,
@@ -314,7 +319,6 @@ class VideoCompiler {
             await MainActor.run {
                 completion(.success(finalURL))
             }
-
         } catch {
             await MainActor.run {
                 completion(.failure(error))
@@ -477,7 +481,7 @@ class VideoCompiler {
         let videoAsset = AVURLAsset(url: videoURL)
         let composition = AVMutableComposition()
 
-        guard let videoTrack = try await videoAsset.loadTracksAsync(withMediaType: .video).first,
+        guard let videoTrack = try await videoAsset.load(.tracks).first(where: { $0.mediaType == .video }),
               let compositionVideoTrack = composition.addMutableTrack(
                 withMediaType: .video,
                 preferredTrackID: kCMPersistentTrackID_Invalid
@@ -485,7 +489,7 @@ class VideoCompiler {
             throw VideoCompositionError.trackCreationFailed
         }
 
-        let videoDuration = try await videoAsset.loadDuration()
+        let videoDuration = try await videoAsset.load(.duration)
 
         try compositionVideoTrack.insertTimeRange(
             CMTimeRange(start: .zero, duration: videoDuration),
@@ -494,7 +498,7 @@ class VideoCompiler {
         )
 
         // Add original audio if exists
-        if let originalAudioTrack = try await videoAsset.loadTracksAsync(withMediaType: .audio).first,
+        if let originalAudioTrack = try await videoAsset.load(.tracks).first(where: { $0.mediaType == .audio }),
            let compositionAudioTrack = composition.addMutableTrack(
             withMediaType: .audio,
             preferredTrackID: kCMPersistentTrackID_Invalid
@@ -507,7 +511,7 @@ class VideoCompiler {
         }
 
         // Add music track with looping
-        guard let musicTrack = try await musicAsset.loadTracksAsync(withMediaType: .audio).first,
+        guard let musicTrack = try await musicAsset.load(.tracks).first(where: { $0.mediaType == .audio }),
               let compositionMusicTrack = composition.addMutableTrack(
                 withMediaType: .audio,
                 preferredTrackID: kCMPersistentTrackID_Invalid
@@ -515,7 +519,7 @@ class VideoCompiler {
             throw VideoCompositionError.trackCreationFailed
         }
 
-        let musicDuration = try await musicAsset.loadDuration()
+        let musicDuration = try await musicAsset.load(.duration)
         var currentTime = CMTime.zero
 
         while currentTime < videoDuration {
@@ -640,6 +644,4 @@ class VideoCompiler {
 
         return outputURL
     }
-
-
 }

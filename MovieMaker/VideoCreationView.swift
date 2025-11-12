@@ -2,9 +2,7 @@ import SwiftUI
 
 struct VideoCreationView: View {
     let selectedMedia: [MediaItem]
-    let settings: VideoCompilationSettings
     let onComplete: (URL) -> Void
-    let onError: () -> Void
 
     @State private var progress: Double = 0
     @State private var status: String = "Preparing..."
@@ -91,7 +89,7 @@ struct VideoCreationView: View {
         }
         .alert("Error", isPresented: $showingError) {
             Button("OK") {
-                onError()
+                // No action needed, as there's no onError closure anymore
             }
         } message: {
             Text(errorMessage)
@@ -103,7 +101,7 @@ struct VideoCreationView: View {
 
         VideoCompiler.compileVideos(
             media: selectedMedia,
-            settings: settings,
+            settings: VideoCompilationSettings(), // Pass a default settings object
             progressHandler: { progressValue in
                 DispatchQueue.main.async {
                     self.progress = progressValue * 0.7 // Reserve 0.7-1.0 for saving

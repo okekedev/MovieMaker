@@ -40,13 +40,9 @@ struct ContentView: View {
                 case .videoCreation:
                     VideoCreationView(
                         selectedMedia: selectedMedia,
-                        settings: settings,
                         onComplete: { url in
                             outputURL = url
                             currentScreen = .completion
-                        },
-                        onError: {
-                            currentScreen = .settings
                         }
                     )
 

@@ -5,7 +5,6 @@ struct CompletionView: View {
     let onCreateAnother: () -> Void
 
     @State private var showingShareSheet = false
-    @State private var showingYouTubeUpload = false
 
     var body: some View {
         VStack(spacing: 30) {
@@ -59,24 +58,6 @@ struct CompletionView: View {
                     .sheet(isPresented: $showingShareSheet) {
                         if let url = videoURL {
                             ShareSheet(items: [url])
-                        }
-                    }
-                    
-                    Button(action: {
-                        showingYouTubeUpload = true
-                    }) {
-                        Label("Upload to YouTube", systemImage: "arrow.up.forward.app.fill")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.red)
-                            .cornerRadius(14)
-                            .shadow(color: Color.red.opacity(0.5), radius: 15, x: 0, y: 8)
-                    }
-                    .sheet(isPresented: $showingYouTubeUpload) {
-                        if let url = videoURL {
-                            YouTubeUploadView(videoURL: url)
                         }
                     }
                 }

@@ -9,9 +9,7 @@ struct MediaSelectionView: View {
     @State private var showingPicker = false
     @State private var showingPaywall = false
     @State private var showingPermissionAlert = false
-    @State private var showingInfo = false
     @State private var showingSettings = false
-    @State private var settings = VideoCompilationSettings()
     @State private var selectedMediaItemForTrimming: MediaItem?
     @EnvironmentObject var storeManager: StoreManager
     @State private var pulseOpacity: Double = 1.0
@@ -41,14 +39,11 @@ struct MediaSelectionView: View {
             PaywallView()
                 .environmentObject(storeManager)
         }
-        .sheet(isPresented: $showingInfo) {
-            InformationView()
-        }
         .fullScreenCover(item: $selectedMediaItemForTrimming) { item in
             TrimmingView(mediaItem: $selectedMedia[selectedMedia.firstIndex(where: { $0.id == item.id })!])
         }
         .alert("Photo Access Required", isPresented: $showingPermissionAlert) {
-            Button("Open Settings", action: openSettings)
+            Button("Open Settings", action: openSystemSettings)
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("Please allow Channel Link to access your videos in Settings to create compilations.")
@@ -102,7 +97,13 @@ struct MediaSelectionView: View {
     @ViewBuilder
     private var mainContent: some View {
         if selectedMedia.isEmpty {
-            mainSelectionButton
+            VStack(spacing: 15) {
+                Text("Movie Maker")
+                    .font(.custom("SendFlowers-Regular", size: 50))
+                    .foregroundColor(.gray)
+                
+                mainSelectionButton
+            }
         } else {
             mediaGridView
         }
@@ -200,16 +201,6 @@ struct MediaSelectionView: View {
                     .shadow(color: Color.brandSecondary.opacity(0.5), radius: 15, x: 0, y: 8)
                 }
                 .padding(.horizontal, 24)
-            } else {
-                HStack {
-                    Spacer()
-                    Button(action: { showingInfo = true }) {
-                        Image(systemName: "info.circle")
-                            .font(.system(size: 20, weight: .medium))
-                            .foregroundColor(.secondary.opacity(0.6))
-                    }
-                }
-                .padding(.horizontal, 24)
             }
         }
         .padding(.bottom, 36)
@@ -245,7 +236,7 @@ struct MediaSelectionView: View {
         timer = nil
     }
 
-    private func openSettings() {
+    private func openSystemSettings() {
         if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
             UIApplication.shared.open(settingsURL)
         }

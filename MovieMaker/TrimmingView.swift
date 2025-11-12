@@ -203,7 +203,7 @@ struct TrimmingView: View {
         await updateAudioMix()
 
         do {
-            self.duration = try await avAsset.loadDuration()
+            self.duration = try await avAsset.load(.duration)
         } catch {
             print("Error loading duration: \(error)")
             return
@@ -266,7 +266,7 @@ struct TrimmingView: View {
 
         if mediaItem.isMuted {
             let audioMix = AVMutableAudioMix()
-            guard let audioTrack = try? await playerItem.asset.loadTracksAsync(withMediaType: .audio).first else { return }
+            guard let audioTrack = try? await playerItem.asset.load(.tracks).first(where: { $0.mediaType == .audio }) else { return }
             
             let audioMixInputParameters = AVMutableAudioMixInputParameters(track: audioTrack)
             audioMixInputParameters.setVolume(0.0, at: .zero)

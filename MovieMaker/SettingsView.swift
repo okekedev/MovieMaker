@@ -7,6 +7,13 @@ struct SettingsView: View {
     let onBack: () -> Void
     let onCreate: () -> Void
 
+    init(selectedMedia: [MediaItem], settings: Binding<VideoCompilationSettings>, onBack: @escaping () -> Void, onCreate: @escaping () -> Void) {
+        self.selectedMedia = selectedMedia
+        self._settings = settings
+        self.onBack = onBack
+        self.onCreate = onCreate
+    }
+
     @State private var showingWarning = false
     @State private var warningMessage = ""
     @State private var orientationExpanded = false
@@ -428,3 +435,4 @@ struct SettingsView: View {
         onCreate()
     }
 }
+// Dummy comment to force re-evaluation
