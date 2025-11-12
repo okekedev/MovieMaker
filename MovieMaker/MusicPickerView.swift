@@ -73,8 +73,6 @@ struct DocumentPicker: UIViewControllerRepresentable {
                 return
             }
 
-            defer { url.stopAccessingSecurityScopedResource() }
-
             // Copy to app's temp directory
             let tempURL = FileManager.default.temporaryDirectory
                 .appendingPathComponent(UUID().uuidString)
@@ -86,10 +84,13 @@ struct DocumentPicker: UIViewControllerRepresentable {
 
                 parent.selectedMusicTitle = url.deletingPathExtension().lastPathComponent
                 parent.musicAsset = AVURLAsset(url: tempURL)
+                print("✅ Music file copied to: \(tempURL.lastPathComponent)")
             } catch {
-                print("Error copying music file: \(error)")
+                print("❌ Error copying music file: \(error.localizedDescription)")
+                parent.musicAsset = nil // Ensure musicAsset is nil on error
             }
 
+            url.stopAccessingSecurityScopedResource() // Stop accessing after all operations
             parent.onDismiss()
         }
 
