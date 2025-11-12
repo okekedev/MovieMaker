@@ -10,84 +10,10 @@ struct MusicPickerView: View {
     @State private var showingDocumentPicker = false
 
     var body: some View {
-        NavigationView {
-            VStack(spacing: 24) {
-                VStack(spacing: 12) {
-                    Image(systemName: "music.note.circle.fill")
-                        .font(.system(size: 60))
-                        .foregroundStyle(
-                            LinearGradient(
-                                colors: [Color.pink, Color.orange],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-
-                    Text("Add Background Music")
-                        .font(.title2.bold())
-
-                    Text("Select an audio file from your Files app or iCloud Drive")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal)
-                }
-                .padding(.top, 40)
-
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("Supported formats:")
-                        .font(.caption.bold())
-                        .foregroundColor(.secondary)
-
-                    HStack(spacing: 8) {
-                        ForEach(["MP3", "M4A", "WAV", "AAC"], id: \.self) { format in
-                            Text(format)
-                                .font(.caption2)
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 4)
-                                .background(Color.brandPrimary.opacity(0.1))
-                                .foregroundColor(.brandPrimary)
-                                .cornerRadius(4)
-                        }
-                    }
-                }
-                .padding(.horizontal, 24)
-
-                Button(action: {
-                    showingDocumentPicker = true
-                }) {
-                    HStack(spacing: 12) {
-                        Image(systemName: "folder.badge.plus")
-                            .font(.title3)
-
-                        Text("Browse Files")
-                            .font(.headline)
-                    }
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 16)
-                    .background(
-                        LinearGradient(
-                            colors: Color.primaryGradient,
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                    .cornerRadius(14)
-                    .shadow(color: Color.brandPrimary.opacity(0.5), radius: 15, x: 0, y: 8)
-                }
-                .padding(.horizontal, 24)
-
-                Spacer()
-            }
-            .navigationTitle("Background Music")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Cancel") {
-                        dismiss()
-                    }
-                }
+        // Directly present the DocumentPicker when this view appears
+        Text("") // Empty text view as a placeholder for NavigationView content
+            .onAppear {
+                showingDocumentPicker = true
             }
             .sheet(isPresented: $showingDocumentPicker) {
                 DocumentPicker(
@@ -98,7 +24,6 @@ struct MusicPickerView: View {
                     }
                 )
             }
-        }
     }
 }
 
