@@ -27,24 +27,6 @@ struct SettingsView: View {
     @State private var selectedMusicTitle: String = "None"
     @EnvironmentObject var storeManager: StoreManager
 
-    private let loopDurationOptions: [Double] = [0, 5, 10, 15, 30, 60, 120, 240] // in minutes, 0 for no loop
-
-    private func formattedLoopDuration(for value: Double) -> String {
-        if value == 0 {
-            return "No loop (play once)"
-        } else if value < 60 {
-            return "\(Int(value)) min"
-        } else {
-            let hours = Int(value / 60)
-            let minutes = Int(value.truncatingRemainder(dividingBy: 60))
-            if minutes == 0 {
-                return "\(hours) hour\(hours == 1 ? "" : "s")"
-            } else {
-                return "\(hours)h \(minutes)m"
-            }
-        }
-    }
-
     private var totalDuration: Double {
         // Calculate total video duration
         var duration: Double = 0
@@ -65,8 +47,8 @@ struct SettingsView: View {
     }
 
     private var loopCount: Int {
-        guard settings.loopDuration > 0, totalDuration > 0 else { return 1 } // settings.loopDuration is already in hours
-        return Int((settings.loopDuration * 3600) / totalDuration)
+        guard settings.loopDuration.hours > 0, totalDuration > 0 else { return 1 }
+        return Int((settings.loopDuration.hours * 3600) / totalDuration)
     }
 
     var body: some View {
@@ -335,45 +317,37 @@ struct SettingsView: View {
                         DisclosureGroup(
                             isExpanded: $loopExpanded,
                             content: {
-                                                            VStack(spacing: 12) {
-                                                                Slider(
-                                                                    value: Binding(
-                                                                        get: { settings.loopDuration * 60 }, // Convert hours to minutes for slider
-                                                                        set: { newValue in
-                                                                            // Find the closest option
-                                                                            let closest = loopDurationOptions.min(by: { abs($0 - newValue) < abs($1 - newValue) }) ?? 0
-                                                                            settings.loopDuration = closest / 60.0 // Convert back to hours
-                                                                        }
-                                                                    ),
-                                                                    in: 0...loopDurationOptions.last!,
-                                                                    step: 1 // Small step for smooth selection, will snap to closest option
-                                                                )
-                                                                .tint(Color.brandAccent)
-                                
-                                                                Text(formattedLoopDuration(for: settings.loopDuration * 60)) // Display selected duration
-                                                                    .font(.subheadline)
-                                                                    .foregroundColor(.primary)
-                                
-                                                                if settings.loopDuration > 0 { // Check if loop is enabled
-                                                                    Text("Your video is \(formattedDuration). Loop for \(formattedLoopDuration(for: settings.loopDuration * 60)) = plays ~\(loopCount) time\(loopCount == 1 ? "" : "s")")
-                                                                        .font(.callout)
-                                                                        .foregroundColor(.secondary)
-                                                                        .padding(12)
-                                                                        .background(Color.brandAccent.opacity(0.1))
-                                                                        .cornerRadius(8)
-                                                                }
-                                                            }
-                                                            .padding(.top, 8)                            },
-                                                    label: {
-                                                        HStack {
-                                                            Text("Loop Settings")
-                                                                .font(.headline)
-                                                            Spacer()
-                                                            Text(formattedLoopDuration(for: settings.loopDuration * 60))
-                                                                .font(.subheadline)
-                                                                .foregroundColor(.secondary)
-                                                        }
-                                                    }                        )
+                                                                                        VStack(spacing: 12) {
+                                                                                            Picker("Loop Duration", selection: $settings.loopDuration) {
+                                                                                                ForEach(LoopDuration.allCases, id: \.self) { duration in
+                                                                                                    Text(duration.rawValue).tag(duration)
+                                                                                                }
+                                                                                            }
+                                                                                            .pickerStyle(MenuPickerStyle())
+                                                                                            .padding(12)
+                                                                                            .background(Color.brandPrimary.opacity(0.1))
+                                                                                            .cornerRadius(8)
+                                                            
+                                                                                            if settings.loopDuration != .noLoop {
+                                                                                                Text("Your video is \(formattedDuration). Loop for \(Int(settings.loopDuration.hours)) hour\(settings.loopDuration.hours == 1 ? "" : "s") = plays ~\(loopCount) time\(loopCount == 1 ? "" : "s")")
+                                                                                                    .font(.callout)
+                                                                                                    .foregroundColor(.secondary)
+                                                                                                    .padding(12)
+                                                                                                    .background(Color.brandAccent.opacity(0.1))
+                                                                                                    .cornerRadius(8)
+                                                                                            }
+                                                                                        }
+                                                                                        .padding(.top, 8)                            },
+                                                                            label: {
+                                                                                HStack {
+                                                                                    Text("Loop Settings")
+                                                                                        .font(.headline)
+                                                                                    Spacer()
+                                                                                    Text(settings.loopDuration.rawValue)
+                                                                                        .font(.subheadline)
+                                                                                        .foregroundColor(.secondary)
+                                                                                }
+                                                                            }                        )
                     } else {
                         Button(action: {
                             showingPaywall = true
