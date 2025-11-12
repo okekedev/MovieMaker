@@ -33,6 +33,7 @@ struct DocumentPicker: UIViewControllerRepresentable {
     let onDismiss: () -> Void
 
     func makeUIViewController(context: Context) -> UIDocumentPickerViewController {
+        print("🎵 Creating DocumentPicker")
         let picker = UIDocumentPickerViewController(
             forOpeningContentTypes: [
                 UTType.audio,
@@ -45,6 +46,7 @@ struct DocumentPicker: UIViewControllerRepresentable {
         )
         picker.allowsMultipleSelection = false
         picker.delegate = context.coordinator
+        print("🎵 DocumentPicker delegate set to: \(context.coordinator)")
         return picker
     }
 
@@ -59,39 +61,39 @@ struct DocumentPicker: UIViewControllerRepresentable {
 
         init(_ parent: DocumentPicker) {
             self.parent = parent
+            print("🎵 Coordinator initialized")
         }
 
         func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+            print("🎵 documentPicker delegate called with \(urls.count) URLs")
             guard let url = urls.first else {
+                print("❌ No URL in array")
                 parent.onDismiss()
                 return
             }
 
-            // Start accessing the security-scoped resource
-            guard url.startAccessingSecurityScopedResource() else {
-                parent.onDismiss()
-                return
+            print("🎵 Selected URL: \(url)")
+
+            // File is already in our app's sandbox due to asCopy: true
+            // No need for security-scoped resource access
+            let musicTitle = url.deletingPathExtension().lastPathComponent
+            let musicAsset = AVURLAsset(url: url)
+
+            print("🎵 Music title: \(musicTitle)")
+            print("🎵 Creating AVURLAsset from: \(url)")
+
+            DispatchQueue.main.async {
+                print("🎵 Setting music title to: \(musicTitle)")
+                self.parent.selectedMusicTitle = musicTitle
+                print("🎵 Setting music asset")
+                self.parent.musicAsset = musicAsset
+                print("✅ Music selection complete!")
+
+                // Delay dismiss slightly to ensure bindings update
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    self.parent.onDismiss()
+                }
             }
-
-            // Copy to app's temp directory
-            let tempURL = FileManager.default.temporaryDirectory
-                .appendingPathComponent(UUID().uuidString)
-                .appendingPathExtension(url.pathExtension)
-
-            do {
-                try? FileManager.default.removeItem(at: tempURL)
-                try FileManager.default.copyItem(at: url, to: tempURL)
-
-                parent.selectedMusicTitle = url.deletingPathExtension().lastPathComponent
-                parent.musicAsset = AVURLAsset(url: tempURL)
-                print("✅ Music file copied to: \(tempURL.lastPathComponent)")
-            } catch {
-                print("❌ Error copying music file: \(error.localizedDescription)")
-                parent.musicAsset = nil // Ensure musicAsset is nil on error
-            }
-
-            url.stopAccessingSecurityScopedResource() // Stop accessing after all operations
-            parent.onDismiss()
         }
 
         func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {

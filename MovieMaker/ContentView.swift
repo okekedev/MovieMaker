@@ -27,7 +27,7 @@ struct ContentView: View {
 
                 case .settings:
                     SettingsView(
-                        selectedMedia: selectedMedia,
+                        selectedMedia: $selectedMedia,
                         settings: $settings,
                         onBack: {
                             currentScreen = .mediaSelection

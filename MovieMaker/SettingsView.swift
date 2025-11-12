@@ -1,14 +1,15 @@
 import SwiftUI
 import Photos
+import AVFoundation
 
 struct SettingsView: View {
-    let selectedMedia: [MediaItem]
+    @Binding var selectedMedia: [MediaItem]
     @Binding var settings: VideoCompilationSettings
     let onBack: () -> Void
     let onCreate: () -> Void
 
-    init(selectedMedia: [MediaItem], settings: Binding<VideoCompilationSettings>, onBack: @escaping () -> Void, onCreate: @escaping () -> Void) {
-        self.selectedMedia = selectedMedia
+    init(selectedMedia: Binding<[MediaItem]>, settings: Binding<VideoCompilationSettings>, onBack: @escaping () -> Void, onCreate: @escaping () -> Void) {
+        self._selectedMedia = selectedMedia
         self._settings = settings
         self.onBack = onBack
         self.onCreate = onCreate
@@ -250,6 +251,22 @@ struct SettingsView: View {
                                     }
 
                                     Button(action: {
+                                        muteAllVideos()
+                                    }) {
+                                        HStack {
+                                            Image(systemName: "speaker.slash.fill")
+                                                .foregroundColor(.orange)
+                                            Text("Mute All Videos")
+                                                .foregroundColor(.primary)
+                                        }
+                                        .font(.subheadline)
+                                        .padding(12)
+                                        .frame(maxWidth: .infinity)
+                                        .background(Color.orange.opacity(0.1))
+                                        .cornerRadius(8)
+                                    }
+
+                                    Button(action: {
                                         settings.musicAsset = nil
                                         selectedMusicTitle = "None"
                                     }) {
@@ -354,7 +371,19 @@ struct SettingsView: View {
                 .environmentObject(storeManager)
         }
         .sheet(isPresented: $showingMusicPicker) {
-            MusicPickerView(selectedMusicTitle: $selectedMusicTitle, musicAsset: $settings.musicAsset)
+            DocumentPicker(
+                selectedMusicTitle: $selectedMusicTitle,
+                musicAsset: $settings.musicAsset,
+                onDismiss: {
+                    showingMusicPicker = false
+                }
+            )
+        }
+    }
+
+    private func muteAllVideos() {
+        for index in selectedMedia.indices {
+            selectedMedia[index].isMuted = true
         }
     }
 
