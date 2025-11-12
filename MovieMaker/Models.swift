@@ -5,7 +5,7 @@ import AVFoundation
 import SwiftUI
 
 struct VideoCompilationSettings {
-    var loopDuration: LoopDuration = .noLoop
+    var loopDuration: Double = 5.0 / 60.0 // Default to 5 minutes in hours
     var orientation: VideoOrientation = .landscape
     var musicAsset: AVURLAsset?
     var musicVolume: Float = 0.5
@@ -21,21 +21,6 @@ enum TransitionType: String, CaseIterable {
     case fade = "Fade to Black"
     case none = "None"
 }
-
-enum LoopDuration: String, CaseIterable {
-    case noLoop = "No loop (play once)"
-    case oneHour = "Loop for 1 hour"
-    case twoHours = "Loop for 2 hours"
-
-    var hours: Double {
-        switch self {
-        case .noLoop: return 0
-        case .oneHour: return 1
-        case .twoHours: return 2
-        }
-    }
-}
-
 enum VideoOrientation: String, CaseIterable {
     case landscape = "Landscape"
     case portrait = "Portrait"
