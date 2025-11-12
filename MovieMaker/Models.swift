@@ -81,6 +81,20 @@ struct CodableColor: Codable, Equatable {
     }
 
     var swiftuiColor: Color {
-        return Color(uiColor: uiColor)
+        get {
+            return Color(uiColor: uiColor)
+        }
+        set {
+            let uiColor = UIColor(newValue)
+            var r: CGFloat = 0
+            var g: CGFloat = 0
+            var b: CGFloat = 0
+            var a: CGFloat = 0
+            uiColor.getRed(&r, green: &g, blue: &b, alpha: &a)
+            self.red = r
+            self.green = g
+            self.blue = b
+            self.alpha = a
+        }
     }
 }
