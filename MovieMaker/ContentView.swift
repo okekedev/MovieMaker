@@ -40,6 +40,7 @@ struct ContentView: View {
                 case .videoCreation:
                     VideoCreationView(
                         selectedMedia: selectedMedia,
+                        settings: settings, // Pass the settings object
                         onComplete: { url in
                             outputURL = url
                             currentScreen = .completion

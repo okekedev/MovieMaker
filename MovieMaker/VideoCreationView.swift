@@ -2,6 +2,7 @@ import SwiftUI
 
 struct VideoCreationView: View {
     let selectedMedia: [MediaItem]
+    let settings: VideoCompilationSettings // Add settings
     let onComplete: (URL) -> Void
 
     @State private var progress: Double = 0
@@ -101,7 +102,7 @@ struct VideoCreationView: View {
 
         VideoCompiler.compileVideos(
             media: selectedMedia,
-            settings: VideoCompilationSettings(), // Pass a default settings object
+            settings: settings, // Use the passed settings object
             progressHandler: { progressValue in
                 DispatchQueue.main.async {
                     self.progress = progressValue * 0.7 // Reserve 0.7-1.0 for saving
