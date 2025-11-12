@@ -18,7 +18,7 @@ struct VideoCompilationSettings {
 }
 
 enum TransitionType: String, CaseIterable {
-    case fade = "Fade to Black"
+    case fade = "Fade"
     case none = "None"
 }
 

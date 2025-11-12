@@ -19,9 +19,8 @@ struct SettingsView: View {
     @State private var orientationExpanded = false
     @State private var showingPaywall = false
     @State private var titleExpanded = false
-    @State private var musicExpanded = false
     @State private var transitionExpanded = false
-    @State private var backgroundColorExpanded = false // New state variable
+    @State private var backgroundSettingsExpanded = false // New state variable
     @State private var showingMusicPicker = false
     @State private var selectedMusicTitle: String = "None"
     @EnvironmentObject var storeManager: StoreManager
@@ -201,107 +200,94 @@ struct SettingsView: View {
 
                     Divider()
 
-                    // Background Color
+                    // Background Settings
                     DisclosureGroup(
-                        isExpanded: $backgroundColorExpanded,
+                        isExpanded: $backgroundSettingsExpanded,
                         content: {
-                            VStack(spacing: 12) {
-                                ColorPicker("Background Color", selection: $settings.backgroundColor.swiftuiColor)
-                                    .padding(.horizontal, 4)
-                            }
-                            .padding(.top, 8)
-                        },
-                        label: {
-                            HStack {
-                                Text("Background Color")
-                                    .font(.headline)
-                                Spacer()
-                                Text(settings.backgroundColor.swiftuiColor.description)
-                                    .font(.subheadline)
-                                    .foregroundColor(.secondary)
-                            }
-                        }
-                    )
-
-                    Divider()
-
-                    // Background Music
-                    DisclosureGroup(
-                        isExpanded: $musicExpanded,
-                        content: {
-                            VStack(spacing: 16) {
-                                Button(action: {
-                                    showingMusicPicker = true
-                                }) {
-                                    HStack {
-                                        Image(systemName: "music.note")
-                                            .foregroundColor(.brandPrimary)
-
-                                        VStack(alignment: .leading) {
-                                            Text("Select Music")
-                                                .font(.subheadline)
-                                                .foregroundColor(.primary)
-
-                                            Text(selectedMusicTitle)
-                                                .font(.caption)
-                                                .foregroundColor(.secondary)
-                                        }
-
-                                        Spacer()
-
-                                        Image(systemName: "chevron.right")
-                                            .foregroundColor(.secondary)
-                                            .font(.caption)
-                                    }
-                                    .padding(12)
-                                    .background(Color.brandPrimary.opacity(0.1))
-                                    .cornerRadius(8)
+                            VStack(alignment: .leading, spacing: 24) {
+                                // Background Color
+                                VStack(spacing: 12) {
+                                    ColorPicker("Background Color", selection: $settings.backgroundColor.swiftuiColor)
+                                        .padding(.horizontal, 4)
                                 }
 
-                                if settings.musicAsset != nil {
-                                    VStack(spacing: 8) {
-                                        HStack {
-                                            Text("Volume")
-                                            Spacer()
-                                            Text("\(Int(settings.musicVolume * 100))%")
-                                                .fontWeight(.semibold)
-                                        }
-                                        .font(.subheadline)
+                                Divider()
 
-                                        Slider(value: $settings.musicVolume, in: 0...1)
-                                            .tint(Color.brandAccent)
-                                    }
-
+                                // Background Music
+                                VStack(spacing: 16) {
                                     Button(action: {
-                                        settings.musicAsset = nil
-                                        selectedMusicTitle = "None"
+                                        showingMusicPicker = true
                                     }) {
                                         HStack {
-                                            Image(systemName: "trash")
-                                            Text("Remove Music")
-                                        }
-                                        .font(.subheadline)
-                                        .foregroundColor(.red)
-                                    }
-                                }
+                                            Image(systemName: "music.note")
+                                                .foregroundColor(.brandPrimary)
 
-                                Text("Music will loop throughout the video")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
+                                            VStack(alignment: .leading) {
+                                                Text("Select Music")
+                                                    .font(.subheadline)
+                                                    .foregroundColor(.primary)
+
+                                                Text(selectedMusicTitle)
+                                                    .font(.caption)
+                                                    .foregroundColor(.secondary)
+                                            }
+
+                                            Spacer()
+
+                                            Image(systemName: "chevron.right")
+                                                .foregroundColor(.secondary)
+                                                .font(.caption)
+                                        }
+                                        .padding(12)
+                                        .background(Color.brandPrimary.opacity(0.1))
+                                        .cornerRadius(8)
+                                    }
+
+                                    if settings.musicAsset != nil {
+                                        VStack(spacing: 8) {
+                                            HStack {
+                                                Text("Volume")
+                                                Spacer()
+                                                Text("\(Int(settings.musicVolume * 100))%")
+                                                    .fontWeight(.semibold)
+                                            }
+                                            .font(.subheadline)
+
+                                            Slider(value: $settings.musicVolume, in: 0...1)
+                                                .tint(Color.brandAccent)
+                                        }
+
+                                        Button(action: {
+                                            settings.musicAsset = nil
+                                            selectedMusicTitle = "None"
+                                        }) {
+                                            HStack {
+                                                Image(systemName: "trash")
+                                                Text("Remove Music")
+                                            }
+                                            .font(.subheadline)
+                                            .foregroundColor(.red)
+                                        }
+                                    }
+
+                                    Text("Music will loop throughout the video")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
                             }
                             .padding(.top, 8)
                         },
                         label: {
                             HStack {
-                                Text("Background Music")
+                                Text("Background Settings")
                                     .font(.headline)
                                 Spacer()
-                                if settings.musicAsset != nil {
+                                if settings.musicAsset != nil || settings.backgroundColor.uiColor != .black { // Indicate if music or custom color is set
                                     Image(systemName: "checkmark.circle.fill")
                                         .foregroundColor(.green)
                                         .font(.subheadline)
                                 } else {
-                                    Text("None")
+                                    Text("Default")
                                         .font(.subheadline)
                                         .foregroundColor(.secondary)
                                 }
