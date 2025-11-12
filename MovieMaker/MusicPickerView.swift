@@ -73,18 +73,24 @@ struct DocumentPicker: UIViewControllerRepresentable {
                 return
             }
 
+            print("DEBUG: Original URL: \(url.absoluteString)")
+            let fileExtension = url.pathExtension.isEmpty ? "mp3" : url.pathExtension
             // Copy to app's temp directory
             let tempURL = FileManager.default.temporaryDirectory
                 .appendingPathComponent(UUID().uuidString)
-                .appendingPathExtension(url.pathExtension)
+                .appendingPathExtension(fileExtension)
+
+            print("DEBUG: Temp URL: \(tempURL.absoluteString)")
 
             do {
                 try? FileManager.default.removeItem(at: tempURL)
                 try FileManager.default.copyItem(at: url, to: tempURL)
 
                 parent.selectedMusicTitle = url.deletingPathExtension().lastPathComponent
-                parent.musicAsset = AVURLAsset(url: tempURL)
+                let asset = AVURLAsset(url: tempURL)
+                parent.musicAsset = asset
                 print("✅ Music file copied to: \(tempURL.lastPathComponent)")
+                print("DEBUG: AVURLAsset created: \(asset)")
             } catch {
                 print("❌ Error copying music file: \(error.localizedDescription)")
                 parent.musicAsset = nil // Ensure musicAsset is nil on error
