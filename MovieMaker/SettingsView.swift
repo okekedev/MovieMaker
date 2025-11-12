@@ -125,30 +125,25 @@ struct SettingsView: View {
                         isExpanded: $titleExpanded,
                         content: {
                             VStack(spacing: 16) {
-                                Toggle("Add Title Screen", isOn: $settings.includeTitleScreen)
-                                    .tint(Color.brandAccent)
+                                VStack(alignment: .leading, spacing: 12) {
+                                    Text("Title (Required)")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
 
-                                if settings.includeTitleScreen {
-                                    VStack(alignment: .leading, spacing: 12) {
-                                        Text("Title (Required)")
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
+                                    TextField("Enter title", text: $settings.titleText)
+                                        .textFieldStyle(RoundedBorderTextFieldStyle())
 
-                                        TextField("Enter title", text: $settings.titleText)
-                                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                                    Text("Subtitle (Optional)")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
 
-                                        Text("Subtitle (Optional)")
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
+                                    TextField("Enter subtitle", text: $settings.subtitleText)
+                                        .textFieldStyle(RoundedBorderTextFieldStyle())
 
-                                        TextField("Enter subtitle", text: $settings.subtitleText)
-                                            .textFieldStyle(RoundedBorderTextFieldStyle())
-
-                                        Text("White text on black background • 3 seconds")
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
-                                            .padding(.top, 4)
-                                    }
+                                    Text("White text on black background • 3 seconds")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                        .padding(.top, 4)
                                 }
                             }
                             .padding(.top, 8)
@@ -158,12 +153,12 @@ struct SettingsView: View {
                                 Text("Title Screen")
                                     .font(.headline)
                                 Spacer()
-                                if settings.includeTitleScreen && !settings.titleText.isEmpty {
+                                if !settings.titleText.isEmpty { // Always consider title screen included if text is present
                                     Image(systemName: "checkmark.circle.fill")
                                         .foregroundColor(.green)
                                         .font(.subheadline)
                                 } else {
-                                    Text("Optional")
+                                    Text("No Title") // Changed from "Optional"
                                         .font(.subheadline)
                                         .foregroundColor(.secondary)
                                 }
@@ -184,6 +179,11 @@ struct SettingsView: View {
                                     }
                                 }
                                 .pickerStyle(SegmentedPickerStyle())
+
+                                if settings.transition == .fade { // Only show color picker if transition is fade
+                                    ColorPicker("Transition Color", selection: $settings.transitionColor.swiftuiColor)
+                                        .padding(.horizontal, 4)
+                                }
                             }
                             .padding(.top, 8)
                         },

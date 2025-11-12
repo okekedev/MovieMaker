@@ -233,7 +233,7 @@ class VideoCompiler {
                 if settings.transition == .fade && index < media.count - 1 {
                     let blackTransitionLayer = CALayer()
                     blackTransitionLayer.frame = CGRect(origin: .zero, size: settings.orientation.size)
-                    blackTransitionLayer.backgroundColor = UIColor.black.cgColor
+                    blackTransitionLayer.backgroundColor = settings.transitionColor.uiColor.cgColor
                     blackTransitionLayer.opacity = 0.0 // Start transparent
 
                     // Fade in to black

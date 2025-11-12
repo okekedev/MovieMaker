@@ -10,8 +10,9 @@ struct VideoCompilationSettings {
     var musicVolume: Float = 0.5
     var titleText: String = ""
     var subtitleText: String = ""
-    var includeTitleScreen: Bool = false
+    var includeTitleScreen: Bool = true
     var transition: TransitionType = .fade
+    var transitionColor: CodableColor = CodableColor(uiColor: .black)
 }
 
 enum TransitionType: String, CaseIterable {
@@ -54,4 +55,31 @@ struct MediaItem: Identifiable {
     var slowMoStartTime: CMTime?
     var slowMoEndTime: CMTime?
     var isMuted: Bool = false
+}
+
+struct CodableColor: Codable, Equatable {
+    let red: CGFloat
+    let green: CGFloat
+    let blue: CGFloat
+    let alpha: CGFloat
+
+    init(uiColor: UIColor) {
+        var r: CGFloat = 0
+        var g: CGFloat = 0
+        var b: CGFloat = 0
+        var a: CGFloat = 0
+        uiColor.getRed(&r, green: &g, blue: &b, alpha: &a)
+        self.red = r
+        self.green = g
+        self.blue = b
+        self.alpha = a
+    }
+
+    var uiColor: UIColor {
+        return UIColor(red: red, green: green, blue: blue, alpha: alpha)
+    }
+
+    var swiftuiColor: Color {
+        return Color(uiColor: uiColor)
+    }
 }
