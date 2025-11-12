@@ -26,8 +26,6 @@ struct MediaSelectionView: View {
                 Spacer()
                 bottomBar
             }
-            .overlay(settingsOverlay, alignment: .bottomLeading)
-
             if showingSettings {
                 AppConfigurationView(isPresented: $showingSettings)
             }
@@ -204,22 +202,6 @@ struct MediaSelectionView: View {
             }
         }
         .padding(.bottom, 36)
-    }
-
-    @ViewBuilder
-    private var settingsOverlay: some View {
-        if selectedMedia.isEmpty {
-            HStack {
-                Button(action: { showingSettings = true }) {
-                    Image(systemName: "gearshape.fill")
-                        .font(.system(size: 20, weight: .medium))
-                        .foregroundColor(.secondary.opacity(0.6))
-                }
-                .padding(.leading, 24)
-                Spacer()
-            }
-            .padding(.bottom, 36)
-        }
     }
 
     // MARK: - Functions
