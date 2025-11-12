@@ -17,7 +17,6 @@ struct SettingsView: View {
     @State private var showingWarning = false
     @State private var warningMessage = ""
     @State private var orientationExpanded = false
-    @State private var loopExpanded = false
     @State private var showingPaywall = false
     @State private var titleExpanded = false
     @State private var musicExpanded = false
@@ -310,64 +309,7 @@ struct SettingsView: View {
                         }
                     )
 
-                    Divider()
-
-                    // Loop Settings
-                    if storeManager.isPro {
-                        DisclosureGroup(
-                            isExpanded: $loopExpanded,
-                            content: {
-                                                                                        VStack(spacing: 12) {
-                                                                                            Picker("Loop Duration", selection: $settings.loopDuration) {
-                                                                                                ForEach(LoopDuration.allCases, id: \.self) { duration in
-                                                                                                    Text(duration.rawValue).tag(duration)
-                                                                                                }
-                                                                                            }
-                                                                                            .pickerStyle(MenuPickerStyle())
-                                                                                            .padding(12)
-                                                                                            .background(Color.brandPrimary.opacity(0.1))
-                                                                                            .cornerRadius(8)
-                                                            
-                                                                                            if settings.loopDuration != .noLoop {
-                                                                                                Text("Your video is \(formattedDuration). Loop for \(Int(settings.loopDuration.hours)) hour\(settings.loopDuration.hours == 1 ? "" : "s") = plays ~\(loopCount) time\(loopCount == 1 ? "" : "s")")
-                                                                                                    .font(.callout)
-                                                                                                    .foregroundColor(.secondary)
-                                                                                                    .padding(12)
-                                                                                                    .background(Color.brandAccent.opacity(0.1))
-                                                                                                    .cornerRadius(8)
-                                                                                            }
-                                                                                        }
-                                                                                        .padding(.top, 8)                            },
-                                                                            label: {
-                                                                                HStack {
-                                                                                    Text("Loop Settings")
-                                                                                        .font(.headline)
-                                                                                    Spacer()
-                                                                                    Text(settings.loopDuration.rawValue)
-                                                                                        .font(.subheadline)
-                                                                                        .foregroundColor(.secondary)
-                                                                                }
-                                                                            }                        )
-                    } else {
-                        Button(action: {
-                            showingPaywall = true
-                        }) {
-                            HStack {
-                                Text("Loop Settings")
-                                    .font(.headline)
-                                    .foregroundColor(.primary)
-                                Spacer()
-                                Image(systemName: "lock.fill")
-                                    .foregroundColor(Color.brandAccent)
-                                    .font(.subheadline)
-                                Text("Pro")
-                                    .font(.subheadline)
-                                    .foregroundColor(Color.brandAccent)
-                            }
-                        }
-                    }
-                            
-                    Divider()
+                    
                 
                     // Preview Section
                     VStack(alignment: .leading, spacing: 8) {
