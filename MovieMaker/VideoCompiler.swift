@@ -89,10 +89,10 @@ class VideoCompiler {
             var instructions: [AVMutableVideoCompositionInstruction] = []
             let transitionDuration = CMTime(seconds: 0.2, preferredTimescale: 30)
 
-            // Add background layer with user-selected color
+            // Add black background layer to prevent green flash
             let backgroundLayer = CALayer()
             backgroundLayer.frame = CGRect(origin: .zero, size: settings.orientation.size)
-            backgroundLayer.backgroundColor = settings.backgroundColor.uiColor.cgColor
+            backgroundLayer.backgroundColor = UIColor.black.cgColor
 
             let videoLayer = CALayer()
             videoLayer.frame = CGRect(origin: .zero, size: settings.orientation.size)

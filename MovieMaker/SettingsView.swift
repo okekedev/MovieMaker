@@ -21,7 +21,6 @@ struct SettingsView: View {
     @State private var titleExpanded = false
     @State private var musicExpanded = false // Re-add musicExpanded
     @State private var transitionExpanded = false
-    @State private var backgroundSettingsExpanded = false
     @State private var showingMusicPicker = false
     @State private var selectedMusicTitle: String = "None"
     @EnvironmentObject var storeManager: StoreManager
@@ -199,35 +198,7 @@ struct SettingsView: View {
                         }
                     )
 
-                    Divider()
 
-                    // Background Settings (only color)
-                    DisclosureGroup(
-                        isExpanded: $backgroundSettingsExpanded,
-                        content: {
-                            VStack(spacing: 12) {
-                                ColorPicker("Background Color", selection: $settings.backgroundColor.swiftuiColor)
-                                    .padding(.horizontal, 4)
-                            }
-                            .padding(.top, 8)
-                        },
-                        label: {
-                            HStack {
-                                Text("Background Settings")
-                                    .font(.headline)
-                                Spacer()
-                                if settings.backgroundColor.uiColor != .black { // Indicate if custom color is set
-                                    Image(systemName: "checkmark.circle.fill")
-                                        .foregroundColor(.green)
-                                        .font(.subheadline)
-                                } else {
-                                    Text("Default")
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
-                                }
-                            }
-                        }
-                    )
 
                     Divider()
 
