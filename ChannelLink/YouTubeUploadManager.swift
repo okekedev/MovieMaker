@@ -51,6 +51,10 @@ class YouTubeUploadManager: NSObject, ObservableObject {
         }
     }
 
+    private struct YouTubeCategory {
+        static let peopleAndBlogs = "22"
+    }
+
     private func initializeUpload(
         metadata: GeminiService.VideoMetadata,
         isPublic: Bool,
@@ -64,7 +68,7 @@ class YouTubeUploadManager: NSObject, ObservableObject {
                 "title": metadata.title,
                 "description": metadata.description,
                 "tags": metadata.tags,
-                "categoryId": "22" // 22 = People & Blogs
+                "categoryId": YouTubeCategory.peopleAndBlogs
             ],
             "status": [
                 "privacyStatus": privacyStatus,

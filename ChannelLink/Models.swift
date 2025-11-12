@@ -8,6 +8,15 @@ struct VideoCompilationSettings {
     var orientation: VideoOrientation = .landscape
     var musicAsset: AVURLAsset?
     var musicVolume: Float = 0.5
+    var titleText: String = ""
+    var subtitleText: String = ""
+    var includeTitleScreen: Bool = false
+    var transition: TransitionType = .fade
+}
+
+enum TransitionType: String, CaseIterable {
+    case fade = "Fade to Black"
+    case none = "None"
 }
 
 enum LoopDuration: String, CaseIterable {
@@ -40,4 +49,9 @@ struct MediaItem: Identifiable {
     let id = UUID()
     let asset: PHAsset
     var thumbnail: UIImage?
+    var startTime: CMTime = .zero
+    var endTime: CMTime?
+    var slowMoStartTime: CMTime?
+    var slowMoEndTime: CMTime?
+    var isMuted: Bool = false
 }

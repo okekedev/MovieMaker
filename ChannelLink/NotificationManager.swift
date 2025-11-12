@@ -1,6 +1,6 @@
 //
 //  NotificationManager.swift
-//  Channel Link
+//  QuickMovie
 //
 //  Handles local notifications for video completion
 //

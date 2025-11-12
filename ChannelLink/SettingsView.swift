@@ -12,11 +12,11 @@ struct SettingsView: View {
     @State private var orientationExpanded = false
     @State private var loopExpanded = false
     @State private var showingPaywall = false
-    @State private var apiKeyExpanded = false
+    @State private var titleExpanded = false
     @State private var musicExpanded = false
+    @State private var transitionExpanded = false
     @State private var showingMusicPicker = false
     @State private var selectedMusicTitle: String = "None"
-    @AppStorage("gemini_api_key") private var geminiAPIKey: String = ""
     @EnvironmentObject var storeManager: StoreManager
 
     private var totalDuration: Double {
@@ -50,6 +50,7 @@ struct SettingsView: View {
                 Button(action: onBack) {
                     Image(systemName: "chevron.left")
                         .font(.title3)
+                        .foregroundColor(.brandPrimary)
                 }
                 Spacer()
                 Text("Settings")
@@ -101,14 +102,95 @@ struct SettingsView: View {
                                     .foregroundColor(.primary)
                                 Spacer()
                                 Image(systemName: "lock.fill")
-                                    .foregroundColor(.blue)
+                                    .foregroundColor(Color.brandAccent)
                                     .font(.subheadline)
                                 Text("Pro")
                                     .font(.subheadline)
-                                    .foregroundColor(.blue)
+                                    .foregroundColor(Color.brandAccent)
                             }
                         }
                     }
+
+                    Divider()
+
+                    // Title Screen
+                    DisclosureGroup(
+                        isExpanded: $titleExpanded,
+                        content: {
+                            VStack(spacing: 16) {
+                                Toggle("Add Title Screen", isOn: $settings.includeTitleScreen)
+                                    .tint(Color.brandAccent)
+
+                                if settings.includeTitleScreen {
+                                    VStack(alignment: .leading, spacing: 12) {
+                                        Text("Title (Required)")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+
+                                        TextField("Enter title", text: $settings.titleText)
+                                            .textFieldStyle(RoundedBorderTextFieldStyle())
+
+                                        Text("Subtitle (Optional)")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+
+                                        TextField("Enter subtitle", text: $settings.subtitleText)
+                                            .textFieldStyle(RoundedBorderTextFieldStyle())
+
+                                        Text("White text on black background • 3 seconds")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                            .padding(.top, 4)
+                                    }
+                                }
+                            }
+                            .padding(.top, 8)
+                        },
+                        label: {
+                            HStack {
+                                Text("Title Screen")
+                                    .font(.headline)
+                                Spacer()
+                                if settings.includeTitleScreen && !settings.titleText.isEmpty {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .foregroundColor(.green)
+                                        .font(.subheadline)
+                                } else {
+                                    Text("Optional")
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                        }
+                    )
+
+                    Divider()
+
+                    // Transition Style
+                    DisclosureGroup(
+                        isExpanded: $transitionExpanded,
+                        content: {
+                            VStack(spacing: 12) {
+                                Picker("Transition Style", selection: $settings.transition) {
+                                    ForEach(TransitionType.allCases, id: \.self) { transition in
+                                        Text(transition.rawValue).tag(transition)
+                                    }
+                                }
+                                .pickerStyle(SegmentedPickerStyle())
+                            }
+                            .padding(.top, 8)
+                        },
+                        label: {
+                            HStack {
+                                Text("Transition Style")
+                                    .font(.headline)
+                                Spacer()
+                                Text(settings.transition.rawValue)
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                    )
 
                     Divider()
 
@@ -122,7 +204,7 @@ struct SettingsView: View {
                                 }) {
                                     HStack {
                                         Image(systemName: "music.note")
-                                            .foregroundColor(.blue)
+                                            .foregroundColor(.brandPrimary)
 
                                         VStack(alignment: .leading) {
                                             Text("Select Music")
@@ -141,7 +223,7 @@ struct SettingsView: View {
                                             .font(.caption)
                                     }
                                     .padding(12)
-                                    .background(Color(.systemGray6))
+                                    .background(Color.brandPrimary.opacity(0.1))
                                     .cornerRadius(8)
                                 }
 
@@ -156,7 +238,7 @@ struct SettingsView: View {
                                         .font(.subheadline)
 
                                         Slider(value: $settings.musicVolume, in: 0...1)
-                                            .accentColor(.blue)
+                                            .tint(Color.brandAccent)
                                     }
 
                                     Button(action: {
@@ -211,7 +293,7 @@ struct SettingsView: View {
                                     }
                                     .pickerStyle(MenuPickerStyle())
                                     .padding(12)
-                                    .background(Color(.systemGray6))
+                                    .background(Color.brandPrimary.opacity(0.1))
                                     .cornerRadius(8)
 
                                     if settings.loopDuration != .noLoop {
@@ -219,7 +301,7 @@ struct SettingsView: View {
                                             .font(.callout)
                                             .foregroundColor(.secondary)
                                             .padding(12)
-                                            .background(Color.blue.opacity(0.1))
+                                            .background(Color.brandAccent.opacity(0.1))
                                             .cornerRadius(8)
                                     }
                                 }
@@ -246,77 +328,17 @@ struct SettingsView: View {
                                     .foregroundColor(.primary)
                                 Spacer()
                                 Image(systemName: "lock.fill")
-                                    .foregroundColor(.blue)
+                                    .foregroundColor(Color.brandAccent)
                                     .font(.subheadline)
                                 Text("Pro")
                                     .font(.subheadline)
-                                    .foregroundColor(.blue)
+                                    .foregroundColor(Color.brandAccent)
                             }
                         }
                     }
-
+                            
                     Divider()
-
-                    // Advanced Settings
-                    DisclosureGroup(
-                        isExpanded: $apiKeyExpanded,
-                        content: {
-                            VStack(alignment: .leading, spacing: 16) {
-                                Text("AI Metadata Generation")
-                                    .font(.subheadline)
-                                    .fontWeight(.semibold)
-
-                                Text("Enter your Gemini API key to enable AI-powered metadata generation for YouTube uploads")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-
-                                SecureField("Gemini API Key", text: $geminiAPIKey)
-                                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                                    .autocapitalization(.none)
-                                    .autocorrectionDisabled()
-
-                                Link(destination: URL(string: "https://makersuite.google.com/app/apikey")!) {
-                                    HStack {
-                                        Image(systemName: "key.fill")
-                                        Text("Get API Key from Google")
-                                        Image(systemName: "arrow.up.right")
-                                    }
-                                    .font(.caption)
-                                    .foregroundColor(.blue)
-                                }
-
-                                if !geminiAPIKey.isEmpty {
-                                    HStack {
-                                        Image(systemName: "checkmark.circle.fill")
-                                            .foregroundColor(.green)
-                                        Text("API Key configured")
-                                            .font(.caption)
-                                            .foregroundColor(.green)
-                                    }
-                                }
-                            }
-                            .padding(.top, 8)
-                        },
-                        label: {
-                            HStack {
-                                Text("Advanced Settings")
-                                    .font(.headline)
-                                Spacer()
-                                if geminiAPIKey.isEmpty {
-                                    Image(systemName: "gear")
-                                        .foregroundColor(.secondary)
-                                        .font(.subheadline)
-                                } else {
-                                    Image(systemName: "checkmark.circle.fill")
-                                        .foregroundColor(.green)
-                                        .font(.subheadline)
-                                }
-                            }
-                        }
-                    )
-
-                    Divider()
-
+                
                     // Preview Section
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Preview")
@@ -324,24 +346,24 @@ struct SettingsView: View {
 
                         HStack {
                             Image(systemName: "clock")
-                                .foregroundColor(.blue)
+                                .foregroundColor(.brandPrimary)
                             Text("Total length: \(formattedDuration)")
                                 .fontWeight(.medium)
                         }
                         .padding(12)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(Color(.systemGray6))
+                        .background(Color.brandPrimary.opacity(0.1))
                         .cornerRadius(8)
 
                         HStack {
                             Image(systemName: "photo.stack")
-                                .foregroundColor(.blue)
+                                .foregroundColor(.brandPrimary)
                             Text("\(selectedMedia.count) item\(selectedMedia.count == 1 ? "" : "s")")
                                 .fontWeight(.medium)
                         }
                         .padding(12)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(Color(.systemGray6))
+                        .background(Color.brandPrimary.opacity(0.1))
                         .cornerRadius(8)
                     }
                 }
@@ -352,24 +374,20 @@ struct SettingsView: View {
             Button(action: {
                 checkAndCreate()
             }) {
-                HStack {
-                    Image(systemName: "tv")
-                        .font(.title3)
-                    Text("Create Video Compilation")
-                        .font(.headline)
-                }
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(
-                    LinearGradient(
-                        colors: [Color.green, Color.green.opacity(0.8)],
-                        startPoint: .top,
-                        endPoint: .bottom
+                Text("Create Video Compilation")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(
+                        LinearGradient(
+                            colors: [Color.brandSecondary, Color.brandAccent],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
                     )
-                )
-                .cornerRadius(12)
-                .shadow(color: Color.green.opacity(0.3), radius: 8, x: 0, y: 4)
+                    .cornerRadius(14)
+                    .shadow(color: Color.brandSecondary.opacity(0.5), radius: 15, x: 0, y: 8)
             }
             .padding()
         }

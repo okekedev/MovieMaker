@@ -11,6 +11,11 @@ class GeminiService: ObservableObject {
     }
 
     func generateMetadata(userTitle: String?, videoDescription: String, isPublic: Bool, completion: @escaping (Result<VideoMetadata, Error>) -> Void) {
+        guard !apiKey.isEmpty else {
+            completion(.failure(NSError(domain: "GeminiService", code: -2, userInfo: [NSLocalizedDescriptionKey: "Gemini API key is missing. Please add it in the Advanced Settings."])))
+            return
+        }
+
         let prompt: String
 
         if let userTitle = userTitle, !userTitle.isEmpty {

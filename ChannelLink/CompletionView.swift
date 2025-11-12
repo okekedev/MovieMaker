@@ -5,6 +5,7 @@ struct CompletionView: View {
     let onCreateAnother: () -> Void
 
     @State private var showingShareSheet = false
+    @State private var showingYouTubeUpload = false
 
     var body: some View {
         VStack(spacing: 30) {
@@ -22,7 +23,7 @@ struct CompletionView: View {
             }
 
             VStack(spacing: 8) {
-                Text("Video Compilation Created!")
+                Text("Video Created!")
                     .font(.title)
                     .fontWeight(.bold)
 
@@ -36,7 +37,7 @@ struct CompletionView: View {
             Spacer()
 
             VStack(spacing: 12) {
-                if let url = videoURL {
+                if videoURL != nil {
                     Button(action: {
                         showingShareSheet = true
                     }) {
@@ -47,48 +48,69 @@ struct CompletionView: View {
                             .padding()
                             .background(
                                 LinearGradient(
-                                    colors: [Color.blue, Color.blue.opacity(0.8)],
-                                    startPoint: .top,
-                                    endPoint: .bottom
+                                    colors: Color.primaryGradient,
+                                    startPoint: .leading,
+                                    endPoint: .trailing
                                 )
                             )
-                            .cornerRadius(12)
-                            .shadow(color: Color.blue.opacity(0.3), radius: 8, x: 0, y: 4)
+                            .cornerRadius(14)
+                            .shadow(color: Color.brandPrimary.opacity(0.5), radius: 15, x: 0, y: 8)
                     }
                     .sheet(isPresented: $showingShareSheet) {
-                        ShareSheet(items: [url])
+                        if let url = videoURL {
+                            ShareSheet(items: [url])
+                        }
+                    }
+                    
+                    Button(action: {
+                        showingYouTubeUpload = true
+                    }) {
+                        Label("Upload to YouTube", systemImage: "arrow.up.forward.app.fill")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.red)
+                            .cornerRadius(14)
+                            .shadow(color: Color.red.opacity(0.5), radius: 15, x: 0, y: 8)
+                    }
+                    .sheet(isPresented: $showingYouTubeUpload) {
+                        if let url = videoURL {
+                            YouTubeUploadView(videoURL: url)
+                        }
                     }
                 }
 
-                Button(action: {
-                    if let url = URL(string: "photos-redirect://") {
-                        UIApplication.shared.open(url)
-                    }
-                }) {
-                    Label("Open Photos", systemImage: "photo.on.rectangle")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(
-                            LinearGradient(
-                                colors: [Color.purple, Color.purple.opacity(0.8)],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                        )
-                        .cornerRadius(12)
-                        .shadow(color: Color.purple.opacity(0.3), radius: 8, x: 0, y: 4)
-                }
-
+                                if videoURL != nil {
+                                    Button(action: {
+                                        if let url = URL(string: "photos-redirect://") {
+                                            UIApplication.shared.open(url)
+                                        }
+                                    }) {
+                                        Label("Open Photos", systemImage: "photo.on.rectangle")
+                                            .font(.headline)
+                                            .foregroundColor(.white)
+                                            .frame(maxWidth: .infinity)
+                                            .padding()
+                                            .background(
+                                                LinearGradient(
+                                                    colors: Color.secondaryGradient,
+                                                    startPoint: .leading,
+                                                    endPoint: .trailing
+                                                )
+                                            )
+                                            .cornerRadius(14)
+                                            .shadow(color: Color.brandSecondary.opacity(0.5), radius: 15, x: 0, y: 8)
+                                    }
+                                }
                 Button(action: onCreateAnother) {
                     Text("Create Another Video")
                         .font(.headline)
-                        .foregroundColor(.blue)
+                        .foregroundColor(.brandPrimary)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.blue.opacity(0.1))
-                        .cornerRadius(12)
+                        .background(Color.brandPrimary.opacity(0.1))
+                        .cornerRadius(14)
                 }
             }
             .padding(.horizontal)

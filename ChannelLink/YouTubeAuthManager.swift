@@ -122,6 +122,10 @@ class YouTubeAuthManager: NSObject, ObservableObject {
 
 extension YouTubeAuthManager: ASWebAuthenticationPresentationContextProviding {
     func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first {
+            return window
+        }
         return ASPresentationAnchor()
     }
 }

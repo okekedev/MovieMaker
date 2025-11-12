@@ -20,14 +20,21 @@ struct VideoCreationView: View {
             ZStack {
                 Circle()
                     .stroke(lineWidth: 12)
-                    .opacity(0.3)
-                    .foregroundColor(.blue)
+                    .opacity(0.2)
+                    .foregroundColor(Color.brandAccent)
                     .frame(width: 150, height: 150)
 
                 Circle()
                     .trim(from: 0, to: progress)
-                    .stroke(style: StrokeStyle(lineWidth: 12, lineCap: .round))
-                    .foregroundColor(.blue)
+                    .stroke(
+                        AngularGradient(
+                            gradient: Gradient(colors: Color.primaryGradient + [Color.brandSecondary]),
+                            center: .center,
+                            startAngle: .degrees(0),
+                            endAngle: .degrees(360 * progress)
+                        ),
+                        style: StrokeStyle(lineWidth: 12, lineCap: .round)
+                    )
                     .frame(width: 150, height: 150)
                     .rotationEffect(.degrees(-90))
                     .animation(.linear, value: progress)
@@ -35,15 +42,22 @@ struct VideoCreationView: View {
                 VStack(spacing: 4) {
                     Text("\(Int(progress * 100))%")
                         .font(.system(size: 36, weight: .bold))
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: Color.primaryGradient,
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
 
                     Image(systemName: "sparkles")
                         .font(.title2)
-                        .foregroundColor(.blue)
+                        .foregroundColor(Color.brandAccent)
                 }
             }
 
             VStack(spacing: 8) {
-                Text("Creating your video compilation...")
+                Text("Creating your video...")
                     .font(.title2)
                     .fontWeight(.semibold)
 
@@ -53,7 +67,7 @@ struct VideoCreationView: View {
 
                 Text("You can close the app - we'll notify you when it's ready")
                     .font(.caption)
-                    .foregroundColor(.blue)
+                    .foregroundColor(.brandPrimary)
                     .padding(.top, 4)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 20)

@@ -19,10 +19,7 @@ struct PaywallView: View {
         ZStack {
             // Gradient background
             LinearGradient(
-                gradient: Gradient(colors: [
-                    Color.blue,
-                    Color.cyan
-                ]),
+                gradient: Gradient(colors: Color.brandGradient),
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
@@ -39,9 +36,15 @@ struct PaywallView: View {
                             .frame(width: 100, height: 100)
                             .shadow(radius: 10)
 
-                        Image(systemName: "tv")
+                        Image(systemName: "video.fill")
                             .font(.system(size: 50))
-                            .foregroundColor(.blue)
+                            .foregroundStyle(
+                                LinearGradient(
+                                    colors: Color.primaryGradient,
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
                     }
 
                     // Title
@@ -102,13 +105,19 @@ struct PaywallView: View {
                             Group {
                                 if storeManager.isLoading {
                                     ProgressView()
-                                        .progressViewStyle(CircularProgressViewStyle(tint: .blue))
+                                        .progressViewStyle(CircularProgressViewStyle(tint: Color.brandPrimary))
                                 } else {
                                     Text("Start Free Trial")
                                         .font(.system(size: 20, weight: .bold))
                                 }
                             }
-                            .foregroundColor(.blue)
+                            .foregroundStyle(
+                                LinearGradient(
+                                    colors: Color.primaryGradient,
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 18)
                             .background(Color.white)
@@ -134,7 +143,7 @@ struct PaywallView: View {
                             }) {
                                 Text("Retry")
                                     .font(.system(size: 18, weight: .semibold))
-                                    .foregroundColor(.blue)
+                                    .foregroundColor(.brandPrimary)
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 18)
                                     .background(Color.white)

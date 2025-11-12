@@ -19,7 +19,6 @@ class StoreManager: ObservableObject {
     @Published var isPro: Bool = false
     @Published var isLoading: Bool = false
     @Published var products: [Product] = []
-    @Published var purchasedSubscriptions: [Product] = []
 
     // MARK: - Product IDs
     // NOTE: These must match your App Store Connect configuration

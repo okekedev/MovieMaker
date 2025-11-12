@@ -45,8 +45,8 @@ struct MusicPickerView: View {
                                 .font(.caption2)
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 4)
-                                .background(Color.blue.opacity(0.1))
-                                .foregroundColor(.blue)
+                                .background(Color.brandPrimary.opacity(0.1))
+                                .foregroundColor(.brandPrimary)
                                 .cornerRadius(4)
                         }
                     }
@@ -68,13 +68,13 @@ struct MusicPickerView: View {
                     .padding(.vertical, 16)
                     .background(
                         LinearGradient(
-                            colors: [Color.pink, Color.orange],
+                            colors: Color.primaryGradient,
                             startPoint: .leading,
                             endPoint: .trailing
                         )
                     )
-                    .cornerRadius(16)
-                    .shadow(color: Color.pink.opacity(0.4), radius: 12, x: 0, y: 6)
+                    .cornerRadius(14)
+                    .shadow(color: Color.brandPrimary.opacity(0.5), radius: 15, x: 0, y: 8)
                 }
                 .padding(.horizontal, 24)
 
