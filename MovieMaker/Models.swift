@@ -59,10 +59,10 @@ struct MediaItem: Identifiable {
 }
 
 struct CodableColor: Codable, Equatable {
-    let red: CGFloat
-    let green: CGFloat
-    let blue: CGFloat
-    let alpha: CGFloat
+    var red: CGFloat
+    var green: CGFloat
+    var blue: CGFloat
+    var alpha: CGFloat
 
     init(uiColor: UIColor) {
         var r: CGFloat = 0
