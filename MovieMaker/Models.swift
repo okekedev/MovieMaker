@@ -2,6 +2,7 @@ import Foundation
 import Photos
 import UIKit
 import AVFoundation
+import SwiftUI
 
 struct VideoCompilationSettings {
     var loopDuration: LoopDuration = .noLoop
