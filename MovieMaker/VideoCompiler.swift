@@ -106,7 +106,7 @@ class VideoCompiler {
             let parentLayer = CALayer()
             parentLayer.frame = CGRect(origin: .zero, size: settings.orientation.size)
             parentLayer.addSublayer(backgroundLayer)
-            parentLayer.addSublayer(videoLayer)
+            // videoLayer is handled by postProcessingAsVideoLayer, not added directly to parentLayer
 
             if settings.includeTitleScreen && !settings.titleText.isEmpty {
                 if let titleImage = createTitleScreen(title: settings.titleText, subtitle: settings.subtitleText, size: settings.orientation.size) {
