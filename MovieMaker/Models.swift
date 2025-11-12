@@ -69,11 +69,18 @@ struct CodableColor: Codable, Equatable {
         var g: CGFloat = 0
         var b: CGFloat = 0
         var a: CGFloat = 0
-        uiColor.getRed(&r, green: &g, blue: &b, alpha: &a)
-        self.red = r
-        self.green = g
-        self.blue = b
-        self.alpha = a
+        if uiColor.getRed(&r, green: &g, blue: &b, alpha: &a) {
+            self.red = r
+            self.green = g
+            self.blue = b
+            self.alpha = a
+        } else {
+            // Fallback to black if not an RGB color
+            self.red = 0
+            self.green = 0
+            self.blue = 0
+            self.alpha = 1
+        }
     }
 
     var uiColor: UIColor {
@@ -90,11 +97,18 @@ struct CodableColor: Codable, Equatable {
             var g: CGFloat = 0
             var b: CGFloat = 0
             var a: CGFloat = 0
-            uiColor.getRed(&r, green: &g, blue: &b, alpha: &a)
-            self.red = r
-            self.green = g
-            self.blue = b
-            self.alpha = a
+            if uiColor.getRed(&r, green: &g, blue: &b, alpha: &a) {
+                self.red = r
+                self.green = g
+                self.blue = b
+                self.alpha = a
+            } else {
+                // Fallback to black if not an RGB color
+                self.red = 0
+                self.green = 0
+                self.blue = 0
+                self.alpha = 1
+            }
         }
     }
 }
