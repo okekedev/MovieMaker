@@ -31,8 +31,9 @@ Movie Maker is built with privacy in mind:
 
 For support, questions, or feedback:
 - Email: support@moviemakerapp.com
-- Privacy Policy: https://YOUR_USERNAME.github.io/MovieMaker/privacy.html
-- Terms of Use: https://YOUR_USERNAME.github.io/MovieMaker/terms.html
+- Privacy Policy: https://okekedev.github.io/MovieMaker/privacy.html
+- Terms of Use: https://okekedev.github.io/MovieMaker/terms.html
+- Support Page: https://okekedev.github.io/MovieMaker/support.html
 
 ## License
 
