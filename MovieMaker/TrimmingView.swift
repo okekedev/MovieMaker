@@ -5,6 +5,7 @@ import Photos
 struct TrimmingView: View {
     @Binding var mediaItem: MediaItem
     @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var storeManager: StoreManager
 
     @State private var player: AVPlayer?
     @State private var avAsset: AVAsset?
@@ -18,16 +19,19 @@ struct TrimmingView: View {
     // UI state for draggable handles
     @State private var leftHandlePosition: CGFloat = 0
     @State private var rightHandlePosition: CGFloat = 1
-    
+
     // Slow-mo state
     @State private var slowMoEnabled = false
     @State private var slowMoLeftHandlePosition: CGFloat = 0.25
     @State private var slowMoRightHandlePosition: CGFloat = 0.75
     @State private var slowMoStartTime: CMTime?
     @State private var slowMoEndTime: CMTime?
-    
+
     // Playhead state
     @State private var playheadPosition: CGFloat = 0
+
+    // Paywall state
+    @State private var showingPaywall = false
 
     var body: some View {
         VStack {
@@ -91,9 +95,37 @@ struct TrimmingView: View {
                 }
                 .frame(height: 80)
                 
-                Toggle("Enable Slow-Mo", isOn: $slowMoEnabled.animation())
-                    .padding(.horizontal)
-                
+                // Slow-Mo Toggle with Pro indicator
+                HStack {
+                    if storeManager.isPro {
+                        Toggle("Enable Slow-Mo", isOn: $slowMoEnabled.animation())
+                    } else {
+                        Toggle("Enable Slow-Mo", isOn: .constant(false))
+                            .disabled(true)
+                            .opacity(0.6)
+
+                        Spacer()
+
+                        Button(action: {
+                            showingPaywall = true
+                        }) {
+                            HStack(spacing: 4) {
+                                Image(systemName: "star.fill")
+                                    .font(.system(size: 12))
+                                    .foregroundColor(.yellow)
+                                Text("PRO")
+                                    .font(.system(size: 12, weight: .bold))
+                                    .foregroundColor(.yellow)
+                            }
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.yellow.opacity(0.2))
+                            .cornerRadius(8)
+                        }
+                    }
+                }
+                .padding(.horizontal)
+
                 Toggle("Mute Video", isOn: $mediaItem.isMuted)
                     .padding(.horizontal)
             }
@@ -111,7 +143,12 @@ struct TrimmingView: View {
             }
             .padding(.horizontal)
 
-            Button("Done") {
+            Button(action: {
+                // Pause player before dismissing
+                player?.pause()
+                isPlaying = false
+
+                // Save trim settings
                 mediaItem.startTime = trimStartTime
                 mediaItem.endTime = trimEndTime
                 if slowMoEnabled {
@@ -121,26 +158,38 @@ struct TrimmingView: View {
                     mediaItem.slowMoStartTime = nil
                     mediaItem.slowMoEndTime = nil
                 }
-                dismiss()
+
+                // Dismiss on main thread after a slight delay to avoid sheet conflicts
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    dismiss()
+                }
+            }) {
+                Text("Done")
+                    .font(.system(size: 17, weight: .semibold))
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(
+                        LinearGradient(
+                            colors: Color.brandGradient,
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .cornerRadius(12)
+                    .shadow(color: Color.brandSecondary.opacity(0.5), radius: 15, x: 0, y: 8)
             }
-            .font(.headline)
-            .foregroundColor(.white)
-            .padding(.vertical)
-            .padding(.horizontal, 50)
-            .background(
-                LinearGradient(
-                    colors: Color.brandGradient,
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
-            )
-            .cornerRadius(14)
-            .shadow(color: Color.brandSecondary.opacity(0.5), radius: 15, x: 0, y: 8)
+            .buttonStyle(.plain)
+            .padding(.horizontal, 20)
         }
         .onAppear {
             Task {
                 await setupPlayer()
             }
+        }
+        .sheet(isPresented: $showingPaywall) {
+            PaywallView()
+                .environmentObject(storeManager)
         }
     }
     
@@ -237,21 +286,23 @@ struct TrimmingView: View {
 
         player?.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.05, preferredTimescale: 600), queue: .main) { time in
             self.currentTime = time
-            
+
             // Update playhead position
             if duration.seconds > 0 {
                 self.playheadPosition = time.seconds / duration.seconds
             }
-            
-            // Handle slow-mo playback rate
-            if slowMoEnabled, let slowStart = self.slowMoStartTime, let slowEnd = self.slowMoEndTime {
-                if time >= slowStart && time < slowEnd {
-                    if player?.rate != 0.5 { player?.rate = 0.5 }
+
+            // Handle slow-mo playback rate - only when playing
+            if isPlaying {
+                if slowMoEnabled, let slowStart = self.slowMoStartTime, let slowEnd = self.slowMoEndTime {
+                    if time >= slowStart && time < slowEnd {
+                        if player?.rate != 0.5 { player?.rate = 0.5 }
+                    } else {
+                        if player?.rate != 1.0 { player?.rate = 1.0 }
+                    }
                 } else {
                     if player?.rate != 1.0 { player?.rate = 1.0 }
                 }
-            } else {
-                if player?.rate != 1.0 { player?.rate = 1.0 }
             }
 
             // Loop playback within trimmed range
@@ -281,12 +332,13 @@ struct TrimmingView: View {
     private func togglePlayPause() {
         guard let player = player else { return }
         if isPlaying {
+            isPlaying = false  // Set this FIRST to prevent time observer from triggering loop
             player.pause()
         } else {
-            player.seek(to: trimStartTime)
+            isPlaying = true
+            // Don't seek - just resume from current position
             player.play()
         }
-        isPlaying.toggle()
     }
 
     private func pausePlayer() {

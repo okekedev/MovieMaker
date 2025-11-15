@@ -45,78 +45,52 @@ struct SettingsView: View {
         }
     }
 
-    private var loopCount: Int {
-        guard settings.loopDuration.hours > 0, totalDuration > 0 else { return 1 }
-        return Int((settings.loopDuration.hours * 3600) / totalDuration)
-    }
-
     var body: some View {
         VStack(spacing: 0) {
             // Header
             HStack {
                 Button(action: onBack) {
-                    Image(systemName: "chevron.left")
-                        .font(.title3)
-                        .foregroundColor(.brandPrimary)
+                    HStack(spacing: 4) {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 18, weight: .semibold))
+                        Text("Back")
+                            .font(.system(size: 17, weight: .regular))
+                    }
+                    .foregroundColor(.primary)
                 }
+                .padding(.leading, 20)
                 Spacer()
-                Text("Settings")
-                    .font(.headline)
-                Spacer()
-                // Invisible button for symmetry
-                Image(systemName: "chevron.left")
-                    .font(.title3)
-                    .opacity(0)
             }
-            .padding()
+            .frame(height: 60)
             .background(Color(.systemBackground))
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
                     // Orientation
-                    if storeManager.isPro {
-                        DisclosureGroup(
-                            isExpanded: $orientationExpanded,
-                            content: {
-                                VStack(spacing: 12) {
-                                    Picker("Orientation", selection: $settings.orientation) {
-                                        ForEach(VideoOrientation.allCases, id: \.self) { orientation in
-                                            Text(orientation.rawValue).tag(orientation)
-                                        }
+                    DisclosureGroup(
+                        isExpanded: $orientationExpanded,
+                        content: {
+                            VStack(spacing: 12) {
+                                Picker("Orientation", selection: $settings.orientation) {
+                                    ForEach(VideoOrientation.allCases, id: \.self) { orientation in
+                                        Text(orientation.rawValue).tag(orientation)
                                     }
-                                    .pickerStyle(SegmentedPickerStyle())
                                 }
-                                .padding(.top, 8)
-                            },
-                            label: {
-                                HStack {
-                                    Text("Video Orientation")
-                                        .font(.headline)
-                                    Spacer()
-                                    Text(settings.orientation.rawValue)
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
-                                }
+                                .pickerStyle(SegmentedPickerStyle())
                             }
-                        )
-                    } else {
-                        Button(action: {
-                            showingPaywall = true
-                        }) {
+                            .padding(.top, 8)
+                        },
+                        label: {
                             HStack {
                                 Text("Video Orientation")
-                                    .font(.headline)
-                                    .foregroundColor(.primary)
+                                    .font(.system(size: 17, weight: .semibold))
                                 Spacer()
-                                Image(systemName: "lock.fill")
-                                    .foregroundColor(Color.brandAccent)
-                                    .font(.subheadline)
-                                Text("Pro")
-                                    .font(.subheadline)
-                                    .foregroundColor(Color.brandAccent)
+                                Text(settings.orientation.rawValue)
+                                    .font(.system(size: 15))
+                                    .foregroundColor(.secondary)
                             }
                         }
-                    }
+                    )
 
                     Divider()
 
@@ -151,15 +125,15 @@ struct SettingsView: View {
                         label: {
                             HStack {
                                 Text("Title Screen")
-                                    .font(.headline)
+                                    .font(.system(size: 17, weight: .semibold))
                                 Spacer()
                                 if !settings.titleText.isEmpty { // Always consider title screen included if text is present
                                     Image(systemName: "checkmark.circle.fill")
                                         .foregroundColor(.green)
-                                        .font(.subheadline)
+                                        .font(.system(size: 15))
                                 } else {
                                     Text("No Title") // Changed from "Optional"
-                                        .font(.subheadline)
+                                        .font(.system(size: 15))
                                         .foregroundColor(.secondary)
                                 }
                             }
@@ -190,10 +164,10 @@ struct SettingsView: View {
                         label: {
                             HStack {
                                 Text("Transition Style")
-                                    .font(.headline)
+                                    .font(.system(size: 17, weight: .semibold))
                                 Spacer()
                                 Text(settings.transition.rawValue)
-                                    .font(.subheadline)
+                                    .font(.system(size: 15))
                                     .foregroundColor(.secondary)
                             }
                         }
@@ -204,105 +178,130 @@ struct SettingsView: View {
                     Divider()
 
                     // Background Music (separate)
-                    DisclosureGroup(
-                        isExpanded: $musicExpanded,
-                        content: {
-                            VStack(spacing: 16) {
-                                Button(action: {
-                                    showingMusicPicker = true
-                                }) {
-                                    HStack {
-                                        Image(systemName: "music.note")
-                                            .foregroundColor(.brandPrimary)
-
-                                        VStack(alignment: .leading) {
-                                            Text("Select Music")
-                                                .font(.subheadline)
-                                                .foregroundColor(.primary)
-
-                                            Text(selectedMusicTitle)
-                                                .font(.caption)
-                                                .foregroundColor(.secondary)
-                                        }
-
-                                        Spacer()
-
-                                        Image(systemName: "chevron.right")
-                                            .foregroundColor(.secondary)
-                                            .font(.caption)
-                                    }
-                                    .padding(12)
-                                    .background(Color.brandPrimary.opacity(0.1))
-                                    .cornerRadius(8)
-                                }
-
-                                if settings.musicAsset != nil {
-                                    VStack(spacing: 8) {
-                                        HStack {
-                                            Text("Volume")
-                                            Spacer()
-                                            Text("\(Int(settings.musicVolume * 100))%")
-                                                .fontWeight(.semibold)
-                                        }
-                                        .font(.subheadline)
-
-                                        Slider(value: $settings.musicVolume, in: 0...1)
-                                            .tint(Color.brandAccent)
-                                    }
-
-                                    Toggle("Background Music Only", isOn: Binding(
-                                        get: { selectedMedia.allSatisfy { $0.isMuted } },
-                                        set: { newValue in
-                                            for index in selectedMedia.indices {
-                                                selectedMedia[index].isMuted = newValue
-                                            }
-                                        }
-                                    ))
-                                    .tint(Color.brandAccent)
-
+                    if storeManager.isPro {
+                        DisclosureGroup(
+                            isExpanded: $musicExpanded,
+                            content: {
+                                VStack(spacing: 16) {
                                     Button(action: {
-                                        settings.musicAsset = nil
-                                        selectedMusicTitle = "None"
+                                        showingMusicPicker = true
                                     }) {
                                         HStack {
-                                            Image(systemName: "trash")
-                                            Text("Remove Music")
-                                        }
-                                        .font(.subheadline)
-                                        .foregroundColor(.red)
-                                    }
-                                }
+                                            Image(systemName: "music.note")
+                                                .foregroundColor(.brandPrimary)
 
-                                Text("Music will loop throughout the video")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
-                            .padding(.top, 8)
-                        },
-                        label: {
-                            HStack {
-                                Text("Background Music")
-                                    .font(.headline)
-                                Spacer()
-                                if settings.musicAsset != nil {
-                                    Image(systemName: "checkmark.circle.fill")
-                                        .foregroundColor(.green)
-                                        .font(.subheadline)
-                                } else {
-                                    Text("None")
-                                        .font(.subheadline)
+                                            VStack(alignment: .leading) {
+                                                Text("Select Music")
+                                                    .font(.subheadline)
+                                                    .foregroundColor(.primary)
+
+                                                Text(selectedMusicTitle)
+                                                    .font(.caption)
+                                                    .foregroundColor(.secondary)
+                                            }
+
+                                            Spacer()
+
+                                            Image(systemName: "chevron.right")
+                                                .foregroundColor(.secondary)
+                                                .font(.caption)
+                                        }
+                                        .padding(12)
+                                        .background(Color.brandPrimary.opacity(0.1))
+                                        .cornerRadius(8)
+                                    }
+
+                                    if settings.musicAsset != nil {
+                                        VStack(spacing: 8) {
+                                            HStack {
+                                                Text("Volume")
+                                                Spacer()
+                                                Text("\(Int(settings.musicVolume * 100))%")
+                                                    .fontWeight(.semibold)
+                                            }
+                                            .font(.subheadline)
+
+                                            Slider(value: $settings.musicVolume, in: 0...1)
+                                                .tint(Color.brandAccent)
+                                        }
+
+                                        Toggle("Background Music Only", isOn: Binding(
+                                            get: { selectedMedia.allSatisfy { $0.isMuted } },
+                                            set: { newValue in
+                                                for index in selectedMedia.indices {
+                                                    selectedMedia[index].isMuted = newValue
+                                                }
+                                            }
+                                        ))
+                                        .tint(Color.brandAccent)
+
+                                        Button(action: {
+                                            settings.musicAsset = nil
+                                            selectedMusicTitle = "None"
+                                        }) {
+                                            HStack {
+                                                Image(systemName: "trash")
+                                                Text("Remove Music")
+                                            }
+                                            .font(.subheadline)
+                                            .foregroundColor(.red)
+                                        }
+                                    }
+
+                                    Text("Music will loop throughout the video")
+                                        .font(.caption)
                                         .foregroundColor(.secondary)
                                 }
+                                .padding(.top, 8)
+                            },
+                            label: {
+                                HStack {
+                                    Text("Background Music")
+                                        .font(.system(size: 17, weight: .semibold))
+                                    Spacer()
+                                    if settings.musicAsset != nil {
+                                        Image(systemName: "checkmark.circle.fill")
+                                            .foregroundColor(.green)
+                                            .font(.system(size: 15))
+                                    } else {
+                                        Text("None")
+                                            .font(.system(size: 15))
+                                            .foregroundColor(.secondary)
+                                    }
+                                }
+                            }
+                        )
+                    } else {
+                        Button(action: {
+                            showingPaywall = true
+                        }) {
+                            HStack {
+                                Text("Background Music")
+                                    .font(.system(size: 17, weight: .semibold))
+                                    .foregroundColor(.primary)
+                                Spacer()
+                                HStack(spacing: 4) {
+                                    Image(systemName: "star.fill")
+                                        .font(.system(size: 12))
+                                        .foregroundColor(.yellow)
+                                    Text("PRO")
+                                        .font(.system(size: 12, weight: .bold))
+                                        .foregroundColor(.yellow)
+                                }
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(Color.yellow.opacity(0.2))
+                                .cornerRadius(8)
                             }
                         }
-                    )
+                    }
 
                     
                 
                     // Preview Section
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Preview")
-                            .font(.headline)
+                            .font(.system(size: 17, weight: .semibold))
 
                         HStack {
                             Image(systemName: "clock")
@@ -334,22 +333,23 @@ struct SettingsView: View {
             Button(action: {
                 checkAndCreate()
             }) {
-                Text("Create Video Compilation")
-                    .font(.system(size: 18, weight: .semibold))
+                Text("Create Video")
+                    .font(.system(size: 17, weight: .semibold))
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
-                    .padding()
+                    .padding(.vertical, 16)
                     .background(
                         LinearGradient(
-                            colors: [Color.brandSecondary, Color.brandAccent],
+                            colors: Color.brandGradient,
                             startPoint: .leading,
                             endPoint: .trailing
                         )
                     )
-                    .cornerRadius(14)
+                    .cornerRadius(12)
                     .shadow(color: Color.brandSecondary.opacity(0.5), radius: 15, x: 0, y: 8)
             }
-            .padding()
+            .padding(.horizontal, 20)
+            .padding(.bottom, 40)
         }
         .navigationBarHidden(true)
         .alert("Warning", isPresented: $showingWarning) {

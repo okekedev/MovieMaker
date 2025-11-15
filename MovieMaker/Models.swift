@@ -4,8 +4,17 @@ import UIKit
 import AVFoundation
 import SwiftUI
 
+// MARK: - Color Theme
+extension Color {
+    static let brandPrimary = Color(red: 0.2, green: 0.6, blue: 0.86)
+    static let brandSecondary = Color(red: 0.2, green: 0.8, blue: 0.6)
+    static let brandAccent = Color(red: 0.1, green: 0.7, blue: 0.75)
+    static let brandGradient = [brandPrimary, brandAccent, brandSecondary]
+    static let primaryGradient = [brandPrimary, brandAccent]
+    static let secondaryGradient = [brandAccent, brandSecondary]
+}
+
 struct VideoCompilationSettings {
-    var loopDuration: LoopDuration = .noLoop
     var orientation: VideoOrientation = .landscape
     var musicAsset: AVURLAsset?
     var musicVolume: Float = 0.5
@@ -19,20 +28,6 @@ struct VideoCompilationSettings {
 enum TransitionType: String, CaseIterable {
     case fade = "Fade"
     case none = "None"
-}
-
-enum LoopDuration: String, CaseIterable {
-    case noLoop = "No loop (play once)"
-    case oneHour = "Loop for 1 hour"
-    case twoHours = "Loop for 2 hours"
-
-    var hours: Double {
-        switch self {
-        case .noLoop: return 0
-        case .oneHour: return 1
-        case .twoHours: return 2
-        }
-    }
 }
 enum VideoOrientation: String, CaseIterable {
     case landscape = "Landscape"

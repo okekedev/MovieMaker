@@ -13,7 +13,7 @@ class StoreManager: ObservableObject {
 
     // MARK: - Development Flag
     // Set to true to enable Pro features without purchase (for testing only)
-    private let ENABLE_PRO_FOR_DEVELOPMENT = true
+    private let ENABLE_PRO_FOR_DEVELOPMENT = false
 
     // MARK: - Published Properties
     @Published var isPro: Bool = false
@@ -22,7 +22,7 @@ class StoreManager: ObservableObject {
 
     // MARK: - Product IDs
     // NOTE: These must match your App Store Connect configuration
-    private let monthlySubscriptionID = "com.christianokeke.slidecast.pro.monthly"
+    private let monthlySubscriptionID = "com.christianokeke.moviemaker.pro.monthly"
 
     // MARK: - Transaction Updates
     private var updateListenerTask: Task<Void, Error>? = nil

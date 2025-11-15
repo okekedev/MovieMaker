@@ -39,7 +39,7 @@ struct SnowfallView: View {
 
     private func createInitialFlakes(in size: CGSize) -> [EmojiFlake] {
         var initialFlakes: [EmojiFlake] = []
-        for _ in 0..<30 {
+        for _ in 0..<50 {
             initialFlakes.append(createFlake(in: size, isInitial: true))
         }
         return initialFlakes
@@ -49,10 +49,10 @@ struct SnowfallView: View {
         let emoji = emojis.randomElement()!
         let x = CGFloat.random(in: 0...size.width)
         let y = isInitial ? CGFloat.random(in: 0...size.height) : -20
-        let size = CGFloat.random(in: 10...30)
+        let size = CGFloat.random(in: 15...35)
         let speed = CGFloat.random(in: 1...3)
-        let opacity = Double.random(in: 0.05...0.1)
-        
+        let opacity = Double.random(in: 0.15...0.3)
+
         return EmojiFlake(
             emoji: emoji,
             position: CGPoint(x: x, y: y),
@@ -73,7 +73,7 @@ struct SnowfallView: View {
         }
         
         // Add new flakes periodically
-        if flakes.count < 50 && Int.random(in: 0...10) == 0 {
+        if flakes.count < 80 && Int.random(in: 0...10) == 0 {
             flakes.append(createFlake(in: size))
         }
     }

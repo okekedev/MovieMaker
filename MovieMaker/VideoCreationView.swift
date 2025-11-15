@@ -27,7 +27,7 @@ struct VideoCreationView: View {
                     .trim(from: 0, to: progress)
                     .stroke(
                         AngularGradient(
-                            gradient: Gradient(colors: Color.primaryGradient + [Color.brandSecondary]),
+                            colors: Color.primaryGradient + [Color.brandSecondary],
                             center: .center,
                             startAngle: .degrees(0),
                             endAngle: .degrees(360 * progress)

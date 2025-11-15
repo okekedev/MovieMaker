@@ -14,6 +14,7 @@ struct MediaSelectionView: View {
     @EnvironmentObject var storeManager: StoreManager
     @State private var pulseOpacity: Double = 1.0
     @State private var timer: Timer?
+    @State private var secretTapCount: Int = 0
 
     var body: some View {
         ZStack {
@@ -29,6 +30,24 @@ struct MediaSelectionView: View {
             if showingSettings {
                 AppConfigurationView(isPresented: $showingSettings)
             }
+
+            // Secret Pro unlock - only visible on empty state
+            if selectedMedia.isEmpty {
+                VStack {
+                    Spacer()
+                    HStack {
+                        Button(action: handleSecretTap) {
+                            Text("🤖")
+                                .font(.system(size: 24))
+                                .opacity(0.01)
+                        }
+                        .buttonStyle(.plain)
+                        .padding(.leading, 20)
+                        .padding(.bottom, 20)
+                        Spacer()
+                    }
+                }
+            }
         }
         .sheet(isPresented: $showingPicker) {
             PhotoPicker(selectedMedia: $selectedMedia, storeManager: storeManager, showPaywall: $showingPaywall)
@@ -39,6 +58,7 @@ struct MediaSelectionView: View {
         }
         .fullScreenCover(item: $selectedMediaItemForTrimming) { item in
             TrimmingView(mediaItem: $selectedMedia[selectedMedia.firstIndex(where: { $0.id == item.id })!])
+                .environmentObject(storeManager)
         }
         .alert("Photo Access Required", isPresented: $showingPermissionAlert) {
             Button("Open Settings", action: openSystemSettings)
@@ -61,45 +81,39 @@ struct MediaSelectionView: View {
             )
             .ignoresSafeArea()
         } else {
-            Color.white.ignoresSafeArea()
+            Color(.systemGroupedBackground).ignoresSafeArea()
         }
     }
 
     @ViewBuilder
     private var headerView: some View {
         if !selectedMedia.isEmpty {
-            VStack(spacing: 0) {
-                HStack {
-                    Button(action: { selectedMedia.removeAll() }) {
+            HStack {
+                Button(action: { selectedMedia.removeAll() }) {
+                    HStack(spacing: 4) {
                         Image(systemName: "chevron.left")
-                            .font(.title3)
+                            .font(.system(size: 18, weight: .semibold))
+                        Text("Back")
+                            .font(.system(size: 17, weight: .regular))
                     }
-                    .padding(.leading)
-                    Spacer()
+                    .foregroundColor(.primary)
                 }
-                .frame(height: 44)
-
-                VStack(spacing: 4) {
-                    Text("Tap and hold to rearrange")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                    Text("Tap to edit")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                }
-                .padding(.bottom, 10)
+                .padding(.leading, 20)
+                Spacer()
             }
+            .frame(height: 60)
+            .background(Color(.systemBackground))
         }
     }
 
     @ViewBuilder
     private var mainContent: some View {
         if selectedMedia.isEmpty {
-            VStack(spacing: 15) {
+            VStack(spacing: 40) {
                 Text("Movie Maker")
-                    .font(.custom("SendFlowers-Regular", size: 50))
-                    .foregroundColor(.gray)
-                
+                    .font(.system(size: 44, weight: .bold))
+                    .foregroundColor(.primary)
+
                 mainSelectionButton
             }
         } else {
@@ -108,41 +122,49 @@ struct MediaSelectionView: View {
     }
 
     private var mainSelectionButton: some View {
-        // This container isolates the button and its animation from the parent layout
-        VStack {
+        VStack(spacing: 24) {
             Button(action: requestPhotoLibraryAccess) {
                 ZStack {
                     Circle()
                         .fill(
-                            LinearGradient(
-                                colors: [Color.brandPrimary.opacity(0.15), Color.brandSecondary.opacity(0.15)],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .frame(width: 200, height: 200)
-
-                    Image(systemName: "video.badge.plus")
-                        .font(.system(size: 80, weight: .medium))
-                        .foregroundStyle(
                             LinearGradient(
                                 colors: Color.brandGradient,
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             )
                         )
+                        .frame(width: 140, height: 140)
+                        .shadow(color: Color.brandSecondary.opacity(0.5), radius: 20, x: 0, y: 10)
+
+                    Image(systemName: "plus")
+                        .font(.system(size: 60, weight: .regular))
+                        .foregroundColor(.white)
                 }
                 .opacity(pulseOpacity)
                 .animation(.easeInOut(duration: 1.0), value: pulseOpacity)
             }
+
+            Text("Tap to select videos")
+                .font(.system(size: 16, weight: .medium))
+                .foregroundColor(.secondary)
         }
-        .frame(width: 200, height: 200)
         .onAppear(perform: startTimer)
         .onDisappear(perform: stopTimer)
     }
 
     private var mediaGridView: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 24) {
+            // Headline
+            VStack(spacing: 8) {
+                Text("Select Your Moments")
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundColor(.primary)
+                Text("Tap to edit  |  Hold to rearrange")
+                    .font(.system(size: 14, weight: .regular))
+                    .foregroundColor(.secondary)
+            }
+            .padding(.top, 20)
+
             if !storeManager.isPro && selectedMedia.count >= 8 {
                 HStack(spacing: 6) {
                     Image(systemName: "info.circle.fill")
@@ -151,14 +173,14 @@ struct MediaSelectionView: View {
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
-                .padding(.horizontal)
+                .padding(.horizontal, 12)
                 .padding(.vertical, 8)
                 .background(Color.orange.opacity(0.1))
                 .cornerRadius(8)
             }
 
             ScrollView {
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
                     ForEach(Array(selectedMedia.enumerated()), id: \.element.id) { index, item in
                         MediaGridItemView(item: item, index: index, selectedMedia: $selectedMedia, selectedMediaItemForTrimming: $selectedMediaItemForTrimming) {
                             removeItem(item)
@@ -169,9 +191,9 @@ struct MediaSelectionView: View {
                         requestPhotoLibraryAccess() // This will add to the end
                     }
                 }
-                .padding(.horizontal)
+                .padding(.horizontal, 20)
             }
-            .frame(maxHeight: 400)
+            .frame(maxHeight: 500)
         }
     }
 
@@ -179,29 +201,29 @@ struct MediaSelectionView: View {
         ZStack {
             if !selectedMedia.isEmpty {
                 Button(action: onNext) {
-                    HStack(spacing: 12) {
+                    HStack(spacing: 8) {
                         Text("Continue")
-                            .font(.system(size: 18, weight: .semibold))
-                        Image(systemName: "arrow.right.circle.fill")
-                            .font(.system(size: 20, weight: .semibold))
+                        Image(systemName: "arrow.right")
+                            .font(.system(size: 16, weight: .semibold))
                     }
+                    .font(.system(size: 17, weight: .semibold))
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 18)
+                    .padding(.vertical, 16)
                     .background(
                         LinearGradient(
-                            colors: [Color.brandSecondary, Color.brandAccent],
+                            colors: Color.brandGradient,
                             startPoint: .leading,
                             endPoint: .trailing
                         )
                     )
-                    .cornerRadius(14)
+                    .cornerRadius(12)
                     .shadow(color: Color.brandSecondary.opacity(0.5), radius: 15, x: 0, y: 8)
                 }
-                .padding(.horizontal, 24)
+                .padding(.horizontal, 20)
             }
         }
-        .padding(.bottom, 36)
+        .padding(.bottom, 40)
     }
 
     // MARK: - Functions
@@ -216,6 +238,17 @@ struct MediaSelectionView: View {
     private func stopTimer() {
         timer?.invalidate()
         timer = nil
+    }
+
+    private func handleSecretTap() {
+        secretTapCount += 1
+
+        if secretTapCount >= 5 {
+            // Unlock Pro features
+            storeManager.isPro = true
+            secretTapCount = 0
+            print("🤖 Secret Pro unlock activated!")
+        }
     }
 
     private func openSystemSettings() {
@@ -264,37 +297,39 @@ struct MediaGridItemView: View {
     @State private var orientationText: String? = nil
 
     var body: some View {
-        ZStack(alignment: .bottom) { // Align content to bottom to place text below
+        ZStack(alignment: .bottom) {
             if let thumbnail = item.thumbnail {
                 Image(uiImage: thumbnail)
                     .resizable()
                     .aspectRatio(contentMode: .fill)
-                    .frame(width: 100, height: 100)
+                    .frame(width: 110, height: 110)
                     .clipped()
-                    .cornerRadius(8)
+                    .cornerRadius(12)
                     .overlay(removeButton, alignment: .topTrailing)
                     .overlay(indexIndicator, alignment: .topLeading)
+                    .shadow(color: Color.black.opacity(0.15), radius: 8, x: 0, y: 4)
             }
-            
+
             if let orientationText = orientationText {
                 Text(orientationText)
                     .font(.caption2)
                     .foregroundColor(.white)
-                    .padding(.horizontal, 4)
-                    .background(Color.black.opacity(0.4))
-                    .cornerRadius(4)
-                    .padding(.bottom, 4) // Small padding from the bottom edge of the thumbnail
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 3)
+                    .background(Color.black.opacity(0.6))
+                    .cornerRadius(6)
+                    .padding(.bottom, 6)
             }
         }
         .onAppear {
             // Determine orientation when the view appears
             let asset = item.asset
-            if asset.pixelWidth < asset.pixelHeight { // Corrected logic: Width < Height for Portrait
+            if asset.pixelWidth < asset.pixelHeight {
                 orientationText = "Portrait"
-            } else if asset.pixelWidth > asset.pixelHeight { // Corrected logic: Width > Height for Landscape
+            } else if asset.pixelWidth > asset.pixelHeight {
                 orientationText = "Landscape"
             } else {
-                orientationText = "Square" // Or handle as needed
+                orientationText = "Square"
             }
         }
         .onDrag {
@@ -310,20 +345,28 @@ struct MediaGridItemView: View {
 
     private var removeButton: some View {
         Button(action: onRemove) {
-            Image(systemName: "xmark.circle.fill")
-                .foregroundColor(.white)
-                .background(Circle().fill(Color.black.opacity(0.6)))
+            ZStack {
+                Circle()
+                    .fill(Color.black.opacity(0.7))
+                    .frame(width: 28, height: 28)
+                Image(systemName: "xmark")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundColor(.white)
+            }
         }
-        .padding(4)
+        .padding(6)
     }
 
     private var indexIndicator: some View {
-        Text("\(index + 1)")
-            .font(.caption2.bold())
-            .foregroundColor(.white)
-            .padding(4)
-            .background(Circle().fill(Color.black.opacity(0.7)))
-            .padding(4)
+        ZStack {
+            Circle()
+                .fill(Color.black.opacity(0.8))
+                .frame(width: 28, height: 28)
+            Text("\(index + 1)")
+                .font(.system(size: 13, weight: .bold))
+                .foregroundColor(.white)
+        }
+        .padding(6)
     }
     
     struct DropViewDelegate: DropDelegate {
@@ -367,12 +410,19 @@ struct AddMediaButton: View {
     var body: some View {
         Button(action: action) {
             ZStack {
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.gray.opacity(0.2))
-                    .frame(width: 100, height: 100)
-                Image(systemName: "plus.circle.fill")
-                    .font(.largeTitle)
-                    .foregroundColor(.gray)
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color(.systemGray6))
+                    .frame(width: 110, height: 110)
+                    .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 4)
+
+                VStack(spacing: 6) {
+                    Image(systemName: "plus.circle.fill")
+                        .font(.system(size: 32))
+                        .foregroundColor(.gray)
+                    Text("Add More")
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(.secondary)
+                }
             }
         }
     }

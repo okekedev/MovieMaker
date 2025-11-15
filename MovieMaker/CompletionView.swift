@@ -13,21 +13,27 @@ struct CompletionView: View {
             // Success animation
             ZStack {
                 Circle()
-                    .fill(Color.green.opacity(0.2))
+                    .fill(
+                        LinearGradient(
+                            colors: Color.brandGradient,
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
                     .frame(width: 150, height: 150)
+                    .shadow(color: Color.brandSecondary.opacity(0.4), radius: 20, x: 0, y: 10)
 
-                Image(systemName: "checkmark.circle.fill")
-                    .font(.system(size: 100))
-                    .foregroundColor(.green)
+                Image(systemName: "checkmark")
+                    .font(.system(size: 70, weight: .bold))
+                    .foregroundColor(.white)
             }
 
-            VStack(spacing: 8) {
+            VStack(spacing: 12) {
                 Text("Video Created!")
-                    .font(.title)
-                    .fontWeight(.bold)
+                    .font(.system(size: 34, weight: .bold))
 
                 Text("Your video has been saved to your photos.")
-                    .font(.callout)
+                    .font(.system(size: 17))
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 30)
@@ -35,25 +41,25 @@ struct CompletionView: View {
 
             Spacer()
 
-            VStack(spacing: 12) {
+            VStack(spacing: 14) {
                 if videoURL != nil {
                     Button(action: {
                         showingShareSheet = true
                     }) {
                         Label("Share Video", systemImage: "square.and.arrow.up")
-                            .font(.headline)
+                            .font(.system(size: 17, weight: .semibold))
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
-                            .padding()
+                            .padding(.vertical, 16)
                             .background(
                                 LinearGradient(
-                                    colors: Color.primaryGradient,
+                                    colors: Color.brandGradient,
                                     startPoint: .leading,
                                     endPoint: .trailing
                                 )
                             )
-                            .cornerRadius(14)
-                            .shadow(color: Color.brandPrimary.opacity(0.5), radius: 15, x: 0, y: 8)
+                            .cornerRadius(12)
+                            .shadow(color: Color.brandSecondary.opacity(0.5), radius: 15, x: 0, y: 8)
                     }
                     .sheet(isPresented: $showingShareSheet) {
                         if let url = videoURL {
@@ -62,39 +68,34 @@ struct CompletionView: View {
                     }
                 }
 
-                                if videoURL != nil {
-                                    Button(action: {
-                                        if let url = URL(string: "photos-redirect://") {
-                                            UIApplication.shared.open(url)
-                                        }
-                                    }) {
-                                        Label("Open Photos", systemImage: "photo.on.rectangle")
-                                            .font(.headline)
-                                            .foregroundColor(.white)
-                                            .frame(maxWidth: .infinity)
-                                            .padding()
-                                            .background(
-                                                LinearGradient(
-                                                    colors: Color.secondaryGradient,
-                                                    startPoint: .leading,
-                                                    endPoint: .trailing
-                                                )
-                                            )
-                                            .cornerRadius(14)
-                                            .shadow(color: Color.brandSecondary.opacity(0.5), radius: 15, x: 0, y: 8)
-                                    }
-                                }
+                if videoURL != nil {
+                    Button(action: {
+                        if let url = URL(string: "photos-redirect://") {
+                            UIApplication.shared.open(url)
+                        }
+                    }) {
+                        Label("Open Photos", systemImage: "photo.on.rectangle")
+                            .font(.system(size: 17, weight: .semibold))
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 16)
+                            .background(Color(.systemGray))
+                            .cornerRadius(12)
+                            .shadow(color: Color.black.opacity(0.15), radius: 8, x: 0, y: 4)
+                    }
+                }
+
                 Button(action: onCreateAnother) {
                     Text("Create Another Video")
-                        .font(.headline)
-                        .foregroundColor(.brandPrimary)
+                        .font(.system(size: 17, weight: .medium))
+                        .foregroundColor(.primary)
                         .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.brandPrimary.opacity(0.1))
-                        .cornerRadius(14)
+                        .padding(.vertical, 16)
+                        .background(Color(.systemGray6))
+                        .cornerRadius(12)
                 }
             }
-            .padding(.horizontal)
+            .padding(.horizontal, 20)
             .padding(.bottom, 40)
         }
         .padding()

@@ -19,7 +19,7 @@ struct PaywallView: View {
         ZStack {
             // Gradient background
             LinearGradient(
-                gradient: Gradient(colors: Color.brandGradient),
+                colors: Color.brandGradient,
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
@@ -31,20 +31,19 @@ struct PaywallView: View {
 
                     // App Icon/Logo
                     ZStack {
-                        Circle()
-                            .fill(Color.white)
-                            .frame(width: 100, height: 100)
-                            .shadow(radius: 10)
-
-                        Image(systemName: "video.fill")
-                            .font(.system(size: 50))
-                            .foregroundStyle(
+                        RoundedRectangle(cornerRadius: 25)
+                            .fill(
                                 LinearGradient(
-                                    colors: Color.primaryGradient,
+                                    colors: [Color.white.opacity(0.3), Color.white.opacity(0.1)],
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
                                 )
                             )
+                            .frame(width: 120, height: 120)
+                            .shadow(color: Color.black.opacity(0.2), radius: 15, x: 0, y: 8)
+
+                        Text("⭐")
+                            .font(.system(size: 70))
                     }
 
                     // Title
@@ -60,10 +59,8 @@ struct PaywallView: View {
 
                     // Feature list
                     VStack(alignment: .leading, spacing: 20) {
-                        FeatureRow(icon: "infinity", title: "Unlimited Videos", description: "Create compilations with as many videos as you want")
-                        FeatureRow(icon: "rectangle.landscape.rotate", title: "Portrait & Landscape", description: "Choose your preferred video orientation")
                         FeatureRow(icon: "music.note", title: "Background Music", description: "Add your own music that loops throughout the video")
-                        FeatureRow(icon: "repeat", title: "Loop Settings", description: "Loop your video compilation for up to 2 hours")
+                        FeatureRow(icon: "slowmo", title: "Slow Motion Effects", description: "Add cinematic slow-mo to any part of your videos")
                     }
                     .padding(.horizontal, 40)
                     .padding(.vertical, 30)

@@ -17,13 +17,13 @@ struct AppConfigurationView: View {
             VStack(spacing: 0) {
                 HStack {
                     Text("App Settings")
-                        .font(.title2.bold())
+                        .font(.system(size: 22, weight: .bold))
                     Spacer()
                     Button(action: {
                         isPresented = false
                     }) {
                         Image(systemName: "xmark.circle.fill")
-                            .font(.title2)
+                            .font(.system(size: 22))
                             .foregroundColor(.secondary)
                     }
                 }

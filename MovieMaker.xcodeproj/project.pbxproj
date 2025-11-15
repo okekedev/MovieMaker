@@ -1,0 +1,416 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		AAB430DF2EC500310068D194 /* AppConfigurationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB430C72EC500310068D194 /* AppConfigurationView.swift */; };
+		AAB430E02EC500310068D194 /* TrimmingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB430DA2EC500310068D194 /* TrimmingView.swift */; };
+		AAB430E22EC500310068D194 /* CompletionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB430CC2EC500310068D194 /* CompletionView.swift */; };
+		AAB430E42EC500310068D194 /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB430D52EC500310068D194 /* PaywallView.swift */; };
+		AAB430E52EC500310068D194 /* VideoCreationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB430DC2EC500310068D194 /* VideoCreationView.swift */; };
+		AAB430E62EC500310068D194 /* MediaSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB430D12EC500310068D194 /* MediaSelectionView.swift */; };
+		AAB430E72EC500310068D194 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB430D42EC500310068D194 /* NotificationManager.swift */; };
+		AAB430E82EC500310068D194 /* SnowfallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB430D82EC500310068D194 /* SnowfallView.swift */; };
+		AAB430EA2EC500310068D194 /* VideoPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB430DD2EC500310068D194 /* VideoPlayerView.swift */; };
+		AAB430EB2EC500310068D194 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB430CD2EC500310068D194 /* ContentView.swift */; };
+		AAB430EC2EC500310068D194 /* ChannelLinkApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB430CA2EC500310068D194 /* ChannelLinkApp.swift */; };
+		AAB430ED2EC500310068D194 /* StoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB430D92EC500310068D194 /* StoreManager.swift */; };
+		AAB430EE2EC500310068D194 /* VideoCompiler.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB430DB2EC500310068D194 /* VideoCompiler.swift */; };
+		AAB430EF2EC500310068D194 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB430D72EC500310068D194 /* SettingsView.swift */; };
+		AAB430F02EC500310068D194 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB430D22EC500310068D194 /* Models.swift */; };
+		AAB430F12EC500310068D194 /* MusicPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB430D32EC500310068D194 /* MusicPickerView.swift */; };
+		AAB430F22EC500310068D194 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AAB430C82EC500310068D194 /* Assets.xcassets */; };
+		AAB430F42EC500310068D194 /* SendFlowers-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AAB430D62EC500310068D194 /* SendFlowers-Regular.ttf */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		AAB430C72EC500310068D194 /* AppConfigurationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfigurationView.swift; sourceTree = "<group>"; };
+		AAB430C82EC500310068D194 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		AAB430CA2EC500310068D194 /* ChannelLinkApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelLinkApp.swift; sourceTree = "<group>"; };
+		AAB430CC2EC500310068D194 /* CompletionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionView.swift; sourceTree = "<group>"; };
+		AAB430CD2EC500310068D194 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		AAB430D02EC500310068D194 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AAB430D12EC500310068D194 /* MediaSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaSelectionView.swift; sourceTree = "<group>"; };
+		AAB430D22EC500310068D194 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		AAB430D32EC500310068D194 /* MusicPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicPickerView.swift; sourceTree = "<group>"; };
+		AAB430D42EC500310068D194 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
+		AAB430D52EC500310068D194 /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
+		AAB430D62EC500310068D194 /* SendFlowers-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SendFlowers-Regular.ttf"; sourceTree = "<group>"; };
+		AAB430D72EC500310068D194 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		AAB430D82EC500310068D194 /* SnowfallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnowfallView.swift; sourceTree = "<group>"; };
+		AAB430D92EC500310068D194 /* StoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreManager.swift; sourceTree = "<group>"; };
+		AAB430DA2EC500310068D194 /* TrimmingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmingView.swift; sourceTree = "<group>"; };
+		AAB430DB2EC500310068D194 /* VideoCompiler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCompiler.swift; sourceTree = "<group>"; };
+		AAB430DC2EC500310068D194 /* VideoCreationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCreationView.swift; sourceTree = "<group>"; };
+		AAB430DD2EC500310068D194 /* VideoPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerView.swift; sourceTree = "<group>"; };
+		AAF69B532EB935B300EA02CE /* MovieMaker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MovieMaker.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		AAF69B502EB935B300EA02CE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		AAB430DE2EC500310068D194 /* MovieMaker */ = {
+			isa = PBXGroup;
+			children = (
+				AAB430C72EC500310068D194 /* AppConfigurationView.swift */,
+				AAB430C82EC500310068D194 /* Assets.xcassets */,
+				AAB430CA2EC500310068D194 /* ChannelLinkApp.swift */,
+				AAB430CC2EC500310068D194 /* CompletionView.swift */,
+				AAB430CD2EC500310068D194 /* ContentView.swift */,
+				AAB430D02EC500310068D194 /* Info.plist */,
+				AAB430D12EC500310068D194 /* MediaSelectionView.swift */,
+				AAB430D22EC500310068D194 /* Models.swift */,
+				AAB430D32EC500310068D194 /* MusicPickerView.swift */,
+				AAB430D42EC500310068D194 /* NotificationManager.swift */,
+				AAB430D52EC500310068D194 /* PaywallView.swift */,
+				AAB430D62EC500310068D194 /* SendFlowers-Regular.ttf */,
+				AAB430D72EC500310068D194 /* SettingsView.swift */,
+				AAB430D82EC500310068D194 /* SnowfallView.swift */,
+				AAB430D92EC500310068D194 /* StoreManager.swift */,
+				AAB430DA2EC500310068D194 /* TrimmingView.swift */,
+				AAB430DB2EC500310068D194 /* VideoCompiler.swift */,
+				AAB430DC2EC500310068D194 /* VideoCreationView.swift */,
+				AAB430DD2EC500310068D194 /* VideoPlayerView.swift */,
+			);
+			path = MovieMaker;
+			sourceTree = "<group>";
+		};
+		AAF69B4A2EB935B300EA02CE = {
+			isa = PBXGroup;
+			children = (
+				AAB430DE2EC500310068D194 /* MovieMaker */,
+				AAF69B542EB935B300EA02CE /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		AAF69B542EB935B300EA02CE /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AAF69B532EB935B300EA02CE /* MovieMaker.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		AAF69B522EB935B300EA02CE /* MovieMaker */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AAF69B5E2EB935B600EA02CE /* Build configuration list for PBXNativeTarget "MovieMaker" */;
+			buildPhases = (
+				AAF69B4F2EB935B300EA02CE /* Sources */,
+				AAF69B502EB935B300EA02CE /* Frameworks */,
+				AAF69B512EB935B300EA02CE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MovieMaker;
+			packageProductDependencies = (
+			);
+			productName = ChannelLink;
+			productReference = AAF69B532EB935B300EA02CE /* MovieMaker.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		AAF69B4B2EB935B300EA02CE /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1640;
+				LastUpgradeCheck = 1640;
+				TargetAttributes = {
+					AAF69B522EB935B300EA02CE = {
+						CreatedOnToolsVersion = 16.4;
+					};
+				};
+			};
+			buildConfigurationList = AAF69B4E2EB935B300EA02CE /* Build configuration list for PBXProject "MovieMaker" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = AAF69B4A2EB935B300EA02CE;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = AAF69B542EB935B300EA02CE /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AAF69B522EB935B300EA02CE /* MovieMaker */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AAF69B512EB935B300EA02CE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AAB430F22EC500310068D194 /* Assets.xcassets in Resources */,
+				AAB430F42EC500310068D194 /* SendFlowers-Regular.ttf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AAF69B4F2EB935B300EA02CE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AAB430DF2EC500310068D194 /* AppConfigurationView.swift in Sources */,
+				AAB430E02EC500310068D194 /* TrimmingView.swift in Sources */,
+				AAB430E22EC500310068D194 /* CompletionView.swift in Sources */,
+				AAB430E42EC500310068D194 /* PaywallView.swift in Sources */,
+				AAB430E52EC500310068D194 /* VideoCreationView.swift in Sources */,
+				AAB430E62EC500310068D194 /* MediaSelectionView.swift in Sources */,
+				AAB430E72EC500310068D194 /* NotificationManager.swift in Sources */,
+				AAB430E82EC500310068D194 /* SnowfallView.swift in Sources */,
+				AAB430EA2EC500310068D194 /* VideoPlayerView.swift in Sources */,
+				AAB430EB2EC500310068D194 /* ContentView.swift in Sources */,
+				AAB430EC2EC500310068D194 /* ChannelLinkApp.swift in Sources */,
+				AAB430ED2EC500310068D194 /* StoreManager.swift in Sources */,
+				AAB430EE2EC500310068D194 /* VideoCompiler.swift in Sources */,
+				AAB430EF2EC500310068D194 /* SettingsView.swift in Sources */,
+				AAB430F02EC500310068D194 /* Models.swift in Sources */,
+				AAB430F12EC500310068D194 /* MusicPickerView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		AAF69B5C2EB935B600EA02CE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = TUG3BHLSM4;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		AAF69B5D2EB935B600EA02CE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = TUG3BHLSM4;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		AAF69B5F2EB935B600EA02CE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = TUG3BHLSM4;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = MovieMaker/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = MovieMaker;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.photography";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.christianokeke.moviemaker;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		AAF69B602EB935B600EA02CE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = TUG3BHLSM4;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = MovieMaker/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = MovieMaker;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.photography";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.christianokeke.moviemaker;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AAF69B4E2EB935B300EA02CE /* Build configuration list for PBXProject "MovieMaker" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AAF69B5C2EB935B600EA02CE /* Debug */,
+				AAF69B5D2EB935B600EA02CE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AAF69B5E2EB935B600EA02CE /* Build configuration list for PBXNativeTarget "MovieMaker" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AAF69B5F2EB935B600EA02CE /* Debug */,
+				AAF69B602EB935B600EA02CE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = AAF69B4B2EB935B300EA02CE /* Project object */;
+}
