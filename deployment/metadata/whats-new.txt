@@ -1,0 +1,4 @@
+• Fixed video pause/play controls - now pauses instantly and resumes from position
+• Improved Done button responsiveness in video editor
+• Updated interface with clearer instructions
+• Bug fixes and performance improvements
