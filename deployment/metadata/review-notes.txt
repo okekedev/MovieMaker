@@ -1,0 +1,62 @@
+APP REVIEW INFORMATION
+
+TESTING THE APP:
+
+No account or login required. The app works entirely offline with local video processing.
+
+REQUIRED PERMISSIONS:
+- Photos Library Access: The app will request permission to access videos from the Photos library. This is required for core functionality (selecting and saving videos).
+
+BASIC WORKFLOW TO TEST:
+1. Grant Photos access when prompted
+2. Tap the + button on the home screen
+3. Select 2-10 videos from Photos library
+4. Tap "Continue"
+5. Configure settings (orientation, music, mute options)
+6. Tap "Create Video"
+7. Video will be saved to Photos library automatically
+
+TESTING FREE TIER FEATURES:
+- Select up to 10 videos
+- Trim individual videos (tap any video thumbnail)
+- Rearrange videos (hold and drag thumbnails)
+- Mute individual videos or all at once
+- Choose landscape, portrait, or square orientation
+
+TESTING PRO FEATURES:
+A promotional code has been provided for testing Pro features. Pro features include:
+- Background music selection from Apple Music library
+- Slow-motion effects on video clips
+- Unlimited video selections (more than 10 videos)
+
+To access Pro features without the promo code, there's a developer unlock:
+- On the empty home screen, tap the 🤖 emoji in the bottom-left corner 5 times (nearly invisible, opacity 0.01)
+- This unlocks all Pro features for testing purposes
+
+VIDEO TRIMMING:
+- Tap any selected video thumbnail to open the editor
+- Use the playback controls to preview
+- Drag the trim handles to adjust start/end points
+- Drag slow-mo handles (blue, Pro only) to add slow-motion effects
+- Tap "Done" to save changes
+
+PRIVACY & DATA:
+- All video processing happens locally on device
+- No data is collected, uploaded, or shared
+- No network requests except for:
+  - Apple Music API (when selecting background music)
+  - StoreKit (for in-app purchases)
+- Privacy policy: https://okekedev.github.io/MovieMaker/privacy.html
+
+SUBSCRIPTION:
+- $2.99/month with 7-day free trial
+- Managed through StoreKit 2
+- Auto-renewable subscription
+- Family Sharing enabled
+
+KNOWN LIMITATIONS:
+- Requires iOS 17.6 or later
+- Works best with videos under 4K resolution
+- Processing time depends on video count and device performance
+
+Thank you for reviewing Movie Maker!
