@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Maker - Create Amazing Video Compilations</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #33A0D6 0%, #33BFB2 50%, #33CCA0 100%);
+            color: white;
+            padding: 100px 20px;
+            text-align: center;
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .hero p {
+            font-size: 20px;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            max-width: 600px;
+        }
+
+        .app-icon {
+            width: 120px;
+            height: 120px;
+            background: white;
+            border-radius: 25px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .download-btn {
+            display: inline-block;
+            background: white;
+            color: #33A0D6;
+            padding: 15px 40px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 18px;
+            transition: transform 0.2s;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .features {
+            max-width: 1000px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+
+        .features h2 {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 50px;
+            color: #33A0D6;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .feature {
+            text-align: center;
+            padding: 30px 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .feature h3 {
+            color: #33BFB2;
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+
+        .feature p {
+            color: #666;
+            font-size: 15px;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 40px 20px;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .footer-links {
+            margin-bottom: 20px;
+        }
+
+        .footer-links a {
+            color: #33A0D6;
+            text-decoration: none;
+            margin: 0 15px;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        .footer p {
+            color: #999;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <div class="app-icon">🎬</div>
+        <h1>Movie Maker</h1>
+        <p>Create stunning video compilations from your favorite moments. Trim, edit, and add music to your videos with ease.</p>
+        <a href="#" class="download-btn">Download on the App Store</a>
+    </div>
+
+    <div class="features">
+        <h2>Features</h2>
+        <div class="feature-grid">
+            <div class="feature">
+                <div class="feature-icon">✂️</div>
+                <h3>Easy Trimming</h3>
+                <p>Trim your videos with intuitive drag-and-drop handles to keep only the best moments.</p>
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon">🎵</div>
+                <h3>Background Music</h3>
+                <p>Add your favorite songs from Apple Music to create the perfect soundtrack for your compilation.</p>
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon">🐌</div>
+                <h3>Slow Motion</h3>
+                <p>Add cinematic slow-motion effects to any part of your videos for dramatic impact.</p>
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon">📱</div>
+                <h3>Smart Orientation</h3>
+                <p>Automatically adjusts to fit landscape, portrait, or square videos perfectly.</p>
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon">🔄</div>
+                <h3>Rearrange Videos</h3>
+                <p>Hold and drag to reorder your videos in the perfect sequence.</p>
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon">🔇</div>
+                <h3>Audio Control</h3>
+                <p>Mute individual videos or all at once to control your compilation's soundtrack.</p>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px;">
+            <h3 style="color: #33A0D6; margin-bottom: 20px;">Try Pro Free for 7 Days</h3>
+            <p style="color: #666; max-width: 600px; margin: 0 auto;">
+                Unlock all features including background music, slow-motion effects, and unlimited video selections.
+                Only $2.99/month after trial. Cancel anytime.
+            </p>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="footer-links">
+            <a href="privacy.html">Privacy Policy</a>
+            <a href="terms.html">Terms of Use</a>
+            <a href="support.html">Support</a>
+        </div>
+        <p>&copy; 2024 Movie Maker. All rights reserved.</p>
+    </div>
+</body>
+</html>
