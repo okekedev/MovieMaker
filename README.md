@@ -2,6 +2,9 @@
 
 Create stunning video compilations from your favorite moments.
 
+![Logo](https://raw.githubusercontent.com/okekedev/MovieMaker/main/logo_icon.png)
+
+
 ## Features
 
 - **Easy Video Selection**: Pick multiple videos from your Photos library
