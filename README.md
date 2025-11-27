@@ -2,7 +2,7 @@
 
 Create stunning video compilations from your favorite moments.
 
-![Logo](https://raw.githubusercontent.com/okekedev/MovieMaker/main/logo_icon.png)
+![iPad Demo](https://raw.githubusercontent.com/okekedev/MovieMaker/main/ipadactual1.png) ![Promo](https://raw.githubusercontent.com/okekedev/MovieMaker/main/promoipad.jpeg)
 
 
 ## Features
