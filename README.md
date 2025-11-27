@@ -2,7 +2,7 @@
 
 Create stunning video compilations from your favorite moments.
 
-<img src="https://raw.githubusercontent.com/okekedev/MovieMaker/main/ipadactual1.png" alt="MovieMaker on iPad" width="400"> <img src="https://raw.githubusercontent.com/okekedev/MovieMaker/main/promoipad.jpeg" alt="MovieMaker Promo" width="400">
+<img src="https://raw.githubusercontent.com/okekedev/MovieMaker/main/ipadactual1.png" alt="MovieMaker on iPad" width="400"> 
 
 
 ## Features
