@@ -2,8 +2,15 @@
 
 Create stunning video compilations from your favorite moments.
 
-<img src="https://raw.githubusercontent.com/okekedev/MovieMaker/main/ipadactual1.png" alt="MovieMaker on iPad" width="400"> 
+[![App Store](https://img.shields.io/badge/App_Store-Download-blue?style=flat&logo=apple)](https://apps.apple.com/app/movie-maker)
 
+## Screenshots
+
+<p align="center">
+  <img src="deployment/screenshots/iphone-65-1.png" width="250" alt="Video Selection">
+  <img src="deployment/screenshots/iphone-65-2.png" width="250" alt="Video Trimming">
+  <img src="deployment/screenshots/iphone-65-3.png" width="250" alt="Export">
+</p>
 
 ## Features
 
