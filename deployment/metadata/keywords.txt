@@ -1,1 +1,1 @@
-video,compilation,combine,merge,editor,music,slow motion,trim,memories,creator,montage
+merger,joiner,editor,trim,splice,montage,slideshow,recap,collage,compilation,splitter,reorder

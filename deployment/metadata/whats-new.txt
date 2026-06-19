@@ -1,4 +1,1 @@
-• Fixed video pause/play controls - now pauses instantly and resumes from position
-• Improved Done button responsiveness in video editor
-• Updated interface with clearer instructions
-• Bug fixes and performance improvements
+Refreshed product page so the app is easier to find for what it actually does — merging videos and photos into one clean movie. Small polish under the hood.
