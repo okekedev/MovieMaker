@@ -23,6 +23,7 @@ struct VideoCompilationSettings {
     var includeTitleScreen: Bool = true
     var transition: TransitionType = .fade
     var transitionColor: CodableColor = CodableColor(uiColor: .black)
+    var photoDuration: Double = 3.0
 }
 
 enum TransitionType: String, CaseIterable {

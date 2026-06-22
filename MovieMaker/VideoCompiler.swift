@@ -78,11 +78,24 @@ class VideoCompiler {
             guard let videoTrack = composition.addMutableTrack(
                 withMediaType: .video,
                 preferredTrackID: kCMPersistentTrackID_Invalid
-            ),
-            let audioTrack = composition.addMutableTrack(
-                withMediaType: .audio,
-                preferredTrackID: kCMPersistentTrackID_Invalid
             ) else {
+                throw VideoCompositionError.trackCreationFailed
+            }
+
+            // Only add an audio track if at least one clip has usable audio.
+            // An empty audio track (zero segments) on a photo-only composition
+            // triggers AVError -11838 / VT -16976 at export time under
+            // AVAssetExportPresetHighestQuality.
+            let needsAudioTrack = media.contains { item in
+                item.asset.mediaType == .video && !item.isMuted
+            }
+            let audioTrack: AVMutableCompositionTrack? = needsAudioTrack
+                ? composition.addMutableTrack(
+                    withMediaType: .audio,
+                    preferredTrackID: kCMPersistentTrackID_Invalid
+                  )
+                : nil
+            if needsAudioTrack && audioTrack == nil {
                 throw VideoCompositionError.trackCreationFailed
             }
 
@@ -137,14 +150,27 @@ class VideoCompiler {
             var insertionPoint = CMTime.zero
             var videoInstructions: [AVMutableVideoCompositionInstruction] = []
 
-            // Process each video
+            // Process each item (video or photo)
             for (index, item) in media.enumerated() {
                 let clipStartTime = insertionPoint // Mark the start of this clip in the composition
 
                 let progress = 0.1 + (Double(index) / Double(media.count)) * 0.7
                 await MainActor.run { progressHandler(progress) }
 
-                let videoAsset = try await loadVideoAsset(for: item.asset)
+                let isImage = item.asset.mediaType == .image
+                let videoAsset: AVAsset
+                if isImage {
+                    let image = try await loadFullImage(for: item.asset, targetSize: settings.orientation.size)
+                    let photoDuration = CMTime(seconds: settings.photoDuration, preferredTimescale: 30)
+                    let segmentURL = try await createImageVideoSegment(
+                        image: image,
+                        duration: photoDuration,
+                        size: settings.orientation.size
+                    )
+                    videoAsset = AVURLAsset(url: segmentURL)
+                } else {
+                    videoAsset = try await loadVideoAsset(for: item.asset)
+                }
 
                 guard let sourceVideoTrack = try await videoAsset.load(.tracks).first(where: { $0.mediaType == .video }) else {
                     continue
@@ -152,16 +178,23 @@ class VideoCompiler {
 
                 let originalVideoDuration = try await videoAsset.load(.duration)
 
-                // Calculate the actual time range to insert based on trimming
-                let actualStartTime = item.startTime
-                let actualEndTime = item.endTime ?? originalVideoDuration
-                
-                let currentClipDuration = CMTimeSubtract(actualEndTime, actualStartTime) // Changed to let
+                // For photos use the full segment; for videos honor user trim
+                let actualStartTime: CMTime
+                let actualEndTime: CMTime
+                if isImage {
+                    actualStartTime = .zero
+                    actualEndTime = originalVideoDuration
+                } else {
+                    actualStartTime = item.startTime
+                    actualEndTime = item.endTime ?? originalVideoDuration
+                }
+
+                let currentClipDuration = CMTimeSubtract(actualEndTime, actualStartTime)
 
                 var effectiveClipDurationInComposition = CMTime.zero // This will be the duration of the clip in the composition, including slow-mo
 
-                // Handle slow-mo if present
-                if let slowMoStartTime = item.slowMoStartTime, let slowMoEndTime = item.slowMoEndTime {
+                // Handle slow-mo if present (videos only — images skip this branch)
+                if !isImage, let slowMoStartTime = item.slowMoStartTime, let slowMoEndTime = item.slowMoEndTime {
                     let preSlowMoDuration = CMTimeSubtract(slowMoStartTime, actualStartTime)
                     let slowMoDuration = CMTimeSubtract(slowMoEndTime, slowMoStartTime)
                     let postSlowMoDuration = CMTimeSubtract(actualEndTime, slowMoEndTime)
@@ -173,7 +206,7 @@ class VideoCompiler {
                     if preSlowMoDuration > .zero {
                         try videoTrack.insertTimeRange(CMTimeRange(start: actualStartTime, duration: preSlowMoDuration), of: sourceVideoTrack, at: insertionPoint)
                         if !item.isMuted, let sourceAudioTrack = try await videoAsset.load(.tracks).first(where: { $0.mediaType == .audio }) {
-                            try? audioTrack.insertTimeRange(CMTimeRange(start: actualStartTime, duration: preSlowMoDuration), of: sourceAudioTrack, at: insertionPoint)
+                            try? audioTrack?.insertTimeRange(CMTimeRange(start: actualStartTime, duration: preSlowMoDuration), of: sourceAudioTrack, at: insertionPoint)
                         }
                         insertionPoint = CMTimeAdd(insertionPoint, preSlowMoDuration)
                         tempClipDuration = CMTimeAdd(tempClipDuration, preSlowMoDuration)
@@ -184,8 +217,8 @@ class VideoCompiler {
                     videoTrack.scaleTimeRange(CMTimeRange(start: insertionPoint, duration: slowMoDuration), toDuration: scaledSlowMoDuration)
 
                     if !item.isMuted, let sourceAudioTrack = try await videoAsset.load(.tracks).first(where: { $0.mediaType == .audio }) {
-                        try? audioTrack.insertTimeRange(CMTimeRange(start: slowMoStartTime, duration: slowMoDuration), of: sourceAudioTrack, at: insertionPoint)
-                        audioTrack.scaleTimeRange(CMTimeRange(start: insertionPoint, duration: slowMoDuration), toDuration: scaledSlowMoDuration)
+                        try? audioTrack?.insertTimeRange(CMTimeRange(start: slowMoStartTime, duration: slowMoDuration), of: sourceAudioTrack, at: insertionPoint)
+                        audioTrack?.scaleTimeRange(CMTimeRange(start: insertionPoint, duration: slowMoDuration), toDuration: scaledSlowMoDuration)
                     }
                     insertionPoint = CMTimeAdd(insertionPoint, scaledSlowMoDuration)
                     tempClipDuration = CMTimeAdd(tempClipDuration, scaledSlowMoDuration)
@@ -194,7 +227,7 @@ class VideoCompiler {
                     if postSlowMoDuration > .zero {
                         try videoTrack.insertTimeRange(CMTimeRange(start: slowMoEndTime, duration: postSlowMoDuration), of: sourceVideoTrack, at: insertionPoint)
                         if !item.isMuted, let sourceAudioTrack = try await videoAsset.load(.tracks).first(where: { $0.mediaType == .audio }) {
-                            try? audioTrack.insertTimeRange(CMTimeRange(start: slowMoEndTime, duration: postSlowMoDuration), of: sourceAudioTrack, at: insertionPoint)
+                            try? audioTrack?.insertTimeRange(CMTimeRange(start: slowMoEndTime, duration: postSlowMoDuration), of: sourceAudioTrack, at: insertionPoint)
                         }
                         insertionPoint = CMTimeAdd(insertionPoint, postSlowMoDuration)
                         tempClipDuration = CMTimeAdd(tempClipDuration, postSlowMoDuration)
@@ -204,7 +237,7 @@ class VideoCompiler {
                     // Handle video without slow-mo (original trimming logic)
                     try videoTrack.insertTimeRange(CMTimeRange(start: actualStartTime, duration: currentClipDuration), of: sourceVideoTrack, at: insertionPoint)
                     if !item.isMuted, let sourceAudioTrack = try await videoAsset.load(.tracks).first(where: { $0.mediaType == .audio }) {
-                        try? audioTrack.insertTimeRange(CMTimeRange(start: actualStartTime, duration: currentClipDuration), of: sourceAudioTrack, at: insertionPoint)
+                        try? audioTrack?.insertTimeRange(CMTimeRange(start: actualStartTime, duration: currentClipDuration), of: sourceAudioTrack, at: insertionPoint)
                     }
                     insertionPoint = CMTimeAdd(insertionPoint, currentClipDuration)
                     effectiveClipDurationInComposition = currentClipDuration // Correct calculation
@@ -273,10 +306,11 @@ class VideoCompiler {
             videoComposition.frameDuration = CMTime(value: 1, timescale: 30)
             videoComposition.renderSize = settings.orientation.size
 
-            videoComposition.animationTool = AVVideoCompositionCoreAnimationTool(
-                postProcessingAsVideoLayer: videoLayer,
-                in: parentLayer
-            )
+            // DIAGNOSTIC: temporarily disabled to isolate AVError -11838
+            // videoComposition.animationTool = AVVideoCompositionCoreAnimationTool(
+            //     postProcessingAsVideoLayer: videoLayer,
+            //     in: parentLayer
+            // )
 
             // Export
             let outputURL = FileManager.default.temporaryDirectory
@@ -344,6 +378,128 @@ class VideoCompiler {
                 }
             }
         }
+    }
+
+    private static func loadFullImage(for asset: PHAsset, targetSize: CGSize) async throws -> UIImage {
+        let options = PHImageRequestOptions()
+        options.isNetworkAccessAllowed = true
+        options.deliveryMode = .highQualityFormat
+        options.resizeMode = .exact
+        options.isSynchronous = false
+
+        return try await withCheckedThrowingContinuation { continuation in
+            var didResume = false
+            PHImageManager.default().requestImage(
+                for: asset,
+                targetSize: targetSize,
+                contentMode: .aspectFit,
+                options: options
+            ) { image, info in
+                // PHImageManager may call the handler twice (low-res then high-res).
+                // We only want to resume the continuation on the final delivery.
+                let isDegraded = (info?[PHImageResultIsDegradedKey] as? Bool) ?? false
+                guard !isDegraded, !didResume else { return }
+                didResume = true
+                if let image = image {
+                    continuation.resume(returning: image)
+                } else if let error = info?[PHImageErrorKey] as? Error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(throwing: VideoCompositionError.imageLoadFailed)
+                }
+            }
+        }
+    }
+
+    private static func createImageVideoSegment(image: UIImage, duration: CMTime, size: CGSize) async throws -> URL {
+        let outputURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString + "_image_segment")
+            .appendingPathExtension("mp4")
+
+        try? FileManager.default.removeItem(at: outputURL)
+
+        let assetWriter = try AVAssetWriter(outputURL: outputURL, fileType: .mp4)
+
+        // Force Baseline profile (no B-frames) — Main profile with B-frames caused
+        // AVError -11838 / VideoToolbox -16976 at export time when these segments
+        // were inserted into a composition exported with AVAssetExportPresetHighestQuality.
+        let videoSettings: [String: Any] = [
+            AVVideoCodecKey: AVVideoCodecType.h264,
+            AVVideoWidthKey: size.width,
+            AVVideoHeightKey: size.height,
+            AVVideoCompressionPropertiesKey: [
+                AVVideoProfileLevelKey: AVVideoProfileLevelH264BaselineAutoLevel,
+                AVVideoAverageBitRateKey: 6_000_000,
+                AVVideoMaxKeyFrameIntervalKey: 30,
+                AVVideoAllowFrameReorderingKey: false
+            ],
+            AVVideoColorPropertiesKey: [
+                AVVideoColorPrimariesKey: AVVideoColorPrimaries_ITU_R_709_2,
+                AVVideoTransferFunctionKey: AVVideoTransferFunction_ITU_R_709_2,
+                AVVideoYCbCrMatrixKey: AVVideoYCbCrMatrix_ITU_R_709_2
+            ]
+        ]
+
+        let videoInput = AVAssetWriterInput(mediaType: .video, outputSettings: videoSettings)
+        videoInput.expectsMediaDataInRealTime = false
+
+        let pixelBufferAttributes: [String: Any] = [
+            kCVPixelBufferPixelFormatTypeKey as String: NSNumber(value: kCVPixelFormatType_32BGRA),
+            kCVPixelBufferWidthKey as String: size.width,
+            kCVPixelBufferHeightKey as String: size.height
+        ]
+
+        let pixelBufferAdaptor = AVAssetWriterInputPixelBufferAdaptor(
+            assetWriterInput: videoInput,
+            sourcePixelBufferAttributes: pixelBufferAttributes
+        )
+
+        assetWriter.add(videoInput)
+        assetWriter.startWriting()
+        assetWriter.startSession(atSourceTime: .zero)
+
+        // Aspect-fit the photo onto a black canvas at target size, mirroring the
+        // letterboxing the video pipeline does for videos that don't match orientation.
+        let composited = UIGraphicsImageRenderer(size: size).image { _ in
+            UIColor.black.setFill()
+            UIRectFill(CGRect(origin: .zero, size: size))
+            let imgSize = image.size
+            guard imgSize.width > 0, imgSize.height > 0 else { return }
+            let scale = min(size.width / imgSize.width, size.height / imgSize.height)
+            let drawSize = CGSize(width: imgSize.width * scale, height: imgSize.height * scale)
+            let drawOrigin = CGPoint(
+                x: (size.width - drawSize.width) / 2,
+                y: (size.height - drawSize.height) / 2
+            )
+            image.draw(in: CGRect(origin: drawOrigin, size: drawSize))
+        }
+
+        guard let pixelBuffer = bgraPixelBuffer(from: composited, size: size) else {
+            throw VideoCompositionError.imageLoadFailed
+        }
+
+        let frameDuration = CMTime(value: 1, timescale: 30)
+        let totalFrames = Int64(duration.seconds * 30)
+
+        var frameCount: Int64 = 0
+        while frameCount < totalFrames {
+            if videoInput.isReadyForMoreMediaData {
+                let presentationTime = CMTimeMultiply(frameDuration, multiplier: Int32(frameCount))
+                pixelBufferAdaptor.append(pixelBuffer, withPresentationTime: presentationTime)
+                frameCount += 1
+            } else {
+                try? await Task.sleep(nanoseconds: 10_000_000)
+            }
+        }
+
+        videoInput.markAsFinished()
+        await assetWriter.finishWriting()
+
+        if assetWriter.status == .failed {
+            throw assetWriter.error ?? VideoCompositionError.exportFailed
+        }
+
+        return outputURL
     }
 
     private static func calculateTransform(
@@ -436,6 +592,45 @@ class VideoCompiler {
                         }
                     }
                     return titleImage
+    }
+
+    private static func bgraPixelBuffer(from image: UIImage, size: CGSize) -> CVPixelBuffer? {
+        let attrs: CFDictionary = [
+            kCVPixelBufferCGImageCompatibilityKey: kCFBooleanTrue!,
+            kCVPixelBufferCGBitmapContextCompatibilityKey: kCFBooleanTrue!
+        ] as CFDictionary
+
+        var pixelBuffer: CVPixelBuffer?
+        let status = CVPixelBufferCreate(
+            kCFAllocatorDefault,
+            Int(size.width),
+            Int(size.height),
+            kCVPixelFormatType_32BGRA,
+            attrs,
+            &pixelBuffer
+        )
+        guard status == kCVReturnSuccess, let buffer = pixelBuffer, let cgImage = image.cgImage else {
+            return nil
+        }
+
+        CVPixelBufferLockBaseAddress(buffer, [])
+        defer { CVPixelBufferUnlockBaseAddress(buffer, []) }
+
+        // BGRA byte order with premultipliedFirst alpha = the native iOS bitmap context layout
+        let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedFirst.rawValue
+            | CGBitmapInfo.byteOrder32Little.rawValue)
+        guard let context = CGContext(
+            data: CVPixelBufferGetBaseAddress(buffer),
+            width: Int(size.width),
+            height: Int(size.height),
+            bitsPerComponent: 8,
+            bytesPerRow: CVPixelBufferGetBytesPerRow(buffer),
+            space: CGColorSpaceCreateDeviceRGB(),
+            bitmapInfo: bitmapInfo.rawValue
+        ) else { return nil }
+
+        context.draw(cgImage, in: CGRect(origin: .zero, size: size))
+        return buffer
     }
 
     private static func pixelBufferFromImage(image: UIImage, size: CGSize) -> CVPixelBuffer? {

@@ -64,7 +64,7 @@ struct MediaSelectionView: View {
             Button("Open Settings", action: openSystemSettings)
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("Please allow Channel Link to access your videos in Settings to create compilations.")
+            Text("Please allow Movie Maker to access your videos and photos in Settings to create compilations.")
         }
     }
 
@@ -144,7 +144,7 @@ struct MediaSelectionView: View {
                 .animation(.easeInOut(duration: 1.0), value: pulseOpacity)
             }
 
-            Text("Tap to select videos")
+            Text("Tap to select videos & photos")
                 .font(.system(size: 16, weight: .medium))
                 .foregroundColor(.secondary)
         }
@@ -165,11 +165,11 @@ struct MediaSelectionView: View {
             }
             .padding(.top, 20)
 
-            if !storeManager.isPro && selectedMedia.count >= 8 {
+            if !storeManager.isPro && selectedMedia.count >= 2 {
                 HStack(spacing: 6) {
                     Image(systemName: "info.circle.fill")
                         .foregroundColor(.orange)
-                    Text("Free plan: \(selectedMedia.count)/10 videos")
+                    Text("Free plan: \(selectedMedia.count)/3 items")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
@@ -339,6 +339,8 @@ struct MediaGridItemView: View {
         }
         .onDrop(of: [.text], delegate: MediaGridItemView.DropViewDelegate(destinationItem: item, selectedMedia: $selectedMedia))
         .onTapGesture {
+            // Trimming only applies to videos
+            guard item.asset.mediaType == .video else { return }
             selectedMediaItemForTrimming = item
         }
     }
@@ -436,7 +438,7 @@ struct PhotoPicker: UIViewControllerRepresentable {
 
     func makeUIViewController(context: Context) -> PHPickerViewController {
         var config = PHPickerConfiguration(photoLibrary: .shared())
-        config.filter = .videos
+        config.filter = .any(of: [.videos, .images])
         config.selectionLimit = 0 // unlimited
         config.preferredAssetRepresentationMode = .current
 
@@ -475,8 +477,8 @@ struct PhotoPicker: UIViewControllerRepresentable {
                         // Check if already selected
                         if !parent.selectedMedia.contains(where: { $0.asset.localIdentifier == asset.localIdentifier }) {
 
-                            // Check photo limit for free users
-                            if !parent.storeManager.isPro && parent.selectedMedia.count >= 10 {
+                            // Free plan limit: 3 items total (photos or videos)
+                            if !parent.storeManager.isPro && parent.selectedMedia.count >= 3 {
                                 DispatchQueue.main.async {
                                     self.parent.showPaywall = true
                                  }

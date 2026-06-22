@@ -22,15 +22,25 @@ struct SettingsView: View {
     @State private var titleExpanded = false
     @State private var musicExpanded = false // Re-add musicExpanded
     @State private var transitionExpanded = false
+    @State private var photoDurationExpanded = false
     @State private var showingMusicPicker = false
     @State private var selectedMusicTitle: String = "None"
     @EnvironmentObject var storeManager: StoreManager
 
+    private static let photoDurationOptions: [Double] = [2, 3, 5, 10]
+
+    private var hasPhotos: Bool {
+        selectedMedia.contains { $0.asset.mediaType == .image }
+    }
+
     private var totalDuration: Double {
-        // Calculate total video duration
         var duration: Double = 0
         for item in selectedMedia {
-            duration += item.asset.duration
+            if item.asset.mediaType == .image {
+                duration += settings.photoDuration
+            } else {
+                duration += item.asset.duration
+            }
         }
         return duration
     }
@@ -174,6 +184,35 @@ struct SettingsView: View {
                     )
 
 
+
+                    if hasPhotos {
+                        Divider()
+
+                        DisclosureGroup(
+                            isExpanded: $photoDurationExpanded,
+                            content: {
+                                VStack(spacing: 12) {
+                                    Picker("Photo Duration", selection: $settings.photoDuration) {
+                                        ForEach(Self.photoDurationOptions, id: \.self) { value in
+                                            Text("\(Int(value)) sec").tag(value)
+                                        }
+                                    }
+                                    .pickerStyle(SegmentedPickerStyle())
+                                }
+                                .padding(.top, 8)
+                            },
+                            label: {
+                                HStack {
+                                    Text("Photo Duration")
+                                        .font(.system(size: 17, weight: .semibold))
+                                    Spacer()
+                                    Text("\(Int(settings.photoDuration)) sec")
+                                        .font(.system(size: 15))
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                        )
+                    }
 
                     Divider()
 

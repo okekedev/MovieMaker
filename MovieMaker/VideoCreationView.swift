@@ -76,7 +76,6 @@ struct VideoCreationView: View {
         }
         .padding()
         .onAppear {
-            // Request notification permission
             NotificationManager.shared.requestAuthorization()
 
             // Keep screen awake during video creation

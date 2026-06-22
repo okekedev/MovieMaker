@@ -1,1 +1,1 @@
-Refreshed product page so the app is easier to find for what it actually does — merging videos and photos into one clean movie. Small polish under the hood.
+Photos are back. Combine photos and videos in any order, set how long each photo holds on screen, and export to your camera roll. Plus a tighter free tier so you can try the full flow with up to 3 items before going Pro.
