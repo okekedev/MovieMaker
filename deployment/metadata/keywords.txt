@@ -1,1 +1,1 @@
-merger,joiner,editor,trim,splice,montage,slideshow,recap,collage,compilation,splitter,reorder
+merger,joiner,trim,splice,montage,collage,splitter,reorder,photo,story,gif,video,combine,music

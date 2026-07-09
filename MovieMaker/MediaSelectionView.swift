@@ -6,8 +6,12 @@ struct MediaSelectionView: View {
     @Binding var selectedMedia: [MediaItem]
     let onNext: () -> Void
 
-    @State private var showingPicker = false
+    // MM_SHOW_PICKER=1 → open the photo picker on launch (screenshot capture; see
+    // the env-var block in ChannelLinkApp.swift). Grant photo permission first via
+    // `simctl privacy <UDID> grant photos <bundle.id>` so no permission alert races the sheet.
+    @State private var showingPicker = ProcessInfo.processInfo.environment["MM_SHOW_PICKER"] == "1"
     @State private var showingPaywall = false
+    @State private var showingDailySpin = false
     @State private var showingPermissionAlert = false
     @State private var showingSettings = false
     @State private var selectedMediaItemForTrimming: MediaItem?
@@ -52,8 +56,12 @@ struct MediaSelectionView: View {
         .sheet(isPresented: $showingPicker) {
             PhotoPicker(selectedMedia: $selectedMedia, storeManager: storeManager, showPaywall: $showingPaywall)
         }
-        .sheet(isPresented: $showingPaywall) {
+        .fullScreenCover(isPresented: $showingPaywall) {
             PaywallView()
+                .environmentObject(storeManager)
+        }
+        .sheet(isPresented: $showingDailySpin) {
+            DailySpinView()
                 .environmentObject(storeManager)
         }
         .fullScreenCover(item: $selectedMediaItemForTrimming) { item in
@@ -87,8 +95,9 @@ struct MediaSelectionView: View {
 
     @ViewBuilder
     private var headerView: some View {
-        if !selectedMedia.isEmpty {
-            HStack {
+        HStack {
+            // Back button — only when the user has media selected.
+            if !selectedMedia.isEmpty {
                 Button(action: { selectedMedia.removeAll() }) {
                     HStack(spacing: 4) {
                         Image(systemName: "chevron.left")
@@ -99,11 +108,59 @@ struct MediaSelectionView: View {
                     .foregroundColor(.primary)
                 }
                 .padding(.leading, 20)
-                Spacer()
             }
-            .frame(height: 60)
-            .background(Color(.systemBackground))
+            Spacer()
+
+            // Daily Spin button — only shown when a spin is available. Sits
+            // just left of the coin badge so it's discoverable but not pushy.
+            if !storeManager.isPro && storeManager.canSpinNow {
+                Button(action: { showingDailySpin = true }) {
+                    HStack(spacing: 4) {
+                        Text("🎁")
+                            .font(.system(size: 14))
+                        Text("Spin")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundColor(.primary)
+                    }
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .background(
+                        Capsule().fill(Color.orange.opacity(0.15))
+                    )
+                    .overlay(
+                        Capsule().stroke(Color.orange.opacity(0.6), lineWidth: 1)
+                    )
+                }
+                .buttonStyle(.plain)
+                .padding(.trailing, 6)
+            }
+
+            // Coin balance badge — always visible. Tap to open the buy sheet.
+            // Uses the same GoldCoin as the paywall for a consistent brand.
+            Button(action: { showingPaywall = true }) {
+                HStack(spacing: 5) {
+                    GoldCoin(size: 18)
+                    if storeManager.isPro {
+                        Text("∞")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundColor(.primary)
+                    } else {
+                        Text("\(storeManager.coinBalance)")
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundColor(.primary)
+                    }
+                }
+                .padding(.horizontal, 10)
+                .padding(.vertical, 6)
+                .background(
+                    Capsule().fill(Color(.systemGray6))
+                )
+            }
+            .buttonStyle(.plain)
+            .padding(.trailing, 20)
         }
+        .frame(height: 60)
+        .background(selectedMedia.isEmpty ? Color.clear : Color(.systemBackground))
     }
 
     @ViewBuilder
@@ -165,11 +222,11 @@ struct MediaSelectionView: View {
             }
             .padding(.top, 20)
 
-            if !storeManager.isPro && selectedMedia.count >= 2 {
+            if !storeManager.isPro && !selectedMedia.isEmpty {
                 HStack(spacing: 6) {
                     Image(systemName: "info.circle.fill")
                         .foregroundColor(.orange)
-                    Text("Free plan: \(selectedMedia.count)/3 items")
+                    Text("\(storeManager.coinBalance) coin\(storeManager.coinBalance == 1 ? "" : "s") left — 1 coin per export")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
@@ -180,7 +237,7 @@ struct MediaSelectionView: View {
             }
 
             ScrollView {
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 110, maximum: 150), spacing: 16)], spacing: 16) {
                     ForEach(Array(selectedMedia.enumerated()), id: \.element.id) { index, item in
                         MediaGridItemView(item: item, index: index, selectedMedia: $selectedMedia, selectedMediaItemForTrimming: $selectedMediaItemForTrimming) {
                             removeItem(item)
@@ -476,15 +533,8 @@ struct PhotoPicker: UIViewControllerRepresentable {
                     if let asset = fetchResult.firstObject {
                         // Check if already selected
                         if !parent.selectedMedia.contains(where: { $0.asset.localIdentifier == asset.localIdentifier }) {
-
-                            // Free plan limit: 3 items total (photos or videos)
-                            if !parent.storeManager.isPro && parent.selectedMedia.count >= 3 {
-                                DispatchQueue.main.async {
-                                    self.parent.showPaywall = true
-                                 }
-                                return
-                            }
-
+                            // Free tier no longer gates selection — users can build
+                            // whatever they want and the paywall lands at export time.
                             let mediaItem = MediaItem(asset: asset)
 
                             // Load thumbnail

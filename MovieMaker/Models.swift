@@ -14,6 +14,45 @@ extension Color {
     static let secondaryGradient = [brandAccent, brandSecondary]
 }
 
+// MARK: - Device Metrics (iPad-adaptive sizing)
+// The app was built iPhone-first with hardcoded point sizes, so on iPad they
+// render tiny in a huge canvas. `DeviceMetrics` gives one multiplier so type,
+// spacing, and controls scale up on iPad, plus a readable content-column width
+// so full-bleed layouts don't stretch edge-to-edge. iPhone is unchanged
+// (scale == 1, contentMaxWidth == .infinity).
+// NOTE: lives here (not AppTheme.swift) because AppTheme.swift is not in the
+// Xcode compile sources — Models.swift is the file that actually builds.
+enum DeviceMetrics {
+    static var isPad: Bool { UIDevice.current.userInterfaceIdiom == .pad }
+    /// Type + control multiplier. Tuned so a 44pt title reads ~62pt on iPad.
+    static var scale: CGFloat { isPad ? 1.4 : 1.0 }
+    /// Max width for stacked content columns (settings rows, buttons, cards).
+    static var contentMaxWidth: CGFloat { isPad ? 620 : .infinity }
+    /// Wider cap for paywall/spin card columns.
+    static var wideContentMaxWidth: CGFloat { isPad ? 720 : .infinity }
+}
+
+extension BinaryInteger {
+    /// Scale a hardcoded iPhone point value up for iPad. No-op on iPhone.
+    /// Works on integer literals: `34.scaled`.
+    var scaled: CGFloat { CGFloat(self) * DeviceMetrics.scale }
+}
+
+extension BinaryFloatingPoint {
+    /// Scale a hardcoded iPhone point value up for iPad. No-op on iPhone.
+    /// Works on CGFloat/Double literals: `15.5.scaled`.
+    var scaled: CGFloat { CGFloat(self) * DeviceMetrics.scale }
+}
+
+extension View {
+    /// Center a content column and cap its width on iPad; full-bleed on iPhone.
+    func iPadReadableWidth(wide: Bool = false) -> some View {
+        self
+            .frame(maxWidth: wide ? DeviceMetrics.wideContentMaxWidth : DeviceMetrics.contentMaxWidth)
+            .frame(maxWidth: .infinity)
+    }
+}
+
 struct VideoCompilationSettings {
     var orientation: VideoOrientation = .landscape
     var musicAsset: AVURLAsset?
@@ -31,13 +70,24 @@ enum TransitionType: String, CaseIterable {
     case none = "None"
 }
 enum VideoOrientation: String, CaseIterable {
-    case landscape = "Landscape"
-    case portrait = "Portrait"
+    case landscape = "16:9"
+    case square = "1:1"
+    case portrait = "9:16"
 
     var size: CGSize {
         switch self {
         case .landscape: return CGSize(width: 1920, height: 1080)
-        case .portrait: return CGSize(width: 1080, height: 1920)
+        case .square:    return CGSize(width: 1080, height: 1080)
+        case .portrait:  return CGSize(width: 1080, height: 1920)
+        }
+    }
+
+    /// Platform hint shown under the picker so users know which ratio to pick.
+    var platformHint: String {
+        switch self {
+        case .landscape: return "YouTube"
+        case .square:    return "Instagram"
+        case .portrait:  return "Reels & TikTok"
         }
     }
 }

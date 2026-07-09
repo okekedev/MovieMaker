@@ -2,7 +2,7 @@
 //  PaywallView.swift
 //  Channel Link
 //
-//  Pro subscription paywall
+//  Buy sheet — grants coins (consumable IAPs) or unlimited exports (subscription).
 //
 
 import SwiftUI
@@ -17,7 +17,6 @@ struct PaywallView: View {
 
     var body: some View {
         ZStack {
-            // Gradient background
             LinearGradient(
                 colors: Color.brandGradient,
                 startPoint: .topLeading,
@@ -26,193 +25,38 @@ struct PaywallView: View {
             .ignoresSafeArea()
 
             ScrollView {
-                VStack(spacing: 30) {
-                    Spacer().frame(height: 20)
+                VStack(spacing: 28.scaled) {
+                    Spacer().frame(height: 24.scaled)
 
-                    // App Icon/Logo
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 25)
-                            .fill(
-                                LinearGradient(
-                                    colors: [Color.white.opacity(0.3), Color.white.opacity(0.1)],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
-                            )
-                            .frame(width: 120, height: 120)
-                            .shadow(color: Color.black.opacity(0.2), radius: 15, x: 0, y: 8)
+                    // Balance / hero — coins are the monetization; features are free.
+                    balanceHero
 
-                        Text("⭐")
-                            .font(.system(size: 70))
+                    // Reassurance: every editing feature is included, coins just
+                    // let you save finished videos. (Replaces the old "unlock these
+                    // features" pitch, which no longer applies — all features free.)
+                    includedBlock
+
+                    // Products
+                    if storeManager.products.isEmpty {
+                        productLoadingState
+                    } else {
+                        coinsSection
+                        subscriptionSection
                     }
 
-                    // Title
-                    VStack(spacing: 12) {
-                        Text("Unlock Pro Features")
-                            .font(.system(size: 32, weight: .bold))
-                            .foregroundColor(.white)
+                    // Restore + legal
+                    restoreAndLegal
 
-                        Text("Create unlimited video compilations")
-                            .font(.system(size: 18))
-                            .foregroundColor(.white.opacity(0.9))
-                    }
-
-                    // Feature list
-                    VStack(alignment: .leading, spacing: 20) {
-                        FeatureRow(icon: "music.note", title: "Background Music", description: "Add your own music that loops throughout the video")
-                        FeatureRow(icon: "slowmo", title: "Slow Motion Effects", description: "Add cinematic slow-mo to any part of your videos")
-                    }
-                    .padding(.horizontal, 40)
-                    .padding(.vertical, 30)
-                    .background(Color.white.opacity(0.15))
-                    .cornerRadius(20)
-                    .padding(.horizontal, 30)
-
-                    // Pricing
-                    VStack(spacing: 12) {
-                        Text("7-Day Free Trial")
-                            .font(.system(size: 24, weight: .bold))
-                            .foregroundColor(.white)
-
-                        Text("Then $2.99/month")
-                            .font(.system(size: 18))
-                            .foregroundColor(.white.opacity(0.9))
-
-                        Text("Cancel anytime • Family Sharing")
-                            .font(.system(size: 14))
+                    // Continue with free
+                    Button(action: { dismiss() }) {
+                        Text("Not now")
+                            .font(.system(size: 15.scaled))
                             .foregroundColor(.white.opacity(0.7))
                     }
-
-                    // Subscribe button
-                    if let product = storeManager.products.first {
-                        Button(action: {
-                            Task {
-                                do {
-                                    let success = try await storeManager.purchase(product)
-                                    if success {
-                                        dismiss()
-                                    }
-                                } catch {
-                                    print("❌ Purchase error: \(error)")
-                                    purchaseErrorMessage = "Unable to complete purchase. Please try again or contact support if the problem persists."
-                                    showPurchaseError = true
-                                }
-                            }
-                        }) {
-                            Group {
-                                if storeManager.isLoading {
-                                    ProgressView()
-                                        .progressViewStyle(CircularProgressViewStyle(tint: Color.brandPrimary))
-                                } else {
-                                    Text("Start Free Trial")
-                                        .font(.system(size: 20, weight: .bold))
-                                }
-                            }
-                            .foregroundStyle(
-                                LinearGradient(
-                                    colors: Color.primaryGradient,
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 18)
-                            .background(Color.white)
-                            .cornerRadius(14)
-                        }
-                        .padding(.horizontal, 30)
-                        .disabled(storeManager.isLoading)
-                    } else if showProductLoadError {
-                        VStack(spacing: 12) {
-                            Text("Unable to load subscription")
-                                .font(.system(size: 16, weight: .semibold))
-                                .foregroundColor(.white)
-
-                            Button(action: {
-                                showProductLoadError = false
-                                Task {
-                                    await storeManager.loadProducts()
-                                    try? await Task.sleep(nanoseconds: 3_000_000_000)
-                                    if storeManager.products.isEmpty {
-                                        showProductLoadError = true
-                                    }
-                                }
-                            }) {
-                                Text("Retry")
-                                    .font(.system(size: 18, weight: .semibold))
-                                    .foregroundColor(.brandPrimary)
-                                    .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 18)
-                                    .background(Color.white)
-                                    .cornerRadius(14)
-                            }
-                            .padding(.horizontal, 30)
-                        }
-                    } else {
-                        ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                            .onAppear {
-                                // Set a timeout for product loading
-                                Task {
-                                    try? await Task.sleep(nanoseconds: 5_000_000_000) // 5 seconds
-                                    if storeManager.products.isEmpty {
-                                        showProductLoadError = true
-                                    }
-                                }
-                            }
-                    }
-
-                    // Restore button
-                    Button(action: {
-                        Task {
-                            await storeManager.restorePurchases()
-                            if storeManager.isPro {
-                                dismiss()
-                            }
-                        }
-                    }) {
-                        Text("Restore Purchases")
-                            .font(.system(size: 16))
-                            .foregroundColor(.white.opacity(0.8))
-                    }
-                    .disabled(storeManager.isLoading)
-
-                    Spacer().frame(height: 30)
-
-                    // Privacy, Terms, and Support links
-                    VStack(spacing: 8) {
-                        HStack(spacing: 12) {
-                            Link("Privacy Policy", destination: URL(string: "https://okekedev.github.io/MovieMaker/privacy.html")!)
-                                .font(.system(size: 12))
-                                .foregroundColor(.white.opacity(0.6))
-
-                            Text("•")
-                                .foregroundColor(.white.opacity(0.4))
-
-                            Link("Terms of Use", destination: URL(string: "https://okekedev.github.io/MovieMaker/terms.html")!)
-                                .font(.system(size: 12))
-                                .foregroundColor(.white.opacity(0.6))
-
-                            Text("•")
-                                .foregroundColor(.white.opacity(0.4))
-
-                            Link("Support", destination: URL(string: "https://okekedev.github.io/MovieMaker/support.html")!)
-                                .font(.system(size: 12))
-                                .foregroundColor(.white.opacity(0.6))
-                        }
-                    }
-
-                    // Close button
-                    Button(action: {
-                        dismiss()
-                    }) {
-                        Text("Continue with Free Version")
-                            .font(.system(size: 14))
-                            .foregroundColor(.white.opacity(0.6))
-                    }
-                    .padding(.bottom, 40)
+                    .padding(.bottom, 40.scaled)
                 }
-                .padding(.horizontal, 0)
+                .padding(.horizontal, 24.scaled)
+                .iPadReadableWidth()
             }
         }
         .alert("Purchase Error", isPresented: $showPurchaseError) {
@@ -221,32 +65,365 @@ struct PaywallView: View {
             Text(purchaseErrorMessage)
         }
     }
+
+    // MARK: - Sections
+
+    private var balanceHero: some View {
+        VStack(spacing: 14.scaled) {
+            GoldCoin(size: 56.scaled)
+
+            Text(storeManager.isPro ? "Unlimited Videos" : "Get More Videos")
+                .font(.system(size: 30.scaled, weight: .bold))
+                .foregroundColor(.white)
+
+            if storeManager.isPro {
+                Text("You have unlimited exports")
+                    .font(.system(size: 16.scaled))
+                    .foregroundColor(.white.opacity(0.9))
+            } else {
+                HStack(spacing: 6.scaled) {
+                    Text("You have")
+                    Text("\(storeManager.coinBalance)")
+                        .fontWeight(.bold)
+                    GoldCoin(size: 18.scaled)
+                    Text(storeManager.coinBalance == 1 ? "coin" : "coins")
+                    Text("· 1 coin = 1 video")
+                        .foregroundColor(.white.opacity(0.7))
+                }
+                .font(.system(size: 16.scaled))
+                .foregroundColor(.white.opacity(0.9))
+            }
+        }
+    }
+
+    // Every editing feature is free for all users now — coins only pay for
+    // saving finished videos. This reassures buyers what they're actually paying for.
+    private var includedBlock: some View {
+        VStack(spacing: 10.scaled) {
+            Text("Every feature included — free")
+                .font(.system(size: 15.scaled, weight: .semibold))
+                .foregroundColor(.white)
+            HStack(spacing: 18.scaled) {
+                includedItem("music.note", "Music")
+                includedItem("slowmo", "Slow-Mo")
+                includedItem("wand.and.stars", "HD Export")
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 18.scaled)
+        .padding(.horizontal, 16.scaled)
+        .background(Color.white.opacity(0.15))
+        .cornerRadius(16)
+    }
+
+    private func includedItem(_ icon: String, _ label: String) -> some View {
+        VStack(spacing: 6.scaled) {
+            Image(systemName: icon)
+                .font(.system(size: 22.scaled))
+                .foregroundColor(.white)
+            Text(label)
+                .font(.system(size: 12.scaled, weight: .medium))
+                .foregroundColor(.white.opacity(0.9))
+        }
+    }
+
+    private var coinsSection: some View {
+        VStack(alignment: .leading, spacing: 10.scaled) {
+            Text("Buy coins")
+                .font(.system(size: 16.scaled, weight: .semibold))
+                .foregroundColor(.white)
+
+            if let coins5 = storeManager.product(id: StoreManager.coins5ID) {
+                CoinTierRow(
+                    coins: 5,
+                    price: coins5.displayPrice,
+                    tag: nil,
+                    action: { purchase(coins5) }
+                )
+            }
+            if let coins15 = storeManager.product(id: StoreManager.coins15ID) {
+                CoinTierRow(
+                    coins: 15,
+                    price: coins15.displayPrice,
+                    tag: "Best value",
+                    action: { purchase(coins15) }
+                )
+            }
+        }
+    }
+
+    private var subscriptionSection: some View {
+        VStack(alignment: .leading, spacing: 10.scaled) {
+            Text("Or go unlimited")
+                .font(.system(size: 16.scaled, weight: .semibold))
+                .foregroundColor(.white)
+                .padding(.top, 4.scaled)
+
+            if let monthly = storeManager.product(id: StoreManager.monthlySubscriptionID) {
+                SubTierRow(
+                    title: "Monthly",
+                    priceLine: "\(monthly.displayPrice) / month",
+                    trailingBadge: "Save 43%",
+                    action: { purchase(monthly) }
+                )
+            }
+            if let yearly = storeManager.product(id: StoreManager.yearlySubscriptionID) {
+                SubTierRow(
+                    title: "Yearly",
+                    priceLine: "\(yearly.displayPrice) / year",
+                    trailingBadge: "Save 68%",
+                    action: { purchase(yearly) }
+                )
+            }
+        }
+    }
+
+    private var restoreAndLegal: some View {
+        VStack(spacing: 16) {
+            Button(action: {
+                Task {
+                    await storeManager.restorePurchases()
+                    if storeManager.isPro { dismiss() }
+                }
+            }) {
+                Text("Restore Purchases")
+                    .font(.system(size: 15))
+                    .foregroundColor(.white.opacity(0.85))
+            }
+            .disabled(storeManager.isLoading)
+
+            HStack(spacing: 12) {
+                Link("Privacy", destination: URL(string: "https://okekedev.github.io/MovieMaker/privacy.html")!)
+                Text("•").foregroundColor(.white.opacity(0.4))
+                Link("Terms", destination: URL(string: "https://okekedev.github.io/MovieMaker/terms.html")!)
+                Text("•").foregroundColor(.white.opacity(0.4))
+                Link("Support", destination: URL(string: "https://okekedev.github.io/MovieMaker/support.html")!)
+            }
+            .font(.system(size: 12))
+            .foregroundColor(.white.opacity(0.6))
+        }
+    }
+
+    private var productLoadingState: some View {
+        VStack(spacing: 12) {
+            if showProductLoadError {
+                Text("Unable to load products")
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundColor(.white)
+                Button(action: {
+                    showProductLoadError = false
+                    Task {
+                        await storeManager.loadProducts()
+                        try? await Task.sleep(nanoseconds: 3_000_000_000)
+                        if storeManager.products.isEmpty { showProductLoadError = true }
+                    }
+                }) {
+                    Text("Retry")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.brandPrimary)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(Color.white)
+                        .cornerRadius(12)
+                }
+            } else {
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                    .onAppear {
+                        Task {
+                            try? await Task.sleep(nanoseconds: 5_000_000_000)
+                            if storeManager.products.isEmpty { showProductLoadError = true }
+                        }
+                    }
+            }
+        }
+        .padding(.vertical, 30)
+    }
+
+    // MARK: - Helpers
+
+    private func purchase(_ product: Product) {
+        Task {
+            do {
+                let success = try await storeManager.purchase(product)
+                if success { dismiss() }
+            } catch {
+                purchaseErrorMessage = "Unable to complete purchase. Please try again."
+                showPurchaseError = true
+            }
+        }
+    }
+
+    /// Per-coin price string using the product's own locale/currency.
+    private func perCoinCopy(product: Product, coins: Int) -> String {
+        let unit = product.price / Decimal(coins)
+        let fmt = NumberFormatter()
+        fmt.numberStyle = .currency
+        fmt.locale = product.priceFormatStyle.locale
+        if let s = fmt.string(from: unit as NSNumber) {
+            return "\(s) each"
+        }
+        return ""
+    }
+
+    /// If the subscription has an introductory offer (free trial), surface it as a badge.
+    private func introOfferBadge(for product: Product) -> String? {
+        guard let sub = product.subscription, let offer = sub.introductoryOffer else { return nil }
+        switch offer.paymentMode {
+        case .freeTrial:
+            let days = offer.period.value * offer.period.unit.approxDays
+            return "\(days)-day free trial"
+        default:
+            return nil
+        }
+    }
 }
 
-// MARK: - Feature Row
+// MARK: - Feature Row (unchanged shape)
 struct FeatureRow: View {
     let icon: String
     let title: String
     let description: String
 
     var body: some View {
-        HStack(spacing: 16) {
+        HStack(spacing: 14) {
             Image(systemName: icon)
-                .font(.system(size: 24))
+                .font(.system(size: 22))
                 .foregroundColor(.white)
-                .frame(width: 40)
-
-            VStack(alignment: .leading, spacing: 4) {
-                Text(title)
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(.white)
-
-                Text(description)
-                    .font(.system(size: 14))
-                    .foregroundColor(.white.opacity(0.8))
+                .frame(width: 32)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title).font(.system(size: 16, weight: .semibold)).foregroundColor(.white)
+                Text(description).font(.system(size: 13)).foregroundColor(.white.opacity(0.85))
             }
-
             Spacer()
+        }
+    }
+}
+
+// MARK: - Coin tier row
+struct CoinTierRow: View {
+    let coins: Int
+    let price: String
+    let tag: String?
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 8.scaled) {
+                Text("\(coins) coins")
+                    .font(.system(size: 16.scaled, weight: .semibold))
+                    .foregroundColor(.brandPrimary)
+                if let tag {
+                    Text(tag)
+                        .font(.system(size: 10.scaled, weight: .bold))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 6.scaled)
+                        .padding(.vertical, 2.scaled)
+                        .background(Color.brandSecondary)
+                        .cornerRadius(4)
+                }
+                Spacer()
+                Text(price)
+                    .font(.system(size: 16.scaled, weight: .bold))
+                    .foregroundColor(.brandPrimary)
+            }
+            .padding(14.scaled)
+            .background(Color.white)
+            .cornerRadius(12)
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+// MARK: - Subscription tier row
+struct SubTierRow: View {
+    let title: String
+    let priceLine: String
+    let trailingBadge: String?
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 12.scaled) {
+                VStack(alignment: .leading, spacing: 2.scaled) {
+                    Text(title)
+                        .font(.system(size: 16.scaled, weight: .semibold))
+                        .foregroundColor(.brandPrimary)
+                    Text(priceLine)
+                        .font(.system(size: 13.scaled))
+                        .foregroundColor(.secondary)
+                }
+                Spacer()
+                if let trailingBadge {
+                    Text(trailingBadge)
+                        .font(.system(size: 11.scaled, weight: .bold))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 8.scaled)
+                        .padding(.vertical, 4.scaled)
+                        .background(Color.brandSecondary)
+                        .cornerRadius(6)
+                }
+            }
+            .padding(14.scaled)
+            .background(Color.white)
+            .cornerRadius(12)
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+// Gold coin glyph — dollar sign in a gold-gradient circle. Feels like a
+// coin, doesn't rely on emoji rendering (which varies by iOS version).
+struct GoldCoin: View {
+    var size: CGFloat = 24
+
+    var body: some View {
+        ZStack {
+            // Gold body
+            Circle()
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            Color(red: 1.00, green: 0.90, blue: 0.35),
+                            Color(red: 0.98, green: 0.72, blue: 0.12),
+                            Color(red: 0.80, green: 0.55, blue: 0.05),
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+            // Darker rim
+            Circle()
+                .stroke(Color(red: 0.55, green: 0.38, blue: 0.02), lineWidth: max(1, size * 0.045))
+            // Subtle inner ring for coin depth
+            Circle()
+                .stroke(Color(red: 1.0, green: 0.95, blue: 0.55).opacity(0.7), lineWidth: max(0.5, size * 0.03))
+                .padding(size * 0.12)
+            // Dollar sign
+            Image(systemName: "dollarsign")
+                .font(.system(size: size * 0.55, weight: .heavy))
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: [Color(red: 0.55, green: 0.38, blue: 0.02),
+                                 Color(red: 0.72, green: 0.50, blue: 0.03)],
+                        startPoint: .top, endPoint: .bottom
+                    )
+                )
+        }
+        .frame(width: size, height: size)
+    }
+}
+
+// Small helper to turn StoreKit's Product.SubscriptionPeriod.Unit into an
+// approximate number of days for trial-length copy.
+private extension Product.SubscriptionPeriod.Unit {
+    var approxDays: Int {
+        switch self {
+        case .day:   return 1
+        case .week:  return 7
+        case .month: return 30
+        case .year:  return 365
+        @unknown default: return 0
         }
     }
 }

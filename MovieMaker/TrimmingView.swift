@@ -34,20 +34,26 @@ struct TrimmingView: View {
     @State private var showingPaywall = false
 
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             if let player = player {
                 VideoPlayerView(player: player)
-                    .frame(height: 300)
+                    // Fill the free vertical space — on iPad this makes the preview
+                    // the hero instead of a 300pt strip; iPhone behaves as before.
+                    .frame(minHeight: 300, maxHeight: .infinity)
                     .onDisappear(perform: pausePlayer)
             } else {
                 ProgressView("Loading video...")
-                    .frame(height: 300)
+                    .frame(minHeight: 300, maxHeight: .infinity)
             }
 
+            // Controls column — capped to a readable width on iPad and centered,
+            // so the big preview above stays full-bleed while the controls don't
+            // stretch edge-to-edge across a 13" canvas.
+            VStack(spacing: 0) {
             // Play/Pause Button
             Button(action: togglePlayPause) {
                 Image(systemName: isPlaying ? "pause.fill" : "play.fill")
-                    .font(.largeTitle)
+                    .font(.system(size: 34.scaled, weight: .regular))
                     .foregroundColor(.brandPrimary)
             }
             .padding()
@@ -95,40 +101,26 @@ struct TrimmingView: View {
                 }
                 .frame(height: 80)
                 
-                // Slow-Mo Toggle with Pro indicator
+                // Slow-Mo — available to every user (no feature gate; coins gate
+                // only the final video export).
                 HStack {
-                    if storeManager.isPro {
-                        Toggle("Enable Slow-Mo", isOn: $slowMoEnabled.animation())
-                    } else {
-                        Toggle("Enable Slow-Mo", isOn: .constant(false))
-                            .disabled(true)
-                            .opacity(0.6)
-
-                        Spacer()
-
-                        Button(action: {
-                            showingPaywall = true
-                        }) {
-                            HStack(spacing: 4) {
-                                Image(systemName: "star.fill")
-                                    .font(.system(size: 12))
-                                    .foregroundColor(.yellow)
-                                Text("PRO")
-                                    .font(.system(size: 12, weight: .bold))
-                                    .foregroundColor(.yellow)
+                    Toggle("Enable Slow-Mo", isOn: $slowMoEnabled.animation())
+                        .onChange(of: slowMoEnabled) {
+                            // Initialize the slow-mo window the moment the toggle flips on —
+                            // otherwise the times stay nil unless a handle is dragged, and
+                            // the compiler silently skips slow-mo.
+                            if slowMoEnabled, duration.seconds > 0 {
+                                slowMoStartTime = CMTime(seconds: slowMoLeftHandlePosition * duration.seconds, preferredTimescale: 600)
+                                slowMoEndTime = CMTime(seconds: slowMoRightHandlePosition * duration.seconds, preferredTimescale: 600)
                             }
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(Color.yellow.opacity(0.2))
-                            .cornerRadius(8)
                         }
-                    }
                 }
                 .padding(.horizontal)
 
                 Toggle("Mute Video", isOn: $mediaItem.isMuted)
                     .padding(.horizontal)
             }
+            .font(.system(size: 17.scaled))
             .padding()
             .onChange(of: mediaItem.isMuted) {
                 Task {
@@ -141,6 +133,7 @@ struct TrimmingView: View {
                 Spacer()
                 Text("End: \(formatTime(trimEndTime))")
             }
+            .font(.system(size: 15.scaled))
             .padding(.horizontal)
 
             Button(action: {
@@ -165,10 +158,10 @@ struct TrimmingView: View {
                 }
             }) {
                 Text("Done")
-                    .font(.system(size: 17, weight: .semibold))
+                    .font(.system(size: 17.scaled, weight: .semibold))
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 16)
+                    .padding(.vertical, 16.scaled)
                     .background(
                         LinearGradient(
                             colors: Color.brandGradient,
@@ -181,13 +174,18 @@ struct TrimmingView: View {
             }
             .buttonStyle(.plain)
             .padding(.horizontal, 20)
+            }
+            // Controls column: readable width + centered on iPad, full-bleed on iPhone.
+            .iPadReadableWidth()
+            .padding(.top, DeviceMetrics.isPad ? 12 : 0)
+            .padding(.bottom, DeviceMetrics.isPad ? 28 : 0)
         }
         .onAppear {
             Task {
                 await setupPlayer()
             }
         }
-        .sheet(isPresented: $showingPaywall) {
+        .fullScreenCover(isPresented: $showingPaywall) {
             PaywallView()
                 .environmentObject(storeManager)
         }

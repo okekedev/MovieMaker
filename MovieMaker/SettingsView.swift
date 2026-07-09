@@ -76,26 +76,31 @@ struct SettingsView: View {
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
-                    // Orientation
+                    // Aspect ratio — pick the target platform's size before export.
                     DisclosureGroup(
                         isExpanded: $orientationExpanded,
                         content: {
-                            VStack(spacing: 12) {
-                                Picker("Orientation", selection: $settings.orientation) {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Picker("Aspect ratio", selection: $settings.orientation) {
                                     ForEach(VideoOrientation.allCases, id: \.self) { orientation in
                                         Text(orientation.rawValue).tag(orientation)
                                     }
                                 }
                                 .pickerStyle(SegmentedPickerStyle())
+
+                                Text("For \(settings.orientation.platformHint)")
+                                    .font(.system(size: 13))
+                                    .foregroundColor(.secondary)
+                                    .frame(maxWidth: .infinity, alignment: .center)
                             }
                             .padding(.top, 8)
                         },
                         label: {
                             HStack {
-                                Text("Video Orientation")
+                                Text("Aspect Ratio")
                                     .font(.system(size: 17, weight: .semibold))
                                 Spacer()
-                                Text(settings.orientation.rawValue)
+                                Text("\(settings.orientation.rawValue) · \(settings.orientation.platformHint)")
                                     .font(.system(size: 15))
                                     .foregroundColor(.secondary)
                             }
@@ -216,9 +221,9 @@ struct SettingsView: View {
 
                     Divider()
 
-                    // Background Music (separate)
-                    if storeManager.isPro {
-                        DisclosureGroup(
+                    // Background Music — available to every user (no feature gate;
+                    // coins gate only the final video export).
+                    DisclosureGroup(
                             isExpanded: $musicExpanded,
                             content: {
                                 VStack(spacing: 16) {
@@ -310,32 +315,8 @@ struct SettingsView: View {
                                 }
                             }
                         )
-                    } else {
-                        Button(action: {
-                            showingPaywall = true
-                        }) {
-                            HStack {
-                                Text("Background Music")
-                                    .font(.system(size: 17, weight: .semibold))
-                                    .foregroundColor(.primary)
-                                Spacer()
-                                HStack(spacing: 4) {
-                                    Image(systemName: "star.fill")
-                                        .font(.system(size: 12))
-                                        .foregroundColor(.yellow)
-                                    Text("PRO")
-                                        .font(.system(size: 12, weight: .bold))
-                                        .foregroundColor(.yellow)
-                                }
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 4)
-                                .background(Color.yellow.opacity(0.2))
-                                .cornerRadius(8)
-                            }
-                        }
-                    }
 
-                    
+
                 
                     // Preview Section
                     VStack(alignment: .leading, spacing: 8) {
@@ -399,7 +380,7 @@ struct SettingsView: View {
         } message: {
             Text(warningMessage)
         }
-        .sheet(isPresented: $showingPaywall) {
+        .fullScreenCover(isPresented: $showingPaywall) {
             PaywallView()
                 .environmentObject(storeManager)
         }
@@ -415,6 +396,14 @@ struct SettingsView: View {
     }
 
     private func checkAndCreate() {
+        // Free-tier gate: paywall lands here at export time, not at selection.
+        // Users can build any project they want and only hit the wall when
+        // they try to burn their 4th free export.
+        if !storeManager.canStartExport {
+            showingPaywall = true
+            return
+        }
+
         // Check for very long videos
         let longVideos = selectedMedia.filter { $0.asset.mediaType == .video && $0.asset.duration > 300 }
         if !longVideos.isEmpty {

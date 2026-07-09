@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		25C6B8C483665DF7AD52803E /* MovieMaker.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 1254A9546367B3C365A0652A /* MovieMaker.storekit */; };
+		26DD4A571962A3EDC3A0ABE4 /* MovieMaker.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 1254A9546367B3C365A0652A /* MovieMaker.storekit */; };
+		6ACA0992D4668355959BC90F /* StoreManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20CE0DA38B5B3A29C8A32DD /* StoreManagerTests.swift */; };
+		7AC0CED8CADBBB946DB13CEE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC0247E1A25CA2F55E56D795 /* Foundation.framework */; };
+		A63E893E23425A3C59DD08D9 /* DailySpinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8219F309551BC6ED2A7228FA /* DailySpinView.swift */; };
 		AAB430DF2EC500310068D194 /* AppConfigurationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB430C72EC500310068D194 /* AppConfigurationView.swift */; };
 		AAB430E02EC500310068D194 /* TrimmingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB430DA2EC500310068D194 /* TrimmingView.swift */; };
 		AAB430E22EC500310068D194 /* CompletionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB430CC2EC500310068D194 /* CompletionView.swift */; };
@@ -25,9 +30,25 @@
 		AAB430F12EC500310068D194 /* MusicPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB430D32EC500310068D194 /* MusicPickerView.swift */; };
 		AAB430F22EC500310068D194 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AAB430C82EC500310068D194 /* Assets.xcassets */; };
 		AAB430F42EC500310068D194 /* SendFlowers-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AAB430D62EC500310068D194 /* SendFlowers-Regular.ttf */; };
+		C3D1DD449D8305276AE00AFF /* ConfettiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14A6C1F3FD4E0C6789BE53CE /* ConfettiView.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		D09E42875035A9D56B07CBA5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AAF69B4B2EB935B300EA02CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AAF69B522EB935B300EA02CE;
+			remoteInfo = MovieMaker;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		100536EEE5D89D58F361CA26 /* MovieMakerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MovieMakerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		1254A9546367B3C365A0652A /* MovieMaker.storekit */ = {isa = PBXFileReference; includeInIndex = 1; path = MovieMaker.storekit; sourceTree = "<group>"; };
+		14A6C1F3FD4E0C6789BE53CE /* ConfettiView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfettiView.swift; sourceTree = "<group>"; };
+		8219F309551BC6ED2A7228FA /* DailySpinView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DailySpinView.swift; sourceTree = "<group>"; };
+		A20CE0DA38B5B3A29C8A32DD /* StoreManagerTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StoreManagerTests.swift; sourceTree = "<group>"; };
 		AAB430C72EC500310068D194 /* AppConfigurationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfigurationView.swift; sourceTree = "<group>"; };
 		AAB430C82EC500310068D194 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AAB430CA2EC500310068D194 /* ChannelLinkApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelLinkApp.swift; sourceTree = "<group>"; };
@@ -48,6 +69,7 @@
 		AAB430DC2EC500310068D194 /* VideoCreationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCreationView.swift; sourceTree = "<group>"; };
 		AAB430DD2EC500310068D194 /* VideoPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerView.swift; sourceTree = "<group>"; };
 		AAF69B532EB935B300EA02CE /* MovieMaker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MovieMaker.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC0247E1A25CA2F55E56D795 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,9 +80,42 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C22658D7997C5CFBA852D58B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7AC0CED8CADBBB946DB13CEE /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		115472E3693670210E3ED0AA /* MovieMakerTests */ = {
+			isa = PBXGroup;
+			children = (
+				A20CE0DA38B5B3A29C8A32DD /* StoreManagerTests.swift */,
+			);
+			name = MovieMakerTests;
+			path = MovieMakerTests;
+			sourceTree = "<group>";
+		};
+		58D6501443721A68C8084D81 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				EC0247E1A25CA2F55E56D795 /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		A577E6CBA213679C0A3C52E0 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				58D6501443721A68C8084D81 /* iOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		AAB430DE2EC500310068D194 /* MovieMaker */ = {
 			isa = PBXGroup;
 			children = (
@@ -83,6 +138,9 @@
 				AAB430DB2EC500310068D194 /* VideoCompiler.swift */,
 				AAB430DC2EC500310068D194 /* VideoCreationView.swift */,
 				AAB430DD2EC500310068D194 /* VideoPlayerView.swift */,
+				1254A9546367B3C365A0652A /* MovieMaker.storekit */,
+				8219F309551BC6ED2A7228FA /* DailySpinView.swift */,
+				14A6C1F3FD4E0C6789BE53CE /* ConfettiView.swift */,
 			);
 			path = MovieMaker;
 			sourceTree = "<group>";
@@ -92,6 +150,8 @@
 			children = (
 				AAB430DE2EC500310068D194 /* MovieMaker */,
 				AAF69B542EB935B300EA02CE /* Products */,
+				A577E6CBA213679C0A3C52E0 /* Frameworks */,
+				115472E3693670210E3ED0AA /* MovieMakerTests */,
 			);
 			sourceTree = "<group>";
 		};
@@ -99,6 +159,7 @@
 			isa = PBXGroup;
 			children = (
 				AAF69B532EB935B300EA02CE /* MovieMaker.app */,
+				100536EEE5D89D58F361CA26 /* MovieMakerTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -106,6 +167,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		10C4C8E286A266EE223B5F69 /* MovieMakerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 61F29A5AA38E1AA64A25047B /* Build configuration list for PBXNativeTarget "MovieMakerTests" */;
+			buildPhases = (
+				6603ABA17C98ACEC622125C4 /* Sources */,
+				C22658D7997C5CFBA852D58B /* Frameworks */,
+				E842BEBF041702FA947E3C35 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				99D83B3D6C55D5D99A6CC5D2 /* PBXTargetDependency */,
+			);
+			name = MovieMakerTests;
+			productName = MovieMakerTests;
+			productReference = 100536EEE5D89D58F361CA26 /* MovieMakerTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		AAF69B522EB935B300EA02CE /* MovieMaker */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = AAF69B5E2EB935B600EA02CE /* Build configuration list for PBXNativeTarget "MovieMaker" */;
@@ -119,8 +198,6 @@
 			dependencies = (
 			);
 			name = MovieMaker;
-			packageProductDependencies = (
-			);
 			productName = ChannelLink;
 			productReference = AAF69B532EB935B300EA02CE /* MovieMaker.app */;
 			productType = "com.apple.product-type.application";
@@ -155,6 +232,7 @@
 			projectRoot = "";
 			targets = (
 				AAF69B522EB935B300EA02CE /* MovieMaker */,
+				10C4C8E286A266EE223B5F69 /* MovieMakerTests */,
 			);
 		};
 /* End PBXProject section */
@@ -166,12 +244,29 @@
 			files = (
 				AAB430F22EC500310068D194 /* Assets.xcassets in Resources */,
 				AAB430F42EC500310068D194 /* SendFlowers-Regular.ttf in Resources */,
+				25C6B8C483665DF7AD52803E /* MovieMaker.storekit in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E842BEBF041702FA947E3C35 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				26DD4A571962A3EDC3A0ABE4 /* MovieMaker.storekit in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		6603ABA17C98ACEC622125C4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6ACA0992D4668355959BC90F /* StoreManagerTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AAF69B4F2EB935B300EA02CE /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -192,12 +287,41 @@
 				AAB430EF2EC500310068D194 /* SettingsView.swift in Sources */,
 				AAB430F02EC500310068D194 /* Models.swift in Sources */,
 				AAB430F12EC500310068D194 /* MusicPickerView.swift in Sources */,
+				A63E893E23425A3C59DD08D9 /* DailySpinView.swift in Sources */,
+				C3D1DD449D8305276AE00AFF /* ConfettiView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		99D83B3D6C55D5D99A6CC5D2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = MovieMaker;
+			target = AAF69B522EB935B300EA02CE /* MovieMaker */;
+			targetProxy = D09E42875035A9D56B07CBA5 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		A3775A86AE11BB1EB92383AC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = TUG3BHLSM4;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = MovieMakerTests;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.christianokeke.moviemaker.tests;
+				PRODUCT_NAME = MovieMakerTests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MovieMaker.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/MovieMaker";
+			};
+			name = Debug;
+		};
 		AAF69B5C2EB935B600EA02CE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -325,7 +449,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = TUG3BHLSM4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -342,7 +466,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.2;
+				MARKETING_VERSION = 2.5;
 				PRODUCT_BUNDLE_IDENTIFIER = com.christianokeke.moviemaker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -360,7 +484,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = TUG3BHLSM4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -377,7 +501,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.2;
+				MARKETING_VERSION = 2.5;
 				PRODUCT_BUNDLE_IDENTIFIER = com.christianokeke.moviemaker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -389,9 +513,37 @@
 			};
 			name = Release;
 		};
+		C1309C9EA2B96DE9ABFE7E92 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = TUG3BHLSM4;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = MovieMakerTests;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.christianokeke.moviemaker.tests;
+				PRODUCT_NAME = MovieMakerTests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MovieMaker.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/MovieMaker";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		61F29A5AA38E1AA64A25047B /* Build configuration list for PBXNativeTarget "MovieMakerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C1309C9EA2B96DE9ABFE7E92 /* Release */,
+				A3775A86AE11BB1EB92383AC /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		AAF69B4E2EB935B300EA02CE /* Build configuration list for PBXProject "MovieMaker" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

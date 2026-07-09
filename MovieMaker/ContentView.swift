@@ -8,10 +8,16 @@ enum AppScreen {
 }
 
 struct ContentView: View {
-    @State private var currentScreen: AppScreen = .mediaSelection
+    // MM_SCREEN=completion → jump straight to the finished screen (screenshot capture;
+    // see the env-var block in ChannelLinkApp.swift). The dummy URL makes the
+    // Share/Open Photos buttons render as they do after a real export.
+    @State private var currentScreen: AppScreen =
+        ProcessInfo.processInfo.environment["MM_SCREEN"] == "completion" ? .completion : .mediaSelection
     @State private var selectedMedia: [MediaItem] = []
     @State private var settings = VideoCompilationSettings()
-    @State private var outputURL: URL?
+    @State private var outputURL: URL? =
+        ProcessInfo.processInfo.environment["MM_SCREEN"] == "completion"
+            ? FileManager.default.temporaryDirectory.appendingPathComponent("demo.mp4") : nil
 
     var body: some View {
         NavigationView {

@@ -5,8 +5,10 @@ struct CompletionView: View {
     let onCreateAnother: () -> Void
 
     @State private var showingShareSheet = false
+    @State private var confettiTrigger: Int = 0
 
     var body: some View {
+        ZStack {
         VStack(spacing: 30) {
             Spacer()
 
@@ -98,7 +100,15 @@ struct CompletionView: View {
             .padding(.horizontal, 20)
             .padding(.bottom, 40)
         }
+        .frame(maxWidth: 640)
+        .frame(maxWidth: .infinity)
         .padding()
+
+        // Confetti overlay fires once on appear — celebrates the successful export.
+        ConfettiBurst(trigger: confettiTrigger)
+            .ignoresSafeArea()
+        }
+        .onAppear { confettiTrigger &+= 1 }
     }
 }
 

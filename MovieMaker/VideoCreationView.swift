@@ -5,6 +5,7 @@ struct VideoCreationView: View {
     let settings: VideoCompilationSettings // Add settings
     let onComplete: (URL) -> Void
 
+    @EnvironmentObject var storeManager: StoreManager
     @State private var progress: Double = 0
     @State private var status: String = "Preparing..."
     @State private var showingError = false
@@ -139,6 +140,10 @@ struct VideoCreationView: View {
 
                 switch result {
                 case .success:
+                    // Count this against the free tier. StoreManager is a no-op
+                    // for Pro users, so this is safe to call unconditionally.
+                    storeManager.recordExport()
+
                     // Send notification if app is in background
                     if scenePhase == .background {
                         NotificationManager.shared.sendVideoCompleteNotification()

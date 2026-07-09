@@ -2,6 +2,8 @@ import SwiftUI
 
 // MARK: - App Theme
 // Centralized styling constants for consistent UI across the app
+// NOTE: This file is NOT in the Xcode compile sources — the live theme/colors
+// are defined in Models.swift. Kept for reference only.
 
 // MARK: - Colors
 extension Color {

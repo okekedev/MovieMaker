@@ -1,0 +1,142 @@
+{
+  "identifier": "3E7A9F1B-2C64-4E85-B0F1-1D9C6A8B7E23",
+  "nonRenewingSubscriptions": [],
+  "products": [
+    {
+      "displayPrice": "2.99",
+      "familyShareable": false,
+      "internalID": "5AE87ACE-56CD-4731-826E-B8813280B672",
+      "localizations": [
+        {
+          "description": "5 coins. Each coin exports 1 video.",
+          "displayName": "5 Coins",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "com.christianokeke.moviemaker.coins.5",
+      "referenceName": "5 Coins",
+      "type": "Consumable"
+    },
+    {
+      "displayPrice": "6.99",
+      "familyShareable": false,
+      "internalID": "9022FC96-B368-42B5-AF1A-0332CAB51136",
+      "localizations": [
+        {
+          "description": "15 coins. Each coin exports 1 video.",
+          "displayName": "15 Coins",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "com.christianokeke.moviemaker.coins.15",
+      "referenceName": "15 Coins",
+      "type": "Consumable"
+    }
+  ],
+  "settings": {
+    "_applicationInternalID": "6755254508",
+    "_developerTeamID": "TUG3BHLSM4",
+    "_failTransactionsEnabled": false,
+    "_lastSynchronizedDate": 0,
+    "_locale": "en_US",
+    "_storefront": "USA",
+    "_storeKitErrors": [
+      {
+        "current": null,
+        "enabled": false,
+        "name": "Load Products"
+      },
+      {
+        "current": null,
+        "enabled": false,
+        "name": "Purchase"
+      },
+      {
+        "current": null,
+        "enabled": false,
+        "name": "Verification"
+      },
+      {
+        "current": null,
+        "enabled": false,
+        "name": "App Store Sync"
+      },
+      {
+        "current": null,
+        "enabled": false,
+        "name": "Subscription Status"
+      },
+      {
+        "current": null,
+        "enabled": false,
+        "name": "App Transaction"
+      },
+      {
+        "current": null,
+        "enabled": false,
+        "name": "Manage Subscriptions Sheet"
+      },
+      {
+        "current": null,
+        "enabled": false,
+        "name": "Refund Request Sheet"
+      },
+      {
+        "current": null,
+        "enabled": false,
+        "name": "Offer Code Redeem Sheet"
+      }
+    ]
+  },
+  "subscriptionGroups": [
+    {
+      "id": "87E70472-E4C7-4C80-8EE2-D9B5955F77B0",
+      "localizations": [],
+      "name": "Movie Maker Pro",
+      "subscriptions": [
+        {
+          "adHocOffers": [],
+          "codeOffers": [],
+          "displayPrice": "7.99",
+          "familyShareable": false,
+          "groupNumber": 1,
+          "internalID": "71DA8402-18BC-4C20-8AAA-DB11C301DA77",
+          "localizations": [
+            {
+              "description": "Unlimited video exports, billed monthly.",
+              "displayName": "Movie Maker Pro (Monthly)",
+              "locale": "en_US"
+            }
+          ],
+          "productID": "com.christianokeke.moviemaker.pro.monthly",
+          "recurringSubscriptionPeriod": "P1M",
+          "referenceName": "Movie Maker Pro Monthly",
+          "type": "RecurringSubscription"
+        },
+        {
+          "adHocOffers": [],
+          "codeOffers": [],
+          "displayPrice": "29.99",
+          "familyShareable": false,
+          "groupNumber": 2,
+          "internalID": "9179A0BD-F9A0-435A-93EE-C85672FCF97E",
+          "localizations": [
+            {
+              "description": "Unlimited video exports, billed yearly. Save 68%.",
+              "displayName": "Movie Maker Pro (Yearly)",
+              "locale": "en_US"
+            }
+          ],
+          "productID": "com.christianokeke.moviemaker.pro.yearly",
+          "recurringSubscriptionPeriod": "P1Y",
+          "referenceName": "Movie Maker Pro Yearly",
+          "type": "RecurringSubscription"
+        }
+      ]
+    }
+  ],
+  "version": {
+    "major": 3,
+    "minor": 0
+  }
+}
