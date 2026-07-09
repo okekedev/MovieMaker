@@ -153,29 +153,42 @@ struct PaywallView: View {
     }
 
     private var subscriptionSection: some View {
-        VStack(alignment: .leading, spacing: 10.scaled) {
+        let monthly = storeManager.product(id: StoreManager.monthlySubscriptionID)
+        let yearly = storeManager.product(id: StoreManager.yearlySubscriptionID)
+        return VStack(alignment: .leading, spacing: 10.scaled) {
             Text("Or go unlimited")
                 .font(.system(size: 16.scaled, weight: .semibold))
                 .foregroundColor(.white)
                 .padding(.top, 4.scaled)
 
-            if let monthly = storeManager.product(id: StoreManager.monthlySubscriptionID) {
+            if let monthly {
                 SubTierRow(
                     title: "Monthly",
                     priceLine: "\(monthly.displayPrice) / month",
-                    trailingBadge: "Save 43%",
+                    trailingBadge: nil,                       // baseline — no savings badge
                     action: { purchase(monthly) }
                 )
             }
-            if let yearly = storeManager.product(id: StoreManager.yearlySubscriptionID) {
+            if let yearly {
                 SubTierRow(
                     title: "Yearly",
                     priceLine: "\(yearly.displayPrice) / year",
-                    trailingBadge: "Save 68%",
+                    trailingBadge: yearlySavingsBadge(monthly: monthly, yearly: yearly),
                     action: { purchase(yearly) }
                 )
             }
         }
+    }
+
+    // Real yearly savings vs. paying monthly for 12 months, computed from live
+    // prices so the badge always matches the store instead of a hardcoded %.
+    private func yearlySavingsBadge(monthly: Product?, yearly: Product) -> String? {
+        guard let monthly else { return nil }
+        let annual = (monthly.price as NSDecimalNumber).doubleValue * 12
+        let yr = (yearly.price as NSDecimalNumber).doubleValue
+        guard annual > 0, yr < annual else { return nil }
+        let pct = Int((((annual - yr) / annual) * 100).rounded())
+        return pct > 0 ? "Save \(pct)%" : nil
     }
 
     private var restoreAndLegal: some View {

@@ -116,13 +116,13 @@
         {
           "adHocOffers": [],
           "codeOffers": [],
-          "displayPrice": "29.99",
+          "displayPrice": "49.99",
           "familyShareable": false,
           "groupNumber": 2,
           "internalID": "9179A0BD-F9A0-435A-93EE-C85672FCF97E",
           "localizations": [
             {
-              "description": "Unlimited video exports, billed yearly. Save 68%.",
+              "description": "Unlimited video exports, billed yearly. Save 48%.",
               "displayName": "Movie Maker Pro (Yearly)",
               "locale": "en_US"
             }
