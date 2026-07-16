@@ -17,15 +17,17 @@ struct SettingsView: View {
 
     @State private var showingWarning = false
     @State private var warningMessage = ""
-    @State private var orientationExpanded = false
     @State private var showingPaywall = false
-    @State private var titleExpanded = false
-    @State private var musicExpanded = false // Re-add musicExpanded
-    @State private var transitionExpanded = false
-    @State private var photoDurationExpanded = false
     @State private var showingMusicPicker = false
     @State private var selectedMusicTitle: String = "None"
+    @State private var expandedTool: EditorTool?
+    @State private var isPreviewPlaying: Bool = true
+    @State private var previewProgress: Double = 0
+    @State private var previewDuration: Double = 0
+    @State private var isScrubbing: Bool = false
     @EnvironmentObject var storeManager: StoreManager
+
+    enum EditorTool { case aspect, music }
 
     private static let photoDurationOptions: [Double] = [2, 3, 5, 10]
 
@@ -33,350 +35,101 @@ struct SettingsView: View {
         selectedMedia.contains { $0.asset.mediaType == .image }
     }
 
-    private var totalDuration: Double {
-        var duration: Double = 0
-        for item in selectedMedia {
-            if item.asset.mediaType == .image {
-                duration += settings.photoDuration
-            } else {
-                duration += item.asset.duration
-            }
-        }
-        return duration
-    }
-
-    private var formattedDuration: String {
-        let minutes = Int(totalDuration) / 60
-        let seconds = Int(totalDuration) % 60
-        if minutes > 0 {
-            return "\(minutes) min \(seconds) sec"
-        } else {
-            return "\(seconds) sec"
-        }
-    }
-
     var body: some View {
-        VStack(spacing: 0) {
-            // Header
-            HStack {
-                Button(action: onBack) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 18, weight: .semibold))
-                        Text("Back")
-                            .font(.system(size: 17, weight: .regular))
-                    }
-                    .foregroundColor(.primary)
+        VStack(spacing: 12) {
+            // Live preview — takes remaining vertical space.
+            CompositionPreviewPlayer(
+                media: selectedMedia,
+                settings: settings,
+                isPlaying: $isPreviewPlaying,
+                progress: $previewProgress,
+                duration: $previewDuration,
+                isScrubbing: $isScrubbing
+            )
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .padding(.horizontal, 12)
+                .padding(.top, 12)
+
+            // Timeline scrubber — playhead position across the composition.
+            timelineBar
+                .padding(.horizontal, 16)
+
+            // Tool icon row — each expands a sub-tab below (matches Trim view).
+            VStack(spacing: 8) {
+                HStack(spacing: 12) {
+                    Button(action: { toggleTool(.aspect) }) {
+                        toolIconBody(icon: "aspectratio", active: expandedTool == .aspect)
+                    }.buttonStyle(.plain)
+
+                    Button(action: {
+                        if settings.musicAsset == nil {
+                            showingMusicPicker = true
+                        } else {
+                            toggleTool(.music)
+                        }
+                    }) {
+                        toolIconBody(
+                            icon: settings.musicAsset != nil ? "music.note" : "music.note.list",
+                            active: expandedTool == .music || settings.musicAsset != nil
+                        )
+                    }.buttonStyle(.plain)
+
+                    // Transition is a direct toggle — fade on/off, no sub-tab.
+                    Button(action: { settings.transition = settings.transition == .fade ? .none : .fade }) {
+                        toolIconBody(icon: "arrow.left.and.right.circle", active: settings.transition == .fade)
+                    }.buttonStyle(.plain)
+
+                    // Direct toggle like Fade: on = today's date, off = nil.
+                    Button(action: {
+                        settings.dateStamp = settings.dateStamp == nil ? Date() : nil
+                    }) {
+                        toolIconBody(icon: "calendar", active: settings.dateStamp != nil)
+                    }.buttonStyle(.plain)
                 }
-                .padding(.leading, 20)
-                Spacer()
-            }
-            .frame(height: 60)
-            .background(Color(.systemBackground))
+                .padding(.horizontal, 16)
 
-            ScrollView {
-                VStack(alignment: .leading, spacing: 24) {
-                    // Aspect ratio — pick the target platform's size before export.
-                    DisclosureGroup(
-                        isExpanded: $orientationExpanded,
-                        content: {
-                            VStack(alignment: .leading, spacing: 8) {
-                                Picker("Aspect ratio", selection: $settings.orientation) {
-                                    ForEach(VideoOrientation.allCases, id: \.self) { orientation in
-                                        Text(orientation.rawValue).tag(orientation)
-                                    }
-                                }
-                                .pickerStyle(SegmentedPickerStyle())
-
-                                Text("For \(settings.orientation.platformHint)")
-                                    .font(.system(size: 13))
-                                    .foregroundColor(.secondary)
-                                    .frame(maxWidth: .infinity, alignment: .center)
-                            }
-                            .padding(.top, 8)
-                        },
-                        label: {
-                            HStack {
-                                Text("Aspect Ratio")
-                                    .font(.system(size: 17, weight: .semibold))
-                                Spacer()
-                                Text("\(settings.orientation.rawValue) · \(settings.orientation.platformHint)")
-                                    .font(.system(size: 15))
-                                    .foregroundColor(.secondary)
-                            }
+                // Inline sub-tab under the icons.
+                Group {
+                    switch expandedTool {
+                    case .aspect:
+                        HStack(spacing: 8) {
+                            aspectChip(.landscape)
+                            aspectChip(.square)
+                            aspectChip(.portrait)
                         }
-                    )
-
-                    Divider()
-
-                    // Title Screen
-                    DisclosureGroup(
-                        isExpanded: $titleExpanded,
-                        content: {
-                            VStack(spacing: 16) {
-                                VStack(alignment: .leading, spacing: 12) {
-                                    Text("Title (Required)")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-
-                                    TextField("Enter title", text: $settings.titleText)
-                                        .textFieldStyle(RoundedBorderTextFieldStyle())
-
-                                    Text("Subtitle (Optional)")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-
-                                    TextField("Enter subtitle", text: $settings.subtitleText)
-                                        .textFieldStyle(RoundedBorderTextFieldStyle())
-
-                                    Text("White text on black background • 3 seconds")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                        .padding(.top, 4)
-                                }
-                            }
-                            .padding(.top, 8)
-                        },
-                        label: {
-                            HStack {
-                                Text("Title Screen")
-                                    .font(.system(size: 17, weight: .semibold))
-                                Spacer()
-                                if !settings.titleText.isEmpty { // Always consider title screen included if text is present
-                                    Image(systemName: "checkmark.circle.fill")
-                                        .foregroundColor(.green)
-                                        .font(.system(size: 15))
-                                } else {
-                                    Text("No Title") // Changed from "Optional"
-                                        .font(.system(size: 15))
-                                        .foregroundColor(.secondary)
-                                }
-                            }
-                        }
-                    )
-
-                    Divider()
-
-                    // Transition Style
-                    DisclosureGroup(
-                        isExpanded: $transitionExpanded,
-                        content: {
-                            VStack(spacing: 12) {
-                                Picker("Transition Style", selection: $settings.transition) {
-                                    ForEach(TransitionType.allCases, id: \.self) { transition in
-                                        Text(transition.rawValue).tag(transition)
-                                    }
-                                }
-                                .pickerStyle(SegmentedPickerStyle())
-
-                                if settings.transition == .fade { // Only show color picker if transition is fade
-                                    ColorPicker("Transition Color", selection: $settings.transitionColor.swiftuiColor)
-                                        .padding(.horizontal, 4)
-                                }
-                            }
-                            .padding(.top, 8)
-                        },
-                        label: {
-                            HStack {
-                                Text("Transition Style")
-                                    .font(.system(size: 17, weight: .semibold))
-                                Spacer()
-                                Text(settings.transition.rawValue)
-                                    .font(.system(size: 15))
-                                    .foregroundColor(.secondary)
-                            }
-                        }
-                    )
-
-
-
-                    if hasPhotos {
-                        Divider()
-
-                        DisclosureGroup(
-                            isExpanded: $photoDurationExpanded,
-                            content: {
-                                VStack(spacing: 12) {
-                                    Picker("Photo Duration", selection: $settings.photoDuration) {
-                                        ForEach(Self.photoDurationOptions, id: \.self) { value in
-                                            Text("\(Int(value)) sec").tag(value)
-                                        }
-                                    }
-                                    .pickerStyle(SegmentedPickerStyle())
-                                }
-                                .padding(.top, 8)
-                            },
-                            label: {
-                                HStack {
-                                    Text("Photo Duration")
-                                        .font(.system(size: 17, weight: .semibold))
-                                    Spacer()
-                                    Text("\(Int(settings.photoDuration)) sec")
-                                        .font(.system(size: 15))
-                                        .foregroundColor(.secondary)
-                                }
-                            }
-                        )
-                    }
-
-                    Divider()
-
-                    // Background Music — available to every user (no feature gate;
-                    // coins gate only the final video export).
-                    DisclosureGroup(
-                            isExpanded: $musicExpanded,
-                            content: {
-                                VStack(spacing: 16) {
-                                    Button(action: {
-                                        showingMusicPicker = true
-                                    }) {
-                                        HStack {
-                                            Image(systemName: "music.note")
-                                                .foregroundColor(.brandPrimary)
-
-                                            VStack(alignment: .leading) {
-                                                Text("Select Music")
-                                                    .font(.subheadline)
-                                                    .foregroundColor(.primary)
-
-                                                Text(selectedMusicTitle)
-                                                    .font(.caption)
-                                                    .foregroundColor(.secondary)
-                                            }
-
-                                            Spacer()
-
-                                            Image(systemName: "chevron.right")
-                                                .foregroundColor(.secondary)
-                                                .font(.caption)
-                                        }
-                                        .padding(12)
-                                        .background(Color.brandPrimary.opacity(0.1))
-                                        .cornerRadius(8)
-                                    }
-
-                                    if settings.musicAsset != nil {
-                                        VStack(spacing: 8) {
-                                            HStack {
-                                                Text("Volume")
-                                                Spacer()
-                                                Text("\(Int(settings.musicVolume * 100))%")
-                                                    .fontWeight(.semibold)
-                                            }
-                                            .font(.subheadline)
-
-                                            Slider(value: $settings.musicVolume, in: 0...1)
-                                                .tint(Color.brandAccent)
-                                        }
-
-                                        Toggle("Background Music Only", isOn: Binding(
-                                            get: { selectedMedia.allSatisfy { $0.isMuted } },
-                                            set: { newValue in
-                                                for index in selectedMedia.indices {
-                                                    selectedMedia[index].isMuted = newValue
-                                                }
-                                            }
-                                        ))
-                                        .tint(Color.brandAccent)
-
-                                        Button(action: {
-                                            settings.musicAsset = nil
-                                            selectedMusicTitle = "None"
-                                        }) {
-                                            HStack {
-                                                Image(systemName: "trash")
-                                                Text("Remove Music")
-                                            }
-                                            .font(.subheadline)
-                                            .foregroundColor(.red)
-                                        }
-                                    }
-
-                                    Text("Music will loop throughout the video")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                }
-                                .padding(.top, 8)
-                            },
-                            label: {
-                                HStack {
-                                    Text("Background Music")
-                                        .font(.system(size: 17, weight: .semibold))
-                                    Spacer()
-                                    if settings.musicAsset != nil {
-                                        Image(systemName: "checkmark.circle.fill")
-                                            .foregroundColor(.green)
-                                            .font(.system(size: 15))
-                                    } else {
-                                        Text("None")
-                                            .font(.system(size: 15))
-                                            .foregroundColor(.secondary)
-                                    }
-                                }
-                            }
-                        )
-
-
-                
-                    // Preview Section
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Preview")
-                            .font(.system(size: 17, weight: .semibold))
-
-                        HStack {
-                            Image(systemName: "clock")
-                                .foregroundColor(.brandPrimary)
-                            Text("Total length: \(formattedDuration)")
-                                .fontWeight(.medium)
-                        }
-                        .padding(12)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(Color.brandPrimary.opacity(0.1))
-                        .cornerRadius(8)
-
-                        HStack {
-                            Image(systemName: "photo.stack")
-                                .foregroundColor(.brandPrimary)
-                            Text("\(selectedMedia.count) item\(selectedMedia.count == 1 ? "" : "s")")
-                                .fontWeight(.medium)
-                        }
-                        .padding(12)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(Color.brandPrimary.opacity(0.1))
-                        .cornerRadius(8)
+                    case .music: musicSubTab
+                    case .none: EmptyView()
                     }
                 }
-                .padding()
+                .padding(.horizontal, 16)
+                .padding(.top, expandedTool == nil ? 0 : 4)
+                .animation(.easeInOut(duration: 0.08), value: expandedTool)
             }
+            .layoutPriority(1)
 
-            // Create Button
-            Button(action: {
-                checkAndCreate()
-            }) {
-                Text("Create Video")
-                    .font(.system(size: 17, weight: .semibold))
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 16)
-                    .background(
-                        LinearGradient(
-                            colors: Color.brandGradient,
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                    .cornerRadius(12)
-                    .shadow(color: Color.brandSecondary.opacity(0.5), radius: 15, x: 0, y: 8)
+            // Fixed gap before the action row (not a greedy Spacer — that
+            // would fight the top Spacer that centers the preview).
+            Color.clear.frame(height: 36)
+
+            // Bottom action row — back, play/pause, check. Play/pause toggles
+            // the preview player between back and the final commit.
+            HStack(spacing: 20) {
+                actionCircle(icon: "chevron.backward", tint: .brandPrimary, filled: false, action: onBack)
+                actionCircle(
+                    icon: isPreviewPlaying ? "pause.fill" : "play.fill",
+                    tint: .brandPrimary,
+                    filled: false,
+                    action: { isPreviewPlaying.toggle() }
+                )
+                actionCircle(icon: "checkmark", tint: .white, filled: true, action: checkAndCreate)
             }
-            .padding(.horizontal, 20)
+            .frame(maxWidth: .infinity)
             .padding(.bottom, 40)
         }
         .navigationBarHidden(true)
         .alert("Warning", isPresented: $showingWarning) {
             Button("Cancel", role: .cancel) {}
-            Button("Create Anyway") {
-                onCreate()
-            }
+            Button("Create Anyway") { onCreate() }
         } message: {
             Text(warningMessage)
         }
@@ -388,38 +141,415 @@ struct SettingsView: View {
             DocumentPicker(
                 selectedMusicTitle: $selectedMusicTitle,
                 musicAsset: $settings.musicAsset,
-                onDismiss: {
-                    showingMusicPicker = false
-                }
+                onDismiss: { showingMusicPicker = false }
             )
         }
     }
 
+    private func toggleTool(_ tool: EditorTool) {
+        expandedTool = expandedTool == tool ? nil : tool
+    }
+
+    // MARK: - Timeline scrubber
+
+    @ViewBuilder
+    private var timelineBar: some View {
+        GeometryReader { geo in
+            ZStack(alignment: .leading) {
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(Color.brandPrimary.opacity(0.15))
+                    .frame(height: 6)
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(
+                        LinearGradient(colors: Color.primaryGradient, startPoint: .leading, endPoint: .trailing)
+                    )
+                    .frame(width: max(0, CGFloat(previewProgress) * geo.size.width), height: 6)
+                Circle()
+                    .fill(Color.brandPrimary)
+                    .frame(width: isScrubbing ? 20 : 14, height: isScrubbing ? 20 : 14)
+                    .shadow(color: Color.brandPrimary.opacity(0.5), radius: 4, x: 0, y: 2)
+                    .offset(x: max(0, CGFloat(previewProgress) * geo.size.width - (isScrubbing ? 10 : 7)))
+                    .animation(.easeOut(duration: 0.1), value: isScrubbing)
+            }
+            .contentShape(Rectangle())
+            .frame(height: 20)
+            .frame(maxHeight: .infinity, alignment: .center)
+            .gesture(
+                DragGesture(minimumDistance: 0)
+                    .onChanged { value in
+                        isScrubbing = true
+                        let clamped = min(max(0, value.location.x), geo.size.width)
+                        previewProgress = geo.size.width > 0 ? Double(clamped / geo.size.width) : 0
+                    }
+                    .onEnded { _ in isScrubbing = false }
+            )
+        }
+        .frame(height: 20)
+    }
+
+    // MARK: - Sub-tabs (inline editors under the icon row)
+
+    @ViewBuilder
+    private var musicSubTab: some View {
+        HStack(spacing: 10) {
+            Image(systemName: "speaker.wave.2")
+                .foregroundColor(.brandPrimary)
+                .frame(width: 24)
+            Slider(value: $settings.musicVolume, in: 0...1).tint(Color.brandAccent)
+            Button(action: { showingMusicPicker = true }) {
+                Image(systemName: "arrow.triangle.2.circlepath")
+                    .foregroundColor(.brandPrimary)
+            }.buttonStyle(.plain)
+            Button(action: {
+                settings.musicAsset = nil
+                selectedMusicTitle = "None"
+                expandedTool = nil
+            }) {
+                Image(systemName: "trash")
+                    .foregroundColor(.red)
+            }.buttonStyle(.plain)
+        }
+        .padding(10)
+        .background(Color.brandPrimary.opacity(0.08))
+        .cornerRadius(12)
+    }
+
+
+    @ViewBuilder
+    private var transitionSubTab: some View {
+        Picker("Transition", selection: $settings.transition) {
+            ForEach(TransitionType.allCases, id: \.self) { t in
+                Text(t.rawValue).tag(t)
+            }
+        }
+        .pickerStyle(SegmentedPickerStyle())
+        .padding(10)
+        .background(Color.brandPrimary.opacity(0.08))
+        .cornerRadius(12)
+    }
+
+    @ViewBuilder
+    private var durationSubTab: some View {
+        VStack(spacing: 8) {
+            if hasPhotos {
+                HStack(spacing: 10) {
+                    Image(systemName: "photo")
+                        .foregroundColor(.brandPrimary)
+                        .frame(width: 24)
+                    Picker("Photo hold", selection: $settings.photoDuration) {
+                        ForEach(Self.photoDurationOptions, id: \.self) { v in
+                            Text("\(Int(v))s").tag(v)
+                        }
+                    }.pickerStyle(SegmentedPickerStyle())
+                }
+            }
+            HStack(spacing: 10) {
+                Image(systemName: "textformat")
+                    .foregroundColor(.brandPrimary)
+                    .frame(width: 24)
+                Picker("Title hold", selection: $settings.titleDuration) {
+                    ForEach(Self.photoDurationOptions, id: \.self) { v in
+                        Text("\(Int(v))s").tag(v)
+                    }
+                }.pickerStyle(SegmentedPickerStyle())
+            }
+        }
+        .padding(10)
+        .background(Color.brandPrimary.opacity(0.08))
+        .cornerRadius(12)
+    }
+
+    // MARK: - Chip / icon helpers
+
+    @ViewBuilder
+    private func aspectChip(_ o: VideoOrientation) -> some View {
+        let active = settings.orientation == o
+        Button(action: {
+            settings.orientation = o
+            expandedTool = nil
+        }) {
+            Text(o.rawValue)
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundColor(active ? .white : .brandPrimary)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 10)
+                .background(
+                    Group {
+                        if active {
+                            LinearGradient(colors: Color.primaryGradient, startPoint: .leading, endPoint: .trailing)
+                        } else {
+                            Color.brandPrimary.opacity(0.12)
+                        }
+                    }
+                )
+                .cornerRadius(10)
+        }
+        .buttonStyle(.plain)
+    }
+
+    @ViewBuilder
+    private func toolIconBody(icon: String, active: Bool) -> some View {
+        Image(systemName: icon)
+            .font(.system(size: 22, weight: .semibold))
+            .foregroundColor(active ? .white : .brandPrimary)
+            .frame(width: 60, height: 50)
+            .background(active ? Color.brandPrimary : Color.brandPrimary.opacity(0.12))
+            .cornerRadius(12)
+    }
+
+    @ViewBuilder
+    private func actionCircle(icon: String, tint: Color, filled: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: icon)
+                .font(.system(size: 28, weight: .semibold))
+                .foregroundColor(tint)
+                .frame(width: 72, height: 72)
+                .background(
+                    Group {
+                        if filled {
+                            LinearGradient(colors: Color.brandGradient, startPoint: .leading, endPoint: .trailing)
+                        } else {
+                            Color.brandPrimary.opacity(0.12)
+                        }
+                    }
+                )
+                .clipShape(Circle())
+                .shadow(color: filled ? Color.brandSecondary.opacity(0.4) : .clear, radius: 10, x: 0, y: 4)
+        }
+        .buttonStyle(.plain)
+    }
+
+    // MARK: - Create action
+
     private func checkAndCreate() {
-        // Free-tier gate: paywall lands here at export time, not at selection.
-        // Users can build any project they want and only hit the wall when
-        // they try to burn their 4th free export.
         if !storeManager.canStartExport {
             showingPaywall = true
             return
         }
-
-        // Check for very long videos
         let longVideos = selectedMedia.filter { $0.asset.mediaType == .video && $0.asset.duration > 300 }
         if !longVideos.isEmpty {
             showingWarning = true
             warningMessage = "You have \(longVideos.count) video\(longVideos.count == 1 ? "" : "s") longer than 5 minutes. This may result in a very large file."
             return
         }
-
-        // Check for large number of items
         if selectedMedia.count > 100 {
             showingWarning = true
             warningMessage = "You have \(selectedMedia.count) items. This may take several minutes to create."
             return
         }
-
         onCreate()
     }
 }
-// Dummy comment to force re-evaluation
+
+// MARK: - CompositionPreviewPlayer
+
+/// Live preview of the compilation as an AVAssetImageGenerator-backed
+/// flipbook. We can't use AVPlayer + videoComposition on the iOS Simulator
+/// because the sim's video compositor errors -19230 whenever the composition
+/// mixes a photo-generated MP4 with a Photos-library video. The image
+/// generator uses a different rendering path that works reliably on sim and
+/// on device. Rebuilds when media or settings change.
+struct CompositionPreviewPlayer: View {
+    let media: [MediaItem]
+    let settings: VideoCompilationSettings
+    @Binding var isPlaying: Bool
+    @Binding var progress: Double
+    @Binding var duration: Double
+    @Binding var isScrubbing: Bool
+
+    @State private var frames: [UIImage] = []
+    @State private var currentIndex: Int = 0
+    @State private var wasPlayingBeforeScrub: Bool = false
+    /// Retained composition + sources so the image generator's underlying
+    /// tracks stay valid for the whole preview lifetime.
+    @State private var retainedComposition: AVMutableComposition?
+    @State private var retainedSources: [AVAsset] = []
+    /// Wall-clock timer that advances currentIndex at real-time playback rate.
+    @State private var tickTimer: Timer?
+
+    private static let framesPerSecond: Double = 6
+
+    var body: some View {
+        GeometryReader { geo in
+            let aspect = settings.orientation.size.width / settings.orientation.size.height
+            let (fitW, fitH): (CGFloat, CGFloat) = {
+                let scaleToWidth = geo.size.width / aspect
+                if scaleToWidth <= geo.size.height {
+                    return (geo.size.width, scaleToWidth)
+                } else {
+                    return (geo.size.height * aspect, geo.size.height)
+                }
+            }()
+
+            ZStack {
+                Color.black
+                if !frames.isEmpty {
+                    let idx = min(max(0, currentIndex), frames.count - 1)
+                    Image(uiImage: frames[idx])
+                        .resizable()
+                        .scaledToFill()
+                } else {
+                    ProgressView().tint(.white)
+                }
+            }
+            .frame(width: fitW, height: fitH)
+            .clipShape(RoundedRectangle(cornerRadius: 20))
+            .position(x: geo.size.width / 2, y: geo.size.height / 2)
+        }
+        .task(id: rebuildKey) { await rebuild() }
+        .onChange(of: isPlaying) {
+            if isPlaying { startTicking() } else { stopTicking() }
+        }
+        .onChange(of: isScrubbing) {
+            if isScrubbing {
+                wasPlayingBeforeScrub = isPlaying
+                stopTicking()
+            } else if wasPlayingBeforeScrub {
+                startTicking()
+            }
+        }
+        .onChange(of: progress) {
+            guard isScrubbing, !frames.isEmpty else { return }
+            currentIndex = min(frames.count - 1, max(0, Int(progress * Double(frames.count - 1))))
+        }
+        .onDisappear { stopTicking() }
+    }
+
+    private var rebuildKey: String {
+        let orient = settings.orientation.rawValue
+        let mediaSig = media.map { item -> String in
+            let start = item.startTime.seconds
+            let end = item.endTime?.seconds ?? -1
+            let crop = item.cropRect.map { "\($0.origin.x),\($0.origin.y),\($0.width),\($0.height)" } ?? "n"
+            return "\(item.id)-\(start)-\(end)-\(item.isMuted)-\(item.playbackRate)-\(crop)"
+        }.joined(separator: "|")
+        return "\(orient)-\(mediaSig)"
+    }
+
+    private func rebuild() async {
+        stopTicking()
+        guard !media.isEmpty else {
+            await MainActor.run { self.frames = []; self.duration = 0 }
+            return
+        }
+        do {
+            let fullSize = settings.orientation.size
+            let previewScale = min(1.0, 640.0 / max(fullSize.width, fullSize.height))
+            let (composition, videoComposition, sources) = try await VideoCompiler.buildComposition(
+                media: media,
+                settings: settings,
+                attachOverlays: false,
+                renderScale: previewScale
+            )
+            let totalSeconds = CMTimeGetSeconds(composition.duration)
+            guard totalSeconds > 0 else { return }
+            let frameCount = max(6, Int(totalSeconds * Self.framesPerSecond))
+            print("[Preview] Generating \(frameCount) frames over \(totalSeconds)s at \(videoComposition.renderSize)")
+
+            let gen = AVAssetImageGenerator(asset: composition)
+            gen.videoComposition = videoComposition
+            gen.appliesPreferredTrackTransform = false
+            gen.requestedTimeToleranceBefore = CMTime(seconds: 0.05, preferredTimescale: 600)
+            gen.requestedTimeToleranceAfter = CMTime(seconds: 0.05, preferredTimescale: 600)
+            // Don't set maximumSize — videoComposition.renderSize already
+            // controls output size, and maximumSize triggers a second aspect-fit
+            // pass that letterboxes rotated sources.
+
+            var newFrames: [UIImage] = []
+            newFrames.reserveCapacity(frameCount)
+            for i in 0..<frameCount {
+                let t = CMTime(seconds: totalSeconds * Double(i) / Double(frameCount - 1),
+                               preferredTimescale: 600)
+                do {
+                    let cg = try gen.copyCGImage(at: t, actualTime: nil)
+                    newFrames.append(UIImage(cgImage: cg))
+                } catch {
+                    print("[Preview] frame \(i) failed: \(error)")
+                }
+            }
+            print("[Preview] Generated \(newFrames.count)/\(frameCount) frames")
+
+            await MainActor.run {
+                self.retainedComposition = composition
+                self.retainedSources = sources
+                self.frames = newFrames
+                self.duration = totalSeconds
+                self.currentIndex = 0
+                if isPlaying { startTicking() }
+            }
+        } catch {
+            print("Preview build failed: \(error)")
+        }
+    }
+
+    private func startTicking() {
+        stopTicking()
+        guard !frames.isEmpty else { return }
+        let interval = 1.0 / Self.framesPerSecond
+        tickTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { _ in
+            Task { @MainActor in
+                guard !isScrubbing, !frames.isEmpty else { return }
+                var next = currentIndex + 1
+                if next >= frames.count { next = 0 }
+                currentIndex = next
+                progress = Double(next) / Double(max(1, frames.count - 1))
+            }
+        }
+    }
+
+    private func stopTicking() {
+        tickTimer?.invalidate()
+        tickTimer = nil
+    }
+}
+
+/// Delegate that AVFoundation calls with specific reasons a video composition
+/// fails validation. Per Apple TN2447 — helpful for diagnosing videoCompositor
+/// -19230 errors that otherwise surface as opaque "invalid composition".
+private final class CompositionValidator: NSObject, AVVideoCompositionValidationHandling {
+    var issues: [String] = []
+
+    func videoComposition(_ vc: AVVideoComposition, shouldContinueValidatingAfterFindingInvalidValueForKey key: String) -> Bool {
+        issues.append("invalidValue key=\(key)")
+        return true
+    }
+    func videoComposition(_ vc: AVVideoComposition, shouldContinueValidatingAfterFindingEmptyTimeRange range: CMTimeRange) -> Bool {
+        issues.append("emptyTimeRange start=\(range.start.seconds) dur=\(range.duration.seconds)")
+        return true
+    }
+    func videoComposition(_ vc: AVVideoComposition, shouldContinueValidatingAfterFindingInvalidTimeRangeIn instruction: AVVideoCompositionInstructionProtocol) -> Bool {
+        issues.append("invalidTimeRangeIn instr start=\(instruction.timeRange.start.seconds) dur=\(instruction.timeRange.duration.seconds)")
+        return true
+    }
+    func videoComposition(_ vc: AVVideoComposition, shouldContinueValidatingAfterFindingInvalidTrackIDIn instruction: AVVideoCompositionInstructionProtocol, layerInstruction: AVVideoCompositionLayerInstruction, asset: AVAsset) -> Bool {
+        issues.append("invalidTrackID trackID=\(layerInstruction.trackID)")
+        return true
+    }
+}
+
+private struct PreviewPlayerLayerView: UIViewRepresentable {
+    let player: AVPlayer
+
+    final class Container: UIView {
+        override class var layerClass: AnyClass { AVPlayerLayer.self }
+        var playerLayer: AVPlayerLayer { layer as! AVPlayerLayer }
+    }
+
+    func makeUIView(context: Context) -> Container {
+        let view = Container()
+        view.backgroundColor = .black
+        view.playerLayer.player = player
+        // .resizeAspect (fit with letterbox) is safer than aspectFill for
+        // preview — always shows the whole rendered composition content
+        // even if the container aspect differs slightly.
+        view.playerLayer.videoGravity = .resizeAspect
+        return view
+    }
+
+    func updateUIView(_ uiView: Container, context: Context) {
+        uiView.playerLayer.videoGravity = .resizeAspect
+        if uiView.playerLayer.player !== player {
+            uiView.playerLayer.player = player
+        }
+    }
+}

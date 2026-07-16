@@ -73,6 +73,76 @@ class VideoCompiler {
         completion: @escaping (Result<URL, Error>) -> Void
     ) async throws {
         do {
+            let (composition, videoComposition, retainedSources) = try await buildComposition(
+                media: media,
+                settings: settings,
+                progressHandler: progressHandler
+            )
+            // Keep retained sources alive for the duration of the export.
+            _ = retainedSources
+
+            // Export
+            let outputURL = FileManager.default.temporaryDirectory
+                .appendingPathComponent(UUID().uuidString)
+                .appendingPathExtension("mp4")
+            try? FileManager.default.removeItem(at: outputURL)
+
+            guard let exportSession = AVAssetExportSession(
+                asset: composition,
+                presetName: AVAssetExportPresetHighestQuality
+            ) else {
+                throw VideoCompositionError.exportFailed
+            }
+            exportSession.outputURL = outputURL
+            exportSession.outputFileType = .mp4
+            exportSession.videoComposition = videoComposition
+
+            await exportSession.export()
+
+            if exportSession.status == .failed {
+                throw exportSession.error ?? VideoCompositionError.exportFailed
+            }
+
+            await MainActor.run { progressHandler(0.9) }
+
+            let finalURL: URL
+            if let musicAsset = settings.musicAsset {
+                finalURL = try await addBackgroundMusic(
+                    to: outputURL,
+                    musicAsset: musicAsset,
+                    volume: settings.musicVolume
+                )
+            } else {
+                finalURL = outputURL
+            }
+
+            await MainActor.run { progressHandler(1.0) }
+            await MainActor.run { completion(.success(finalURL)) }
+        } catch {
+            await MainActor.run { completion(.failure(error)) }
+        }
+    }
+
+    /// Build an AVMutableComposition + AVMutableVideoComposition from the media
+    /// list and settings. This is the same composition the exporter uses, so
+    /// SettingsView can hand it to an AVPlayer for real-time preview WITHOUT
+    /// running the (slow) AVAssetExportSession encoder.
+    static func buildComposition(
+        media: [MediaItem],
+        settings: VideoCompilationSettings,
+        progressHandler: @escaping (Double) -> Void = { _ in },
+        attachOverlays: Bool = true,
+        renderScale: CGFloat = 1.0
+    ) async throws -> (AVMutableComposition, AVMutableVideoComposition, [AVAsset]) {
+        do {
+            // Preview path can down-scale the render target so the sim's
+            // videoCompositor doesn't choke on 1920x1080 (error -19230).
+            // Round to even dimensions — H.264 requires even width/height.
+            let fullSize = settings.orientation.size
+            let targetSize = renderScale >= 0.999
+                ? fullSize
+                : CGSize(width: floor(fullSize.width * renderScale / 2) * 2,
+                         height: floor(fullSize.height * renderScale / 2) * 2)
             let composition = AVMutableComposition()
 
             guard let videoTrack = composition.addMutableTrack(
@@ -83,9 +153,8 @@ class VideoCompiler {
             }
 
             // Only add an audio track if at least one clip has usable audio.
-            // An empty audio track (zero segments) on a photo-only composition
-            // triggers AVError -11838 / VT -16976 at export time under
-            // AVAssetExportPresetHighestQuality.
+            // An empty audio track on a photo-only composition triggers
+            // AVError -11838 / VT -16976 at export under HighestQuality.
             let needsAudioTrack = media.contains { item in
                 item.asset.mediaType == .video && !item.isMuted
             }
@@ -100,50 +169,13 @@ class VideoCompiler {
             }
 
             var instructions: [AVMutableVideoCompositionInstruction] = []
-            let transitionDuration = CMTime(seconds: 0.2, preferredTimescale: 30)
-
-            // Add black background layer to prevent green flash
-            let backgroundLayer = CALayer()
-            backgroundLayer.frame = CGRect(origin: .zero, size: settings.orientation.size)
-            backgroundLayer.backgroundColor = UIColor.black.cgColor
-
-            let videoLayer = CALayer()
-            videoLayer.frame = CGRect(origin: .zero, size: settings.orientation.size)
-            
-            // Add blur filter for transitions
-            let blurFilter = CIFilter(name: "CIGaussianBlur")!
-            blurFilter.name = "blur"
-            blurFilter.setValue(0, forKey: kCIInputRadiusKey)
-            videoLayer.filters = [blurFilter]
-
-            let parentLayer = CALayer()
-            parentLayer.frame = CGRect(origin: .zero, size: settings.orientation.size)
-            parentLayer.addSublayer(backgroundLayer)
-            parentLayer.addSublayer(videoLayer)
-
-            if settings.includeTitleScreen && !settings.titleText.isEmpty {
-                if let titleImage = createTitleScreen(title: settings.titleText, subtitle: settings.subtitleText, size: settings.orientation.size) {
-                    let titleLayer = CALayer()
-                    titleLayer.contents = titleImage.cgImage
-                    titleLayer.frame = CGRect(origin: .zero, size: settings.orientation.size)
-                    titleLayer.opacity = 1.0 // Start visible
-                    titleLayer.isGeometryFlipped = true // Correct orientation for UIImage
-
-                    let titleOverlayDuration = CMTime(seconds: 3, preferredTimescale: 30)
-
-                    // Fade Out
-                    let fadeOutAnimation = CABasicAnimation(keyPath: "opacity")
-                    fadeOutAnimation.fromValue = 1.0
-                    fadeOutAnimation.toValue = 0.0
-                    fadeOutAnimation.duration = transitionDuration.seconds
-                    fadeOutAnimation.beginTime = AVCoreAnimationBeginTimeAtZero + titleOverlayDuration.seconds - transitionDuration.seconds
-                    fadeOutAnimation.isRemovedOnCompletion = false
-                    fadeOutAnimation.fillMode = .forwards
-                    titleLayer.add(fadeOutAnimation, forKey: "titleFadeOut")
-
-                    parentLayer.addSublayer(titleLayer)
-                }
-            }
+            // Track each clip's placement in the composition so the
+            // animationTool block below can add per-clip text overlays.
+            var clipRanges: [(item: MediaItem, start: CMTime, duration: CMTime)] = []
+            // Retain source AVAssets to prevent them from being deallocated
+            // mid-playback — image segments' AVURLAssets in particular need
+            // this because the composition doesn't strongly hold sources.
+            var retainedSources: [AVAsset] = []
 
             await MainActor.run { progressHandler(0.1) }
 
@@ -160,17 +192,20 @@ class VideoCompiler {
                 let isImage = item.asset.mediaType == .image
                 let videoAsset: AVAsset
                 if isImage {
-                    let image = try await loadFullImage(for: item.asset, targetSize: settings.orientation.size)
-                    let photoDuration = CMTime(seconds: settings.photoDuration, preferredTimescale: 30)
+                    let image = try await loadFullImage(for: item.asset, targetSize: targetSize)
+                    // Per-photo override wins; fall back to global setting.
+                    let secs = item.photoDuration ?? settings.photoDuration
+                    let photoDuration = CMTime(seconds: secs, preferredTimescale: 30)
                     let segmentURL = try await createImageVideoSegment(
                         image: image,
                         duration: photoDuration,
-                        size: settings.orientation.size
+                        size: targetSize
                     )
                     videoAsset = AVURLAsset(url: segmentURL)
                 } else {
                     videoAsset = try await loadVideoAsset(for: item.asset)
                 }
+                retainedSources.append(videoAsset)
 
                 guard let sourceVideoTrack = try await videoAsset.load(.tracks).first(where: { $0.mediaType == .video }) else {
                     continue
@@ -239,8 +274,21 @@ class VideoCompiler {
                     if !item.isMuted, let sourceAudioTrack = try await videoAsset.load(.tracks).first(where: { $0.mediaType == .audio }) {
                         try? audioTrack?.insertTimeRange(CMTimeRange(start: actualStartTime, duration: currentClipDuration), of: sourceAudioTrack, at: insertionPoint)
                     }
-                    insertionPoint = CMTimeAdd(insertionPoint, currentClipDuration)
-                    effectiveClipDurationInComposition = currentClipDuration // Correct calculation
+
+                    // Apply whole-clip playback rate (Speed picker) via scaleTimeRange.
+                    // rate == 1.0 → no-op. rate == 0.5 → clip plays half-speed (2x
+                    // duration). rate == 2.0 → clip plays 2x speed (half duration).
+                    if item.playbackRate > 0 && abs(item.playbackRate - 1.0) > 0.001 {
+                        let scaledDuration = CMTimeMultiplyByFloat64(currentClipDuration, multiplier: 1.0 / item.playbackRate)
+                        let insertedRange = CMTimeRange(start: insertionPoint, duration: currentClipDuration)
+                        videoTrack.scaleTimeRange(insertedRange, toDuration: scaledDuration)
+                        audioTrack?.scaleTimeRange(insertedRange, toDuration: scaledDuration)
+                        insertionPoint = CMTimeAdd(insertionPoint, scaledDuration)
+                        effectiveClipDurationInComposition = scaledDuration
+                    } else {
+                        insertionPoint = CMTimeAdd(insertionPoint, currentClipDuration)
+                        effectiveClipDurationInComposition = currentClipDuration
+                    }
                 }
 
                 // Create instruction for proper sizing for the entire duration of the clip in the composition
@@ -254,8 +302,9 @@ class VideoCompiler {
                 let preferredTransform = try await sourceVideoTrack.load(.preferredTransform)
                 let transform = calculateTransform(
                     from: naturalSize,
-                    to: settings.orientation.size,
-                    preferredTransform: preferredTransform
+                    to: targetSize,
+                    preferredTransform: preferredTransform,
+                    cropRect: isImage ? nil : item.cropRect
                 )
 
                 // Set transform for this time range
@@ -264,101 +313,148 @@ class VideoCompiler {
                 instruction.layerInstructions = [layerInstruction]
                 videoInstructions.append(instruction)
 
-                // Implement Fade to Black using a dedicated black CALayer
-                if settings.transition == .fade && index < media.count - 1 {
-                    let blackTransitionLayer = CALayer()
-                    blackTransitionLayer.frame = CGRect(origin: .zero, size: settings.orientation.size)
-                    blackTransitionLayer.backgroundColor = settings.transitionColor.uiColor.cgColor
-                    blackTransitionLayer.opacity = 0.0 // Start transparent
+                clipRanges.append((item, clipStartTime, effectiveClipDurationInComposition))
 
-                    // Fade in to black
-                    let fadeInBlack = CABasicAnimation(keyPath: "opacity")
-                    fadeInBlack.fromValue = 0.0
-                    fadeInBlack.toValue = 1.0
-                    fadeInBlack.duration = transitionDuration.seconds
-                    fadeInBlack.beginTime = AVCoreAnimationBeginTimeAtZero + clipStartTime.seconds + effectiveClipDurationInComposition.seconds - transitionDuration.seconds
-                    fadeInBlack.isRemovedOnCompletion = false
-                    fadeInBlack.fillMode = .forwards
-                    blackTransitionLayer.add(fadeInBlack, forKey: "fadeInBlack-\(clipStartTime.seconds)")
-
-                    // Fade out from black
-                    let fadeOutBlack = CABasicAnimation(keyPath: "opacity")
-                    fadeOutBlack.fromValue = 1.0
-                    fadeOutBlack.toValue = 0.0
-                    fadeOutBlack.duration = transitionDuration.seconds
-                    fadeOutBlack.beginTime = AVCoreAnimationBeginTimeAtZero + clipStartTime.seconds + effectiveClipDurationInComposition.seconds
-                    fadeOutBlack.isRemovedOnCompletion = false
-                    fadeOutBlack.fillMode = .forwards
-                    blackTransitionLayer.add(fadeOutBlack, forKey: "fadeOutBlack-\(clipStartTime.seconds)")
-
-                    parentLayer.addSublayer(blackTransitionLayer)
-                }
-
-
+                // Fade-to-black transitions used to be implemented here via
+                // CALayer/CABasicAnimation feeding a CoreAnimationTool, but
+                // that tool was disabled (see AVError -11838 diagnostic notes
+                // in the git history) and the layer code became dead. Removed
+                // as part of the buildComposition refactor.
             }
-            instructions = videoInstructions // Assign to global instructions
+            instructions = videoInstructions
 
-            await MainActor.run { progressHandler(0.8) }
-
-            // Create video composition with black background
             let videoComposition = AVMutableVideoComposition()
             videoComposition.instructions = instructions
             videoComposition.frameDuration = CMTime(value: 1, timescale: 30)
-            videoComposition.renderSize = settings.orientation.size
+            videoComposition.renderSize = targetSize
 
-            // DIAGNOSTIC: temporarily disabled to isolate AVError -11838
-            // videoComposition.animationTool = AVVideoCompositionCoreAnimationTool(
-            //     postProcessingAsVideoLayer: videoLayer,
-            //     in: parentLayer
-            // )
+            // Overlays: per-clip title/subtitle + global retro date stamp.
+            // Skipped entirely when attachOverlays=false (preview path) because
+            // AVVideoCompositionCoreAnimationTool is export-only.
+            let hasPerClipText = clipRanges.contains { !$0.item.titleText.isEmpty || !$0.item.subtitleText.isEmpty }
+            let hasDate = settings.dateStamp != nil
 
-            // Export
-            let outputURL = FileManager.default.temporaryDirectory
-                .appendingPathComponent(UUID().uuidString)
-                .appendingPathExtension("mp4")
+            if attachOverlays && (hasPerClipText || hasDate) {
+                let renderSize = settings.orientation.size
+                let parentLayer = CALayer()
+                parentLayer.frame = CGRect(origin: .zero, size: renderSize)
+                let videoLayer = CALayer()
+                videoLayer.frame = CGRect(origin: .zero, size: renderSize)
+                parentLayer.addSublayer(videoLayer)
 
-            try? FileManager.default.removeItem(at: outputURL)
+                // Per-clip title/subtitle overlays — CATextLayer per clip, with
+                // opacity keyframes so it appears only during that clip's range.
+                for range in clipRanges {
+                    let title = range.item.titleText
+                    let subtitle = range.item.subtitleText
+                    guard !title.isEmpty || !subtitle.isEmpty else { continue }
+                    let clipStart = range.start.seconds
+                    let clipEnd = clipStart + range.duration.seconds
+                    let fadeDur: Double = 0.15
+                    let combined: String = {
+                        if !title.isEmpty && !subtitle.isEmpty { return title + "\n" + subtitle }
+                        return title.isEmpty ? subtitle : title
+                    }()
 
-            guard let exportSession = AVAssetExportSession(
-                asset: composition,
-                presetName: AVAssetExportPresetHighestQuality
-            ) else {
-                throw VideoCompositionError.exportFailed
-            }
+                    let textLayer = CATextLayer()
+                    textLayer.string = combined
+                    textLayer.font = CTFontCreateWithName("HelveticaNeue-Bold" as CFString, 0, nil)
+                    textLayer.fontSize = min(renderSize.width, renderSize.height) * 0.048
+                    textLayer.foregroundColor = (range.item.titleIsWhite ? UIColor.white : UIColor.black).cgColor
+                    textLayer.alignmentMode = .center
+                    textLayer.isWrapped = true
+                    textLayer.contentsScale = UIScreen.main.scale
+                    textLayer.shadowColor = (range.item.titleIsWhite ? UIColor.black : UIColor.white).cgColor
+                    textLayer.shadowOpacity = 0.7
+                    textLayer.shadowOffset = CGSize(width: 0, height: -1)
+                    textLayer.shadowRadius = 4
+                    let textHeight = textLayer.fontSize * 3
+                    let sideMargin: CGFloat = renderSize.width * 0.05
+                    // Center vertically instead of bottom-anchored.
+                    let centerY: CGFloat = (renderSize.height - textHeight) / 2
+                    textLayer.frame = CGRect(
+                        x: sideMargin,
+                        y: centerY,
+                        width: renderSize.width - sideMargin * 2,
+                        height: textHeight
+                    )
+                    textLayer.opacity = 0
 
-            exportSession.outputURL = outputURL
-            exportSession.outputFileType = .mp4
-            exportSession.videoComposition = videoComposition
+                    // Keyframe: fade in at clipStart, hold until near end, fade out.
+                    let anim = CAKeyframeAnimation(keyPath: "opacity")
+                    anim.values = [0.0, 1.0, 1.0, 0.0]
+                    let visibleStart = clipStart
+                    let visibleFadeInEnd = min(clipStart + fadeDur, clipEnd)
+                    let visibleFadeOutStart = max(clipEnd - fadeDur, clipStart)
+                    let visibleEnd = clipEnd
+                    // Whole composition times, referenced from AVCoreAnimationBeginTimeAtZero.
+                    anim.keyTimes = [
+                        NSNumber(value: visibleStart),
+                        NSNumber(value: visibleFadeInEnd),
+                        NSNumber(value: visibleFadeOutStart),
+                        NSNumber(value: visibleEnd),
+                    ]
+                    anim.calculationMode = .linear
+                    anim.beginTime = AVCoreAnimationBeginTimeAtZero
+                    anim.duration = max(0.01, visibleEnd)
+                    anim.isRemovedOnCompletion = false
+                    anim.fillMode = .forwards
+                    // Above uses absolute-composition-time keyTimes with
+                    // beginTime=AVCoreAnimationBeginTimeAtZero; we treat the
+                    // keyTimes as SECONDS by using a duration equal to visibleEnd
+                    // — CAKeyframeAnimation interprets keyTimes as [0,1] ratios
+                    // by default, so normalize:
+                    let total = max(0.001, visibleEnd)
+                    anim.keyTimes = [
+                        NSNumber(value: visibleStart / total),
+                        NSNumber(value: visibleFadeInEnd / total),
+                        NSNumber(value: visibleFadeOutStart / total),
+                        NSNumber(value: visibleEnd / total),
+                    ]
+                    textLayer.add(anim, forKey: "opacity")
+                    parentLayer.addSublayer(textLayer)
+                }
 
-            await exportSession.export()
+                // Global retro date stamp in bottom-right.
+                if let stampDate = settings.dateStamp {
+                    let df = DateFormatter()
+                    df.dateFormat = "MMM d yyyy"
+                    let dateText = df.string(from: stampDate).uppercased()
 
-            if exportSession.status == .failed {
-                throw exportSession.error ?? VideoCompositionError.exportFailed
-            }
+                    let dateLayer = CATextLayer()
+                    dateLayer.string = dateText
+                    dateLayer.font = CTFontCreateWithName("Courier-Bold" as CFString, 0, nil)
+                    dateLayer.fontSize = min(renderSize.width, renderSize.height) * 0.038
+                    dateLayer.foregroundColor = UIColor(red: 1.0, green: 0.55, blue: 0.15, alpha: 0.95).cgColor
+                    dateLayer.alignmentMode = .right
+                    dateLayer.contentsScale = UIScreen.main.scale
+                    dateLayer.shadowColor = UIColor.black.cgColor
+                    dateLayer.shadowOpacity = 0.6
+                    dateLayer.shadowOffset = CGSize(width: 1, height: -1)
+                    dateLayer.shadowRadius = 2
+                    let textWidth: CGFloat = renderSize.width * 0.35
+                    let textHeight: CGFloat = dateLayer.fontSize * 1.4
+                    let margin: CGFloat = min(renderSize.width, renderSize.height) * 0.04
+                    dateLayer.frame = CGRect(
+                        x: renderSize.width - textWidth - margin,
+                        y: margin,
+                        width: textWidth,
+                        height: textHeight
+                    )
+                    parentLayer.addSublayer(dateLayer)
+                }
 
-            await MainActor.run { progressHandler(0.9) }
-
-            // Add background music if provided
-            let finalURL: URL
-            if let musicAsset = settings.musicAsset {
-                finalURL = try await addBackgroundMusic(
-                    to: outputURL,
-                    musicAsset: musicAsset,
-                    volume: settings.musicVolume
+                videoComposition.animationTool = AVVideoCompositionCoreAnimationTool(
+                    postProcessingAsVideoLayer: videoLayer,
+                    in: parentLayer
                 )
-            } else {
-                finalURL = outputURL
             }
 
-            await MainActor.run { progressHandler(1.0) }
+            await MainActor.run { progressHandler(0.8) }
 
-            await MainActor.run {
-                completion(.success(finalURL))
-            }
+            return (composition, videoComposition, retainedSources)
         } catch {
-            await MainActor.run {
-                completion(.failure(error))
-            }
+            throw error
         }
     }
 
@@ -458,14 +554,15 @@ class VideoCompiler {
         assetWriter.startWriting()
         assetWriter.startSession(atSourceTime: .zero)
 
-        // Aspect-fit the photo onto a black canvas at target size, mirroring the
-        // letterboxing the video pipeline does for videos that don't match orientation.
+        // Aspect-FILL the photo into the target frame. Any excess bleeds off
+        // the edges — we prefer edge-crop over letterboxing so every clip fills
+        // the frame consistently.
         let composited = UIGraphicsImageRenderer(size: size).image { _ in
             UIColor.black.setFill()
             UIRectFill(CGRect(origin: .zero, size: size))
             let imgSize = image.size
             guard imgSize.width > 0, imgSize.height > 0 else { return }
-            let scale = min(size.width / imgSize.width, size.height / imgSize.height)
+            let scale = max(size.width / imgSize.width, size.height / imgSize.height)
             let drawSize = CGSize(width: imgSize.width * scale, height: imgSize.height * scale)
             let drawOrigin = CGPoint(
                 x: (size.width - drawSize.width) / 2,
@@ -505,7 +602,8 @@ class VideoCompiler {
     private static func calculateTransform(
         from sourceSize: CGSize,
         to targetSize: CGSize,
-        preferredTransform: CGAffineTransform
+        preferredTransform: CGAffineTransform,
+        cropRect: CGRect? = nil
     ) -> CGAffineTransform {
         // Handle edge cases
         guard sourceSize.width > 0 && sourceSize.height > 0 &&
@@ -520,10 +618,39 @@ class VideoCompiler {
         let actualWidth = isRotated ? sourceSize.height : sourceSize.width
         let actualHeight = isRotated ? sourceSize.width : sourceSize.height
 
-        // Calculate scale to fit the video in the target size (aspect fit - letterboxing)
+        if let crop = cropRect,
+           crop.width > 0, crop.height > 0,
+           crop.width.isFinite, crop.height.isFinite,
+           crop.origin.x.isFinite, crop.origin.y.isFinite {
+            // Aspect-FILL the crop region into the target. Take max so the crop
+            // covers the whole target frame (any excess bleeds off-screen).
+            let cropPixelWidth = crop.width * actualWidth
+            let cropPixelHeight = crop.height * actualHeight
+            let scale = max(targetSize.width / cropPixelWidth,
+                            targetSize.height / cropPixelHeight)
+
+            guard scale > 0 && !scale.isNaN && !scale.isInfinite else {
+                return .identity
+            }
+
+            // Move crop's top-left to (0,0), then re-center any leftover excess
+            // when the crop aspect doesn't match target aspect.
+            let translateX = -crop.origin.x * actualWidth * scale
+                + (targetSize.width - cropPixelWidth * scale) / 2.0
+            let translateY = -crop.origin.y * actualHeight * scale
+                + (targetSize.height - cropPixelHeight * scale) / 2.0
+
+            var transform = preferredTransform
+            transform = transform.concatenating(CGAffineTransform(scaleX: scale, y: scale))
+            transform = transform.concatenating(CGAffineTransform(translationX: translateX, y: translateY))
+            return transform
+        }
+
+        // Aspect-FILL the video into the target size. Every clip fills the
+        // frame; excess bleeds off. Consistent with photo pre-compositing.
         let scaleWidth = targetSize.width / actualWidth
         let scaleHeight = targetSize.height / actualHeight
-        let scale = min(scaleWidth, scaleHeight)
+        let scale = max(scaleWidth, scaleHeight)
 
         // Prevent invalid scale values
         guard scale > 0 && !scale.isNaN && !scale.isInfinite else {

@@ -4,6 +4,7 @@ import Photos
 
 struct MediaSelectionView: View {
     @Binding var selectedMedia: [MediaItem]
+    @Binding var orientation: VideoOrientation
     let onNext: () -> Void
 
     // MM_SHOW_PICKER=1 → open the photo picker on launch (screenshot capture; see
@@ -15,6 +16,7 @@ struct MediaSelectionView: View {
     @State private var showingPermissionAlert = false
     @State private var showingSettings = false
     @State private var selectedMediaItemForTrimming: MediaItem?
+    @State private var selectedMediaItemForPhotoEdit: MediaItem?
     @EnvironmentObject var storeManager: StoreManager
     @State private var pulseOpacity: Double = 1.0
     @State private var timer: Timer?
@@ -65,8 +67,58 @@ struct MediaSelectionView: View {
                 .environmentObject(storeManager)
         }
         .fullScreenCover(item: $selectedMediaItemForTrimming) { item in
-            TrimmingView(mediaItem: $selectedMedia[selectedMedia.firstIndex(where: { $0.id == item.id })!])
+            TrimmingView(
+                mediaItem: $selectedMedia[selectedMedia.firstIndex(where: { $0.id == item.id })!],
+                orientation: $orientation,
+                onSplit: { splitTime in
+                    guard let i = selectedMedia.firstIndex(where: { $0.id == item.id }) else { return }
+                    let originalEndTime = selectedMedia[i].endTime
+                    let firstStart = selectedMedia[i].startTime
+                    selectedMedia[i].endTime = splitTime
+
+                    var newItem = MediaItem(
+                        asset: selectedMedia[i].asset,
+                        thumbnail: selectedMedia[i].thumbnail,
+                        startTime: splitTime,
+                        endTime: originalEndTime,
+                        isMuted: selectedMedia[i].isMuted
+                    )
+                    // Slow-mo stripped on split — the window would misalign against the new bounds.
+                    newItem.slowMoStartTime = nil
+                    newItem.slowMoEndTime = nil
+                    // Crop is a per-frame transform, not a time window — safe to carry across.
+                    newItem.cropRect = selectedMedia[i].cropRect
+
+                    selectedMedia.insert(newItem, at: i + 1)
+
+                    // Regenerate thumbnails from actual frames so the two halves
+                    // are visually distinguishable in the collection grid.
+                    let phAsset = selectedMedia[i].asset
+                    let firstId = selectedMedia[i].id
+                    let secondId = newItem.id
+                    let firstMid = CMTimeMultiplyByFloat64(CMTimeAdd(firstStart, splitTime), multiplier: 0.5)
+                    Task {
+                        async let firstThumb = MediaSelectionView.thumbnail(from: phAsset, at: firstMid)
+                        async let secondThumb = MediaSelectionView.thumbnail(from: phAsset, at: splitTime)
+                        let (t1, t2) = await (firstThumb, secondThumb)
+                        await MainActor.run {
+                            if let t1 = t1, let idx = selectedMedia.firstIndex(where: { $0.id == firstId }) {
+                                selectedMedia[idx].thumbnail = t1
+                            }
+                            if let t2 = t2, let idx = selectedMedia.firstIndex(where: { $0.id == secondId }) {
+                                selectedMedia[idx].thumbnail = t2
+                            }
+                        }
+                    }
+                }
+            )
                 .environmentObject(storeManager)
+        }
+        .fullScreenCover(item: $selectedMediaItemForPhotoEdit) { item in
+            PhotoEditorView(
+                mediaItem: $selectedMedia[selectedMedia.firstIndex(where: { $0.id == item.id })!],
+                orientation: $orientation
+            )
         }
         .alert("Photo Access Required", isPresented: $showingPermissionAlert) {
             Button("Open Settings", action: openSystemSettings)
@@ -95,72 +147,13 @@ struct MediaSelectionView: View {
 
     @ViewBuilder
     private var headerView: some View {
-        HStack {
-            // Back button — only when the user has media selected.
-            if !selectedMedia.isEmpty {
-                Button(action: { selectedMedia.removeAll() }) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 18, weight: .semibold))
-                        Text("Back")
-                            .font(.system(size: 17, weight: .regular))
-                    }
-                    .foregroundColor(.primary)
-                }
-                .padding(.leading, 20)
-            }
-            Spacer()
-
-            // Daily Spin button — only shown when a spin is available. Sits
-            // just left of the coin badge so it's discoverable but not pushy.
-            if !storeManager.isPro && storeManager.canSpinNow {
-                Button(action: { showingDailySpin = true }) {
-                    HStack(spacing: 4) {
-                        Text("🎁")
-                            .font(.system(size: 14))
-                        Text("Spin")
-                            .font(.system(size: 13, weight: .semibold))
-                            .foregroundColor(.primary)
-                    }
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 6)
-                    .background(
-                        Capsule().fill(Color.orange.opacity(0.15))
-                    )
-                    .overlay(
-                        Capsule().stroke(Color.orange.opacity(0.6), lineWidth: 1)
-                    )
-                }
-                .buttonStyle(.plain)
-                .padding(.trailing, 6)
-            }
-
-            // Coin balance badge — always visible. Tap to open the buy sheet.
-            // Uses the same GoldCoin as the paywall for a consistent brand.
-            Button(action: { showingPaywall = true }) {
-                HStack(spacing: 5) {
-                    GoldCoin(size: 18)
-                    if storeManager.isPro {
-                        Text("∞")
-                            .font(.system(size: 16, weight: .bold))
-                            .foregroundColor(.primary)
-                    } else {
-                        Text("\(storeManager.coinBalance)")
-                            .font(.system(size: 15, weight: .semibold))
-                            .foregroundColor(.primary)
-                    }
-                }
-                .padding(.horizontal, 10)
-                .padding(.vertical, 6)
-                .background(
-                    Capsule().fill(Color(.systemGray6))
-                )
-            }
-            .buttonStyle(.plain)
-            .padding(.trailing, 20)
-        }
-        .frame(height: 60)
-        .background(selectedMedia.isEmpty ? Color.clear : Color(.systemBackground))
+        // Header is intentionally empty — Coin/Spin removed for a quieter
+        // top area. Coin buy sheet still opens via the paywall path when the
+        // user hits the coin gate on export. Daily spin can be surfaced
+        // elsewhere (e.g., a settings menu) when needed.
+        HStack { Spacer() }
+            .frame(height: 12)
+            .background(Color.clear)
     }
 
     @ViewBuilder
@@ -201,86 +194,75 @@ struct MediaSelectionView: View {
                 .animation(.easeInOut(duration: 1.0), value: pulseOpacity)
             }
 
-            Text("Tap to select videos & photos")
-                .font(.system(size: 16, weight: .medium))
-                .foregroundColor(.secondary)
         }
         .onAppear(perform: startTimer)
         .onDisappear(perform: stopTimer)
     }
 
     private var mediaGridView: some View {
-        VStack(spacing: 24) {
-            // Headline
-            VStack(spacing: 8) {
-                Text("Select Your Moments")
-                    .font(.system(size: 20, weight: .semibold))
-                    .foregroundColor(.primary)
-                Text("Tap to edit  |  Hold to rearrange")
-                    .font(.system(size: 14, weight: .regular))
-                    .foregroundColor(.secondary)
-            }
-            .padding(.top, 20)
-
-            if !storeManager.isPro && !selectedMedia.isEmpty {
-                HStack(spacing: 6) {
-                    Image(systemName: "info.circle.fill")
-                        .foregroundColor(.orange)
-                    Text("\(storeManager.coinBalance) coin\(storeManager.coinBalance == 1 ? "" : "s") left — 1 coin per export")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
-                .background(Color.orange.opacity(0.1))
-                .cornerRadius(8)
-            }
-
+        VStack(spacing: 16) {
             ScrollView {
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 110, maximum: 150), spacing: 16)], spacing: 16) {
+                LazyVGrid(
+                    columns: [
+                        GridItem(.flexible(), spacing: 14),
+                        GridItem(.flexible(), spacing: 14)
+                    ],
+                    spacing: 14
+                ) {
                     ForEach(Array(selectedMedia.enumerated()), id: \.element.id) { index, item in
-                        MediaGridItemView(item: item, index: index, selectedMedia: $selectedMedia, selectedMediaItemForTrimming: $selectedMediaItemForTrimming) {
+                        MediaGridItemView(
+                            item: item,
+                            index: index,
+                            selectedMedia: $selectedMedia,
+                            selectedMediaItemForTrimming: $selectedMediaItemForTrimming,
+                            selectedMediaItemForPhotoEdit: $selectedMediaItemForPhotoEdit
+                        ) {
                             removeItem(item)
                         }
                     }
-                    // Add a "+" button at the end of the list
-                    AddMediaButton {
-                        requestPhotoLibraryAccess() // This will add to the end
-                    }
                 }
                 .padding(.horizontal, 20)
+                .padding(.top, 16)
             }
-            .frame(maxHeight: 500)
         }
     }
 
     private var bottomBar: some View {
-        ZStack {
+        HStack(spacing: 20) {
             if !selectedMedia.isEmpty {
-                Button(action: onNext) {
-                    HStack(spacing: 8) {
-                        Text("Continue")
-                        Image(systemName: "arrow.right")
-                            .font(.system(size: 16, weight: .semibold))
-                    }
-                    .font(.system(size: 17, weight: .semibold))
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 16)
-                    .background(
-                        LinearGradient(
-                            colors: Color.brandGradient,
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                    .cornerRadius(12)
-                    .shadow(color: Color.brandSecondary.opacity(0.5), radius: 15, x: 0, y: 8)
+                mediaActionCircle(icon: "chevron.backward", tint: .brandPrimary, filled: false) {
+                    selectedMedia.removeAll()
                 }
-                .padding(.horizontal, 20)
+                mediaActionCircle(icon: "plus", tint: .brandPrimary, filled: false) {
+                    requestPhotoLibraryAccess()
+                }
+                mediaActionCircle(icon: "checkmark", tint: .white, filled: true, action: onNext)
             }
         }
+        .frame(maxWidth: .infinity)
         .padding(.bottom, 40)
+    }
+
+    @ViewBuilder
+    private func mediaActionCircle(icon: String, tint: Color, filled: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: icon)
+                .font(.system(size: 28, weight: .semibold))
+                .foregroundColor(tint)
+                .frame(width: 72, height: 72)
+                .background(
+                    Group {
+                        if filled {
+                            LinearGradient(colors: Color.brandGradient, startPoint: .leading, endPoint: .trailing)
+                        } else {
+                            Color.brandPrimary.opacity(0.12)
+                        }
+                    }
+                )
+                .clipShape(Circle())
+                .shadow(color: filled ? Color.brandSecondary.opacity(0.4) : .clear, radius: 10, x: 0, y: 4)
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: - Functions
@@ -340,6 +322,37 @@ struct MediaSelectionView: View {
     private func removeItem(_ item: MediaItem) {
         selectedMedia.removeAll { $0.id == item.id }
     }
+
+    /// Extract a UIImage frame from a PHAsset video at the given time — used
+    /// to give each half of a split its own visually-distinct grid thumbnail.
+    static func thumbnail(from asset: PHAsset, at time: CMTime) async -> UIImage? {
+        let options = PHVideoRequestOptions()
+        options.deliveryMode = .fastFormat
+        options.isNetworkAccessAllowed = true
+
+        let avAsset: AVAsset? = await withCheckedContinuation { continuation in
+            PHImageManager.default().requestAVAsset(forVideo: asset, options: options) { avAsset, _, _ in
+                continuation.resume(returning: avAsset)
+            }
+        }
+        guard let avAsset = avAsset else { return nil }
+
+        let generator = AVAssetImageGenerator(asset: avAsset)
+        generator.appliesPreferredTrackTransform = true
+        generator.maximumSize = CGSize(width: 220, height: 220)
+        generator.requestedTimeToleranceBefore = .zero
+        generator.requestedTimeToleranceAfter = .zero
+
+        return await withCheckedContinuation { continuation in
+            generator.generateCGImagesAsynchronously(forTimes: [NSValue(time: time)]) { _, cgImage, _, _, _ in
+                if let cgImage = cgImage {
+                    continuation.resume(returning: UIImage(cgImage: cgImage))
+                } else {
+                    continuation.resume(returning: nil)
+                }
+            }
+        }
+    }
 }
 
 // MARK: - Sub-structs for complex parts
@@ -349,44 +362,44 @@ struct MediaGridItemView: View {
     let index: Int
     @Binding var selectedMedia: [MediaItem]
     @Binding var selectedMediaItemForTrimming: MediaItem?
+    @Binding var selectedMediaItemForPhotoEdit: MediaItem?
     let onRemove: () -> Void
-
-    @State private var orientationText: String? = nil
 
     var body: some View {
         ZStack(alignment: .bottom) {
             if let thumbnail = item.thumbnail {
-                Image(uiImage: thumbnail)
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 110, height: 110)
-                    .clipped()
-                    .cornerRadius(12)
-                    .overlay(removeButton, alignment: .topTrailing)
-                    .overlay(indexIndicator, alignment: .topLeading)
+                // Square tile via Color.clear.aspectRatio + overlay — the
+                // classic SwiftUI "aspect-fill inside a fixed aspect frame"
+                // pattern. Direct chaining of .aspectRatio on Image doesn't
+                // reliably square the container, hence the wrapper.
+                Color.clear
+                    .aspectRatio(1, contentMode: .fit)
+                    .frame(maxWidth: .infinity)
+                    .overlay(
+                        Image(uiImage: thumbnail)
+                            .resizable()
+                            .scaledToFill()
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 14))
+                    .overlay(indexIndicator, alignment: .topTrailing)
+                    .overlay(removeButton, alignment: .topLeading)
+                    .overlay(aspectLabel, alignment: .bottomLeading)
+                    .overlay(editIndicator, alignment: .bottomTrailing)
                     .shadow(color: Color.black.opacity(0.15), radius: 8, x: 0, y: 4)
             }
 
-            if let orientationText = orientationText {
-                Text(orientationText)
-                    .font(.caption2)
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 3)
-                    .background(Color.black.opacity(0.6))
-                    .cornerRadius(6)
-                    .padding(.bottom, 6)
-            }
         }
-        .onAppear {
-            // Determine orientation when the view appears
-            let asset = item.asset
-            if asset.pixelWidth < asset.pixelHeight {
-                orientationText = "Portrait"
-            } else if asset.pixelWidth > asset.pixelHeight {
-                orientationText = "Landscape"
+        // Make the whole tile rect hit-testable — the Color.clear inside the
+        // ZStack isn't tappable by default, so onTapGesture would only fire
+        // in overlay areas otherwise.
+        .contentShape(Rectangle())
+        .onTapGesture {
+            // Videos → full TrimmingView editor. Photos → simpler
+            // PhotoEditorView with just duration/zoom/aspect.
+            if item.asset.mediaType == .video {
+                selectedMediaItemForTrimming = item
             } else {
-                orientationText = "Square"
+                selectedMediaItemForPhotoEdit = item
             }
         }
         .onDrag {
@@ -395,11 +408,64 @@ struct MediaGridItemView: View {
             return provider
         }
         .onDrop(of: [.text], delegate: MediaGridItemView.DropViewDelegate(destinationItem: item, selectedMedia: $selectedMedia))
-        .onTapGesture {
-            // Trimming only applies to videos
-            guard item.asset.mediaType == .video else { return }
-            selectedMediaItemForTrimming = item
+    }
+
+    /// Small aspect ratio label (e.g. "16:9", "9:16", "4:3") in the bottom-
+    /// left corner. Simplifies via GCD when possible.
+    @ViewBuilder
+    private var aspectLabel: some View {
+        Text(aspectRatioText(width: item.asset.pixelWidth, height: item.asset.pixelHeight))
+            .font(.system(size: 10, weight: .bold))
+            .foregroundColor(.white)
+            .padding(.horizontal, 6)
+            .padding(.vertical, 3)
+            .background(Color.black.opacity(0.65))
+            .clipShape(Capsule())
+            .padding(6)
+    }
+
+    /// Pencil edit indicator in bottom-right — visual affordance that the
+    /// tile is tappable to edit. Tint switches to brand-accent when a crop
+    /// is applied so the two states are visible in one glyph.
+    @ViewBuilder
+    private var editIndicator: some View {
+        let hasCrop = item.cropRect != nil
+        Image(systemName: "square.and.pencil")
+            .font(.system(size: 12, weight: .semibold))
+            .foregroundColor(.white)
+            .frame(width: 28, height: 28)
+            .background(Circle().fill(hasCrop ? Color.brandAccent : Color.black.opacity(0.65)))
+            .padding(6)
+    }
+
+    /// Snap to the nearest common aspect ratio; fall back to a fuzzy label
+    /// like "~3:2" if the source is far off any standard.
+    private func aspectRatioText(width: Int, height: Int) -> String {
+        guard width > 0, height > 0 else { return "?" }
+        let ratio = Double(width) / Double(height)
+        let common: [(label: String, value: Double)] = [
+            ("16:9", 16.0/9),   ("9:16", 9.0/16),
+            ("4:3",  4.0/3),    ("3:4",  3.0/4),
+            ("3:2",  3.0/2),    ("2:3",  2.0/3),
+            ("1:1",  1.0),
+            ("21:9", 21.0/9),   ("9:21", 9.0/21),
+            ("5:4",  5.0/4),    ("4:5",  4.0/5),
+        ]
+        let tolerance = 0.02
+        if let match = common.min(by: { abs($0.value - ratio) < abs($1.value - ratio) }),
+           abs(match.value - ratio) <= tolerance {
+            return match.label
         }
+        // No standard match — show simplified via GCD, but cap to 3 digits each.
+        var a = width, b = height
+        while b != 0 { (a, b) = (b, a % b) }
+        let g = max(1, a)
+        let simpW = width / g, simpH = height / g
+        if simpW < 100 && simpH < 100 {
+            return "\(simpW):\(simpH)"
+        }
+        // Fall back to a decimal approximation for very unusual ratios.
+        return String(format: "%.2f:1", ratio)
     }
 
     private var removeButton: some View {
@@ -419,13 +485,20 @@ struct MediaGridItemView: View {
     private var indexIndicator: some View {
         ZStack {
             Circle()
-                .fill(Color.black.opacity(0.8))
-                .frame(width: 28, height: 28)
+                .fill(
+                    LinearGradient(
+                        colors: Color.brandGradient,
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .frame(width: 34, height: 34)
+                .shadow(color: Color.black.opacity(0.25), radius: 4, x: 0, y: 2)
             Text("\(index + 1)")
-                .font(.system(size: 13, weight: .bold))
+                .font(.system(size: 16, weight: .bold))
                 .foregroundColor(.white)
         }
-        .padding(6)
+        .padding(8)
     }
     
     struct DropViewDelegate: DropDelegate {

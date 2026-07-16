@@ -63,6 +63,13 @@ struct VideoCompilationSettings {
     var transition: TransitionType = .fade
     var transitionColor: CodableColor = CodableColor(uiColor: .black)
     var photoDuration: Double = 3.0
+    /// How long the title screen stays on screen. Only applies when
+    /// `titleText` is non-empty.
+    var titleDuration: Double = 3.0
+    /// Retro film-style date stamp in the bottom-right of the exported video.
+    /// nil = off. When set, that specific date is rendered (defaults to today
+    /// if the user opens the picker without changing it).
+    var dateStamp: Date? = nil
 }
 
 enum TransitionType: String, CaseIterable {
@@ -101,6 +108,23 @@ struct MediaItem: Identifiable {
     var slowMoStartTime: CMTime?
     var slowMoEndTime: CMTime?
     var isMuted: Bool = false
+    // Normalized (0-1) focal region in the source's display-oriented coordinate
+    // space (top-left origin, after preferredTransform). nil = default aspect-fit
+    // letterbox; when set, the compiler aspect-fills this region into the target.
+    var cropRect: CGRect? = nil
+    /// Whole-clip playback rate. 1.0 = normal, 0.5 = slow-mo, 2.0 = fast.
+    /// Applied via scaleTimeRange in the compiler.
+    var playbackRate: Double = 1.0
+    /// Per-photo hold duration override (only used when asset is an image).
+    /// nil = fall back to the composition-wide `settings.photoDuration`.
+    var photoDuration: Double? = nil
+    /// Per-clip text overlay — shows on top of the clip while it plays.
+    /// Rendered via CATextLayer + AVVideoCompositionCoreAnimationTool.
+    var titleText: String = ""
+    var subtitleText: String = ""
+    /// Text color for the title/subtitle overlay. true = white on dark shadow,
+    /// false = black on light shadow.
+    var titleIsWhite: Bool = true
 }
 
 struct CodableColor: Codable, Equatable {
