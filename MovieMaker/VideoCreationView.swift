@@ -144,6 +144,10 @@ struct VideoCreationView: View {
                     // for Pro users, so this is safe to call unconditionally.
                     storeManager.recordExport()
 
+                    // Ask for an App Store review on the 3rd successful export,
+                    // capped once per app version.
+                    ReviewPrompt.recordExportAndMaybeAsk()
+
                     // Send notification if app is in background
                     if scenePhase == .background {
                         NotificationManager.shared.sendVideoCompleteNotification()

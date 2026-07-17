@@ -15,6 +15,7 @@
 		AAB430DF2EC500310068D194 /* AppConfigurationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB430C72EC500310068D194 /* AppConfigurationView.swift */; };
 		AAB430E02EC500310068D194 /* TrimmingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB430DA2EC500310068D194 /* TrimmingView.swift */; };
 		AAB43F012EC500310068D194 /* PhotoEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB43F002EC500310068D194 /* PhotoEditorView.swift */; };
+		AAB43F032EC500310068D194 /* ReviewPrompt.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB43F022EC500310068D194 /* ReviewPrompt.swift */; };
 		AAB430E22EC500310068D194 /* CompletionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB430CC2EC500310068D194 /* CompletionView.swift */; };
 		AAB430E42EC500310068D194 /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB430D52EC500310068D194 /* PaywallView.swift */; };
 		AAB430E52EC500310068D194 /* VideoCreationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB430DC2EC500310068D194 /* VideoCreationView.swift */; };
@@ -68,6 +69,7 @@
 		AAB430D92EC500310068D194 /* StoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreManager.swift; sourceTree = "<group>"; };
 		AAB430DA2EC500310068D194 /* TrimmingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmingView.swift; sourceTree = "<group>"; };
 		AAB43F002EC500310068D194 /* PhotoEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoEditorView.swift; sourceTree = "<group>"; };
+		AAB43F022EC500310068D194 /* ReviewPrompt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewPrompt.swift; sourceTree = "<group>"; };
 		AAB430DB2EC500310068D194 /* VideoCompiler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCompiler.swift; sourceTree = "<group>"; };
 		AAB430DC2EC500310068D194 /* VideoCreationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCreationView.swift; sourceTree = "<group>"; };
 		AAB430DD2EC500310068D194 /* VideoPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerView.swift; sourceTree = "<group>"; };
@@ -140,6 +142,7 @@
 				AAB430D92EC500310068D194 /* StoreManager.swift */,
 				AAB430DA2EC500310068D194 /* TrimmingView.swift */,
 				AAB43F002EC500310068D194 /* PhotoEditorView.swift */,
+				AAB43F022EC500310068D194 /* ReviewPrompt.swift */,
 				AAB430DB2EC500310068D194 /* VideoCompiler.swift */,
 				AAB430DC2EC500310068D194 /* VideoCreationView.swift */,
 				AAB430DD2EC500310068D194 /* VideoPlayerView.swift */,
@@ -286,6 +289,7 @@
 				AAB430DF2EC500310068D194 /* AppConfigurationView.swift in Sources */,
 				AAB430E02EC500310068D194 /* TrimmingView.swift in Sources */,
 				AAB43F012EC500310068D194 /* PhotoEditorView.swift in Sources */,
+				AAB43F032EC500310068D194 /* ReviewPrompt.swift in Sources */,
 				AAB430E22EC500310068D194 /* CompletionView.swift in Sources */,
 				AAB430E42EC500310068D194 /* PaywallView.swift in Sources */,
 				AAB430E52EC500310068D194 /* VideoCreationView.swift in Sources */,
