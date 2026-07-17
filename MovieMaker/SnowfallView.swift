@@ -65,7 +65,7 @@ struct SnowfallView: View {
         let x = CGFloat.random(in: 0...size.width)
         let y = isInitial ? CGFloat.random(in: 0...size.height) : -20
         let size = CGFloat.random(in: 15...35)
-        let speed = CGFloat.random(in: 1...3)
+        let speed = CGFloat.random(in: 0.3...1.0)
         let opacity = Double.random(in: 0.15...0.3)
 
         return EmojiFlake(

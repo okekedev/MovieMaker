@@ -160,13 +160,13 @@ struct MediaSelectionView: View {
     private var mainContent: some View {
         if selectedMedia.isEmpty {
             VStack(spacing: 12) {
-                Image(systemName: "arrow.down")
-                    .font(.system(size: 40, weight: .semibold))
-                    .foregroundColor(.brandAccent)
-                    .offset(y: pulseOpacity == 1.0 ? 0 : 8)
-                    .animation(.easeInOut(duration: 0.9).repeatForever(autoreverses: true), value: pulseOpacity)
-
                 mainSelectionButton
+
+                Image(systemName: "arrow.up")
+                    .font(.system(size: 40, weight: .semibold))
+                    .foregroundColor(Color.brandPrimary.opacity(0.4))
+                    .offset(y: pulseOpacity == 1.0 ? 0 : -8)
+                    .animation(.easeInOut(duration: 0.9).repeatForever(autoreverses: true), value: pulseOpacity)
             }
         } else {
             mediaGridView
