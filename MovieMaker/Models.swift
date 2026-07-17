@@ -5,13 +5,18 @@ import AVFoundation
 import SwiftUI
 
 // MARK: - Color Theme
+// Warm memory-book palette keyed to the app logo: amber background,
+// cream play triangle, coral heart. Chose these to move the app out of
+// the cool-toned "video editor" cluster (CapCut/InShot/Splice) and into
+// the warm "memory keeper" cluster that matches the Highlight Reel /
+// Memories positioning.
 extension Color {
-    static let brandPrimary = Color(red: 0.2, green: 0.6, blue: 0.86)
-    static let brandSecondary = Color(red: 0.2, green: 0.8, blue: 0.6)
-    static let brandAccent = Color(red: 0.1, green: 0.7, blue: 0.75)
-    static let brandGradient = [brandPrimary, brandAccent, brandSecondary]
+    static let brandPrimary = Color(red: 0.839, green: 0.533, blue: 0.306)   // #D6884E amber
+    static let brandSecondary = Color(red: 0.961, green: 0.918, blue: 0.851) // #F5EAD9 cream
+    static let brandAccent = Color(red: 0.910, green: 0.353, blue: 0.310)    // #E85A4F coral
+    static let brandGradient = [brandPrimary, brandAccent]
     static let primaryGradient = [brandPrimary, brandAccent]
-    static let secondaryGradient = [brandAccent, brandSecondary]
+    static let secondaryGradient = [brandPrimary, brandSecondary]
 }
 
 // MARK: - Device Metrics (iPad-adaptive sizing)

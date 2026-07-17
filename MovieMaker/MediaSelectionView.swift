@@ -174,22 +174,12 @@ struct MediaSelectionView: View {
     private var mainSelectionButton: some View {
         VStack(spacing: 24) {
             Button(action: requestPhotoLibraryAccess) {
-                ZStack {
-                    Circle()
-                        .fill(
-                            LinearGradient(
-                                colors: Color.brandGradient,
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .frame(width: 140, height: 140)
-                        .shadow(color: Color.brandSecondary.opacity(0.5), radius: 20, x: 0, y: 10)
-
-                    Image(systemName: "plus")
-                        .font(.system(size: 60, weight: .regular))
-                        .foregroundColor(.white)
-                }
+                Image("AppLogo")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 180, height: 180)
+                    .clipShape(RoundedRectangle(cornerRadius: 40))
+                    .shadow(color: Color.brandPrimary.opacity(0.35), radius: 24, x: 0, y: 12)
                 .opacity(pulseOpacity)
                 .animation(.easeInOut(duration: 1.0), value: pulseOpacity)
             }
