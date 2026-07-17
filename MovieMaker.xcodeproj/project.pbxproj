@@ -28,6 +28,7 @@
 		AAB430EE2EC500310068D194 /* VideoCompiler.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB430DB2EC500310068D194 /* VideoCompiler.swift */; };
 		AAB430EF2EC500310068D194 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB430D72EC500310068D194 /* SettingsView.swift */; };
 		AAB430F02EC500310068D194 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB430D22EC500310068D194 /* Models.swift */; };
+		AAB44A012EC600310068D194 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = AAB44A002EC600310068D194 /* Localizable.xcstrings */; };
 		AAB430F12EC500310068D194 /* MusicPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB430D32EC500310068D194 /* MusicPickerView.swift */; };
 		AAB430F22EC500310068D194 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AAB430C82EC500310068D194 /* Assets.xcassets */; };
 		AAB430F42EC500310068D194 /* SendFlowers-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AAB430D62EC500310068D194 /* SendFlowers-Regular.ttf */; };
@@ -70,6 +71,7 @@
 		AAB430DB2EC500310068D194 /* VideoCompiler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCompiler.swift; sourceTree = "<group>"; };
 		AAB430DC2EC500310068D194 /* VideoCreationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCreationView.swift; sourceTree = "<group>"; };
 		AAB430DD2EC500310068D194 /* VideoPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerView.swift; sourceTree = "<group>"; };
+		AAB44A002EC600310068D194 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		AAF69B532EB935B300EA02CE /* MovieMaker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MovieMaker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC0247E1A25CA2F55E56D795 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
@@ -144,6 +146,7 @@
 				1254A9546367B3C365A0652A /* MovieMaker.storekit */,
 				8219F309551BC6ED2A7228FA /* DailySpinView.swift */,
 				14A6C1F3FD4E0C6789BE53CE /* ConfettiView.swift */,
+				AAB44A002EC600310068D194 /* Localizable.xcstrings */,
 			);
 			path = MovieMaker;
 			sourceTree = "<group>";
@@ -226,6 +229,11 @@
 			knownRegions = (
 				en,
 				Base,
+				es,
+				"pt-BR",
+				fr,
+				de,
+				ja,
 			);
 			mainGroup = AAF69B4A2EB935B300EA02CE;
 			minimizedProjectReferenceProxies = 1;
@@ -248,6 +256,7 @@
 				AAB430F22EC500310068D194 /* Assets.xcassets in Resources */,
 				AAB430F42EC500310068D194 /* SendFlowers-Regular.ttf in Resources */,
 				25C6B8C483665DF7AD52803E /* MovieMaker.storekit in Resources */,
+				AAB44A012EC600310068D194 /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

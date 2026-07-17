@@ -7,7 +7,7 @@ struct VideoCreationView: View {
 
     @EnvironmentObject var storeManager: StoreManager
     @State private var progress: Double = 0
-    @State private var status: String = "Preparing..."
+    @State private var status: String = NSLocalizedString("Preparing...", comment: "Export progress status")
     @State private var showingError = false
     @State private var errorMessage = ""
     @Environment(\.scenePhase) private var scenePhase
@@ -98,7 +98,7 @@ struct VideoCreationView: View {
     }
 
     private func startCreation() {
-        status = "Compiling videos..."
+        status = NSLocalizedString("Compiling videos...", comment: "Export progress status")
 
         VideoCompiler.compileVideos(
             media: selectedMedia,
@@ -108,11 +108,11 @@ struct VideoCreationView: View {
                     self.progress = progressValue * 0.7 // Reserve 0.7-1.0 for saving
 
                     if progressValue < 0.5 {
-                        status = "Adding videos..."
+                        status = NSLocalizedString("Adding videos...", comment: "Export progress status")
                     } else if progressValue < 0.8 {
-                        status = "Composing video..."
+                        status = NSLocalizedString("Composing video...", comment: "Export progress status")
                     } else {
-                        status = "Almost done..."
+                        status = NSLocalizedString("Almost done...", comment: "Export progress status")
                     }
                 }
             },
@@ -130,7 +130,7 @@ struct VideoCreationView: View {
 
     private func saveToPhotoLibrary(url: URL) {
         DispatchQueue.main.async {
-            status = "Saving to Photos..."
+            status = NSLocalizedString("Saving to Photos...", comment: "Export progress status")
             progress = 0.8
         }
 

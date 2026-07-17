@@ -19,7 +19,7 @@ struct SettingsView: View {
     @State private var warningMessage = ""
     @State private var showingPaywall = false
     @State private var showingMusicPicker = false
-    @State private var selectedMusicTitle: String = "None"
+    @State private var selectedMusicTitle: String = NSLocalizedString("None", comment: "Music picker: no track selected")
     @State private var expandedTool: EditorTool?
     @State private var isPreviewPlaying: Bool = true
     @State private var previewProgress: Double = 0
@@ -202,7 +202,7 @@ struct SettingsView: View {
             }.buttonStyle(.plain)
             Button(action: {
                 settings.musicAsset = nil
-                selectedMusicTitle = "None"
+                selectedMusicTitle = NSLocalizedString("None", comment: "Music picker: no track selected")
                 expandedTool = nil
             }) {
                 Image(systemName: "trash")
@@ -329,12 +329,14 @@ struct SettingsView: View {
         let longVideos = selectedMedia.filter { $0.asset.mediaType == .video && $0.asset.duration > 300 }
         if !longVideos.isEmpty {
             showingWarning = true
-            warningMessage = "You have \(longVideos.count) video\(longVideos.count == 1 ? "" : "s") longer than 5 minutes. This may result in a very large file."
+            let fmt = NSLocalizedString("warning.longVideos", comment: "Warning when clips exceed 5 min; %d = count (uses plural variations)")
+            warningMessage = String.localizedStringWithFormat(fmt, longVideos.count)
             return
         }
         if selectedMedia.count > 100 {
             showingWarning = true
-            warningMessage = "You have \(selectedMedia.count) items. This may take several minutes to create."
+            let fmt = NSLocalizedString("warning.manyItems", comment: "Warning when many clips are selected; %d = count")
+            warningMessage = String.localizedStringWithFormat(fmt, selectedMedia.count)
             return
         }
         onCreate()

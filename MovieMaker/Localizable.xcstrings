@@ -1,0 +1,832 @@
+{
+  "sourceLanguage" : "en",
+  "version" : "1.0",
+  "strings" : {
+    "OK" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "OK" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "OK" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "OK" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "OK" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "OK" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "OK" } }
+      }
+    },
+    "Cancel" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Cancel" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Cancelar" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Cancelar" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Annuler" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Abbrechen" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "キャンセル" } }
+      }
+    },
+    "Close" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Close" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Cerrar" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Fechar" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Fermer" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Schließen" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "閉じる" } }
+      }
+    },
+    "Continue" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Continue" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Continuar" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Continuar" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Continuer" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Weiter" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "続ける" } }
+      }
+    },
+    "Retry" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Retry" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Reintentar" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Tentar novamente" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Réessayer" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Wiederholen" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "再試行" } }
+      }
+    },
+    "Not now" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Not now" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Ahora no" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Agora não" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Plus tard" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Nicht jetzt" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "後で" } }
+      }
+    },
+    "Warning" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Warning" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Advertencia" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Aviso" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Avertissement" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Warnung" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "警告" } }
+      }
+    },
+    "Error" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Error" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Error" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Erro" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Erreur" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Fehler" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "エラー" } }
+      }
+    },
+    "None" : {
+      "extractionState" : "manual",
+      "comment" : "Transition name AND music-none placeholder",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "None" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Ninguno" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Nenhum" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Aucun" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Keine" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "なし" } }
+      }
+    },
+    "App Settings" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "App Settings" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Ajustes de la App" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Ajustes do App" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Réglages de l'app" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "App-Einstellungen" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "アプリ設定" } }
+      }
+    },
+    "Movie Maker" : {
+      "extractionState" : "manual",
+      "comment" : "Brand name — kept identical across locales",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Movie Maker" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Movie Maker" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Movie Maker" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Movie Maker" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Movie Maker" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "Movie Maker" } }
+      }
+    },
+    "Add More" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Add More" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Añadir más" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Adicionar mais" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ajouter" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Mehr hinzufügen" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "追加" } }
+      }
+    },
+    "Photo Access Required" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Photo Access Required" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Acceso a fotos requerido" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Acesso às fotos necessário" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Accès aux photos requis" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Fotozugriff erforderlich" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "写真へのアクセスが必要" } }
+      }
+    },
+    "Open Settings" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Open Settings" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Abrir Ajustes" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Abrir Ajustes" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ouvrir les Réglages" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Einstellungen öffnen" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "設定を開く" } }
+      }
+    },
+    "Please allow Movie Maker to access your videos and photos in Settings to create compilations." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Please allow Movie Maker to access your videos and photos in Settings to create compilations." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Permite que Movie Maker acceda a tus vídeos y fotos en Ajustes para crear compilaciones." } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Permita que o Movie Maker acesse seus vídeos e fotos em Ajustes para criar compilações." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Autorisez Movie Maker à accéder à vos vidéos et photos dans Réglages pour créer des compilations." } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Erlaube Movie Maker in den Einstellungen den Zugriff auf deine Videos und Fotos, um Zusammenstellungen zu erstellen." } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "動画を作成するには、設定でMovie Makerに写真と動画へのアクセスを許可してください。" } }
+      }
+    },
+    "Loading video..." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Loading video..." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Cargando vídeo..." } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Carregando vídeo..." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Chargement de la vidéo..." } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Video wird geladen..." } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "動画を読み込み中..." } }
+      }
+    },
+    "Daily Spin" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Daily Spin" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Giro diario" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Giro diário" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Tour quotidien" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Tägliches Drehen" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "デイリースピン" } }
+      }
+    },
+    "Come back tomorrow for another spin" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Come back tomorrow for another spin" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Vuelve mañana para otro giro" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Volte amanhã para outro giro" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Revenez demain pour un nouveau tour" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Komm morgen für einen weiteren Dreh wieder" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "明日また回しに来てください" } }
+      }
+    },
+    "You won" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "You won" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "¡Ganaste!" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Você ganhou" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Gagné !" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Gewonnen" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "当たり" } }
+      }
+    },
+    "So close! Try again tomorrow" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "So close! Try again tomorrow" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "¡Casi! Inténtalo mañana" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Quase! Tente novamente amanhã" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Presque ! Réessayez demain" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Knapp daneben! Morgen wieder versuchen" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "惜しい！明日また挑戦してね" } }
+      }
+    },
+    "Spin" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Spin" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Girar" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Girar" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Tourner" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Drehen" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "回す" } }
+      }
+    },
+    "Rolling…" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Rolling…" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Girando…" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Girando…" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "En cours…" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Läuft…" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "回転中…" } }
+      }
+    },
+    "Awesome" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Awesome" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "¡Genial!" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Ótimo!" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Super !" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Super" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "やった！" } }
+      }
+    },
+    "Video Compilation Ready!" : {
+      "extractionState" : "manual",
+      "comment" : "Push notification title",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Video Compilation Ready!" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "¡Tu vídeo está listo!" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Seu vídeo está pronto!" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Votre vidéo est prête !" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Dein Video ist fertig!" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "動画が完成しました！" } }
+      }
+    },
+    "Your video has been saved to Photos" : {
+      "extractionState" : "manual",
+      "comment" : "Push notification body",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Your video has been saved to Photos" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Se ha guardado en Fotos" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Foi salvo em Fotos" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Enregistrée dans Photos" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "In Fotos gespeichert" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "「写真」に保存されました" } }
+      }
+    },
+    "Video Created!" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Video Created!" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "¡Vídeo creado!" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Vídeo criado!" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Vidéo créée !" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Video erstellt!" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "動画が作成されました！" } }
+      }
+    },
+    "Your video has been saved to your photos." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Your video has been saved to your photos." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Tu vídeo se ha guardado en tus fotos." } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Seu vídeo foi salvo em suas fotos." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Votre vidéo a été enregistrée dans vos photos." } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Dein Video wurde in deinen Fotos gespeichert." } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "動画が写真に保存されました。" } }
+      }
+    },
+    "Share Video" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Share Video" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Compartir vídeo" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Compartilhar vídeo" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Partager la vidéo" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Video teilen" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "動画を共有" } }
+      }
+    },
+    "Open Photos" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Open Photos" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Abrir Fotos" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Abrir Fotos" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ouvrir Photos" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Fotos öffnen" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "「写真」を開く" } }
+      }
+    },
+    "Create Another Video" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Create Another Video" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Crear otro vídeo" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Criar outro vídeo" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Créer une autre vidéo" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Weiteres Video erstellen" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "別の動画を作成" } }
+      }
+    },
+    "Transition" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Transition" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Transición" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Transição" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Transition" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Übergang" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "トランジション" } }
+      }
+    },
+    "Photo hold" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Photo hold" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Duración foto" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Duração da foto" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Durée photo" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Fotodauer" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "写真の長さ" } }
+      }
+    },
+    "Title hold" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Title hold" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Duración título" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Duração do título" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Durée titre" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Titeldauer" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "タイトルの長さ" } }
+      }
+    },
+    "Create Anyway" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Create Anyway" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Crear igualmente" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Criar mesmo assim" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Créer quand même" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Trotzdem erstellen" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "そのまま作成" } }
+      }
+    },
+    "Creating your video..." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Creating your video..." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Creando tu vídeo..." } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Criando seu vídeo..." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Création de votre vidéo..." } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Video wird erstellt..." } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "動画を作成中..." } }
+      }
+    },
+    "You can close the app - we'll notify you when it's ready" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "You can close the app - we'll notify you when it's ready" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Puedes cerrar la app; te avisaremos cuando esté lista" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Você pode fechar o app; avisaremos quando estiver pronto" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Vous pouvez fermer l'app ; nous vous préviendrons dès que c'est prêt" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Du kannst die App schließen — wir benachrichtigen dich, sobald es fertig ist" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "アプリを閉じても大丈夫です。完成したらお知らせします" } }
+      }
+    },
+    "Preparing..." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Preparing..." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Preparando..." } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Preparando..." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Préparation..." } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Wird vorbereitet..." } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "準備中..." } }
+      }
+    },
+    "Compiling videos..." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Compiling videos..." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Compilando vídeos..." } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Compilando vídeos..." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Compilation des vidéos..." } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Videos werden zusammengefügt..." } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "動画を編集中..." } }
+      }
+    },
+    "Adding videos..." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Adding videos..." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Añadiendo vídeos..." } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Adicionando vídeos..." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ajout des vidéos..." } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Videos werden hinzugefügt..." } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "動画を追加中..." } }
+      }
+    },
+    "Composing video..." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Composing video..." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Componiendo vídeo..." } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Compondo vídeo..." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Composition de la vidéo..." } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Video wird komponiert..." } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "動画を合成中..." } }
+      }
+    },
+    "Almost done..." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Almost done..." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Casi listo..." } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Quase pronto..." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Presque terminé..." } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Fast fertig..." } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "もうすぐ完了..." } }
+      }
+    },
+    "Saving to Photos..." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Saving to Photos..." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Guardando en Fotos..." } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Salvando em Fotos..." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Enregistrement dans Photos..." } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "In Fotos speichern..." } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "「写真」に保存中..." } }
+      }
+    },
+    "warning.longVideos" : {
+      "extractionState" : "manual",
+      "comment" : "Formatted with count; %d = number of long videos. NEEDS NATIVE REVIEW",
+      "localizations" : {
+        "en" : { "variations" : { "plural" : {
+          "one" : { "stringUnit" : { "state" : "translated", "value" : "You have %d video longer than 5 minutes. This may result in a very large file." } },
+          "other" : { "stringUnit" : { "state" : "translated", "value" : "You have %d videos longer than 5 minutes. This may result in a very large file." } }
+        } } },
+        "es" : { "variations" : { "plural" : {
+          "one" : { "stringUnit" : { "state" : "translated", "value" : "Tienes %d vídeo de más de 5 minutos. El archivo podría ser muy grande." } },
+          "other" : { "stringUnit" : { "state" : "translated", "value" : "Tienes %d vídeos de más de 5 minutos. El archivo podría ser muy grande." } }
+        } } },
+        "pt-BR" : { "variations" : { "plural" : {
+          "one" : { "stringUnit" : { "state" : "translated", "value" : "Você tem %d vídeo com mais de 5 minutos. Isso pode gerar um arquivo muito grande." } },
+          "other" : { "stringUnit" : { "state" : "translated", "value" : "Você tem %d vídeos com mais de 5 minutos. Isso pode gerar um arquivo muito grande." } }
+        } } },
+        "fr" : { "variations" : { "plural" : {
+          "one" : { "stringUnit" : { "state" : "translated", "value" : "%d vidéo dépasse 5 minutes. Le fichier peut être très volumineux." } },
+          "other" : { "stringUnit" : { "state" : "translated", "value" : "%d vidéos dépassent 5 minutes. Le fichier peut être très volumineux." } }
+        } } },
+        "de" : { "variations" : { "plural" : {
+          "one" : { "stringUnit" : { "state" : "translated", "value" : "%d Video ist länger als 5 Minuten. Die Datei kann sehr groß werden." } },
+          "other" : { "stringUnit" : { "state" : "translated", "value" : "%d Videos sind länger als 5 Minuten. Die Datei kann sehr groß werden." } }
+        } } },
+        "ja" : { "variations" : { "plural" : {
+          "other" : { "stringUnit" : { "state" : "translated", "value" : "5分を超える動画が%d本あります。ファイルサイズが大きくなる可能性があります。" } }
+        } } }
+      }
+    },
+    "warning.manyItems" : {
+      "extractionState" : "manual",
+      "comment" : "%d = item count. NEEDS NATIVE REVIEW",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "You have %d items. This may take several minutes to create." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Tienes %d elementos. La creación puede tardar varios minutos." } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Você tem %d itens. A criação pode levar vários minutos." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Vous avez %d éléments. La création peut prendre plusieurs minutes." } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Du hast %d Elemente. Die Erstellung kann mehrere Minuten dauern." } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "%d個の項目があります。作成に数分かかる場合があります。" } }
+      }
+    },
+    "Purchase Error" : {
+      "extractionState" : "manual",
+      "comment" : "NEEDS NATIVE REVIEW",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Purchase Error" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Error de compra" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Erro na compra" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Erreur d'achat" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Kauffehler" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "購入エラー" } }
+      }
+    },
+    "Unable to complete purchase. Please try again." : {
+      "extractionState" : "manual",
+      "comment" : "NEEDS NATIVE REVIEW",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Unable to complete purchase. Please try again." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "No se pudo completar la compra. Inténtalo de nuevo." } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Não foi possível concluir a compra. Tente novamente." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Impossible de finaliser l'achat. Veuillez réessayer." } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Kauf konnte nicht abgeschlossen werden. Bitte erneut versuchen." } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "購入を完了できませんでした。もう一度お試しください。" } }
+      }
+    },
+    "Unlimited Videos" : {
+      "extractionState" : "manual",
+      "comment" : "NEEDS NATIVE REVIEW",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Unlimited Videos" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Vídeos ilimitados" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Vídeos ilimitados" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Vidéos illimitées" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Unbegrenzte Videos" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "動画作成し放題" } }
+      }
+    },
+    "Get More Videos" : {
+      "extractionState" : "manual",
+      "comment" : "NEEDS NATIVE REVIEW",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Get More Videos" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Consigue más vídeos" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Ganhe mais vídeos" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Obtenir plus de vidéos" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Mehr Videos erhalten" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "動画をもっと作成" } }
+      }
+    },
+    "You have unlimited exports" : {
+      "extractionState" : "manual",
+      "comment" : "NEEDS NATIVE REVIEW",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "You have unlimited exports" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Tienes exportaciones ilimitadas" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Você tem exportações ilimitadas" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Exports illimités activés" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Du hast unbegrenzte Exporte" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "書き出し無制限です" } }
+      }
+    },
+    "You have" : {
+      "extractionState" : "manual",
+      "comment" : "Followed by a coin count number. NEEDS NATIVE REVIEW",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "You have" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Tienes" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Você tem" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Vous avez" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Du hast" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "残高" } }
+      }
+    },
+    "coin" : {
+      "extractionState" : "manual",
+      "comment" : "Singular. NEEDS NATIVE REVIEW",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "coin" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "moneda" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "moeda" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "jeton" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Coin" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "コイン" } }
+      }
+    },
+    "coins" : {
+      "extractionState" : "manual",
+      "comment" : "Plural. NEEDS NATIVE REVIEW",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "coins" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "monedas" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "moedas" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "jetons" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Coins" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "コイン" } }
+      }
+    },
+    "· 1 coin = 1 video" : {
+      "extractionState" : "manual",
+      "comment" : "NEEDS NATIVE REVIEW",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "· 1 coin = 1 video" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "· 1 moneda = 1 vídeo" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "· 1 moeda = 1 vídeo" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "· 1 jeton = 1 vidéo" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "· 1 Coin = 1 Video" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "· コイン1枚で動画1本" } }
+      }
+    },
+    "Every feature included — free" : {
+      "extractionState" : "manual",
+      "comment" : "NEEDS NATIVE REVIEW",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Every feature included — free" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Todas las funciones incluidas — gratis" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Todas as funções incluídas — grátis" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Toutes les fonctionnalités incluses — gratuit" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Alle Funktionen inklusive — kostenlos" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "すべての機能を無料で" } }
+      }
+    },
+    "Music" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Music" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Música" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Música" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Musique" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Musik" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "音楽" } }
+      }
+    },
+    "Slow-Mo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Slow-Mo" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Cámara lenta" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Câmera lenta" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ralenti" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Zeitlupe" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "スロー" } }
+      }
+    },
+    "HD Export" : {
+      "extractionState" : "manual",
+      "comment" : "NEEDS NATIVE REVIEW",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "HD Export" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Exportar en HD" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Exportar em HD" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Export HD" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "HD-Export" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "HD書き出し" } }
+      }
+    },
+    "Buy coins" : {
+      "extractionState" : "manual",
+      "comment" : "NEEDS NATIVE REVIEW",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Buy coins" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Comprar monedas" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Comprar moedas" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Acheter des jetons" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Coins kaufen" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "コインを購入" } }
+      }
+    },
+    "Best value" : {
+      "extractionState" : "manual",
+      "comment" : "NEEDS NATIVE REVIEW",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Best value" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Mejor valor" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Melhor oferta" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Meilleur prix" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Bestes Angebot" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "お得" } }
+      }
+    },
+    "Or go unlimited" : {
+      "extractionState" : "manual",
+      "comment" : "NEEDS NATIVE REVIEW",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Or go unlimited" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "O hazte ilimitado" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Ou vá para o ilimitado" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ou passez en illimité" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Oder unbegrenzt nutzen" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "無制限プランはこちら" } }
+      }
+    },
+    "Monthly" : {
+      "extractionState" : "manual",
+      "comment" : "NEEDS NATIVE REVIEW",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Monthly" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Mensual" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Mensal" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Mensuel" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Monatlich" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "月額" } }
+      }
+    },
+    "Yearly" : {
+      "extractionState" : "manual",
+      "comment" : "NEEDS NATIVE REVIEW",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Yearly" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Anual" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Anual" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Annuel" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Jährlich" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "年額" } }
+      }
+    },
+    "Save %d%%" : {
+      "extractionState" : "manual",
+      "comment" : "Yearly savings badge. NEEDS NATIVE REVIEW",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Save %d%%" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Ahorra %d%%" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Economize %d%%" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "-%d%%" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "%d%% sparen" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "%d%%オフ" } }
+      }
+    },
+    "%@ / month" : {
+      "extractionState" : "manual",
+      "comment" : "Formatted price line. NEEDS NATIVE REVIEW",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "%@ / month" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "%@ / mes" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "%@ / mês" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "%@ / mois" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "%@ / Monat" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "%@ / 月" } }
+      }
+    },
+    "%@ / year" : {
+      "extractionState" : "manual",
+      "comment" : "Formatted price line. NEEDS NATIVE REVIEW",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "%@ / year" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "%@ / año" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "%@ / ano" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "%@ / an" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "%@ / Jahr" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "%@ / 年" } }
+      }
+    },
+    "%d coins" : {
+      "extractionState" : "manual",
+      "comment" : "Coin-tier label. NEEDS NATIVE REVIEW",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "%d coins" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "%d monedas" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "%d moedas" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "%d jetons" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "%d Coins" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "%dコイン" } }
+      }
+    },
+    "Restore Purchases" : {
+      "extractionState" : "manual",
+      "comment" : "NEEDS NATIVE REVIEW",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Restore Purchases" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Restaurar compras" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Restaurar compras" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Restaurer les achats" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Käufe wiederherstellen" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "購入を復元" } }
+      }
+    },
+    "Privacy" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Privacy" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Privacidad" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Privacidade" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Confidentialité" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Datenschutz" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "プライバシー" } }
+      }
+    },
+    "Terms" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Terms" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Términos" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Termos" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Conditions" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "AGB" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "利用規約" } }
+      }
+    },
+    "Support" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Support" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Ayuda" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Suporte" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Assistance" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Support" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "サポート" } }
+      }
+    },
+    "Unable to load products" : {
+      "extractionState" : "manual",
+      "comment" : "NEEDS NATIVE REVIEW",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Unable to load products" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "No se pudieron cargar los productos" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Não foi possível carregar os produtos" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Impossible de charger les produits" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Produkte konnten nicht geladen werden" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "商品を読み込めません" } }
+      }
+    }
+  }
+}

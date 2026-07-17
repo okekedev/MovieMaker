@@ -25,8 +25,8 @@ class NotificationManager {
 
     func sendVideoCompleteNotification() {
         let content = UNMutableNotificationContent()
-        content.title = "Video Compilation Ready!"
-        content.body = "Your video has been saved to Photos"
+        content.title = NSLocalizedString("Video Compilation Ready!", comment: "Push notification title when export completes")
+        content.body = NSLocalizedString("Your video has been saved to Photos", comment: "Push notification body")
         content.sound = .default
 
         let request = UNNotificationRequest(

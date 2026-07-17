@@ -174,7 +174,13 @@ struct DailySpinView: View {
                 .foregroundColor(.white.opacity(0.85))
         case .revealed:
             Button(action: { dismiss() }) {
-                Text(result.map { if case .win = $0 { return "Awesome" } else { return "Continue" } } ?? "Continue")
+                Text(result.map {
+                    if case .win = $0 {
+                        return NSLocalizedString("Awesome", comment: "Daily-spin dismiss after a win")
+                    } else {
+                        return NSLocalizedString("Continue", comment: "Daily-spin dismiss after a miss")
+                    }
+                } ?? NSLocalizedString("Continue", comment: "Daily-spin dismiss default"))
                     .font(.system(size: 20, weight: .bold))
                     .foregroundStyle(
                         LinearGradient(colors: Color.primaryGradient,
