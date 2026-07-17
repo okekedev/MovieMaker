@@ -159,10 +159,12 @@ struct MediaSelectionView: View {
     @ViewBuilder
     private var mainContent: some View {
         if selectedMedia.isEmpty {
-            VStack(spacing: 40) {
-                Text("Movie Maker")
-                    .font(.system(size: 44, weight: .bold))
-                    .foregroundColor(.primary)
+            VStack(spacing: 12) {
+                Image(systemName: "arrow.down")
+                    .font(.system(size: 40, weight: .semibold))
+                    .foregroundColor(.brandAccent)
+                    .offset(y: pulseOpacity == 1.0 ? 0 : 8)
+                    .animation(.easeInOut(duration: 0.9).repeatForever(autoreverses: true), value: pulseOpacity)
 
                 mainSelectionButton
             }
