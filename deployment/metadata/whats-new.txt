@@ -1,1 +1,6 @@
-Small polish and clarity improvements so it's easier to find what Movie Maker actually does — merging your videos and photos into one clean movie.
+v2.7 makes building a highlight reel simpler and faster.
+
+• Redesigned settings preview — see your combined movie with the aspect ratio, music, and transitions applied before you export.
+• Per-clip titles and subtitles you can add and style right on each photo or video.
+• Tightened paywall — clearer coin balance, no fluff, faster path to the export you actually came for.
+• A friendly review prompt after your third export, so you can tell the App Store what you think without hunting for the button.

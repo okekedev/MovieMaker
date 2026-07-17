@@ -1,6 +1,6 @@
-Merge videos, photos, and music into one clean movie — no complex timeline.
+Turn your camera roll into a highlight reel your family and friends will actually rewatch.
 
-Movie Maker is the fastest way to combine clips, add a soundtrack, and export to your camera roll. Just drag, trim, and you're done.
+Movie Maker is the fastest way to combine clips, add photo memories, drop in a soundtrack, and export a finished movie back to your camera roll. Drag, trim, and you're done — no complex timeline, no learning curve, no watermark.
 
 WHAT YOU CAN DO
 • Merge videos from your library into one movie — as many clips as you want.
@@ -8,6 +8,7 @@ WHAT YOU CAN DO
 • Trim the start and end of each clip so only the best moments remain.
 • Drag to reorder scenes until the story feels right.
 • Add background music and slow-motion to any clip.
+• Add per-clip titles and subtitles right on the photo or video.
 • Mute clip audio when you want a quiet edit or music-only soundtrack.
 • Export back to Photos in full quality — no watermark.
 
