@@ -31,11 +31,6 @@ struct PaywallView: View {
                     // Balance / hero — coins are the monetization; features are free.
                     balanceHero
 
-                    // Reassurance: every editing feature is included, coins just
-                    // let you save finished videos. (Replaces the old "unlock these
-                    // features" pitch, which no longer applies — all features free.)
-                    includedBlock
-
                     // Products
                     if storeManager.products.isEmpty {
                         productLoadingState
@@ -76,54 +71,17 @@ struct PaywallView: View {
                 .font(.system(size: 30.scaled, weight: .bold))
                 .foregroundColor(.white)
 
-            if storeManager.isPro {
-                Text("You have unlimited exports")
-                    .font(.system(size: 16.scaled))
-                    .foregroundColor(.white.opacity(0.9))
-            } else {
+            if !storeManager.isPro {
                 HStack(spacing: 6.scaled) {
                     Text("You have")
                     Text("\(storeManager.coinBalance)")
                         .fontWeight(.bold)
                     GoldCoin(size: 18.scaled)
                     Text(storeManager.coinBalance == 1 ? "coin" : "coins")
-                    Text("· 1 coin = 1 video")
-                        .foregroundColor(.white.opacity(0.7))
                 }
                 .font(.system(size: 16.scaled))
                 .foregroundColor(.white.opacity(0.9))
             }
-        }
-    }
-
-    // Every editing feature is free for all users now — coins only pay for
-    // saving finished videos. This reassures buyers what they're actually paying for.
-    private var includedBlock: some View {
-        VStack(spacing: 10.scaled) {
-            Text("Every feature included — free")
-                .font(.system(size: 15.scaled, weight: .semibold))
-                .foregroundColor(.white)
-            HStack(spacing: 18.scaled) {
-                includedItem("music.note", "Music")
-                includedItem("slowmo", "Slow-Mo")
-                includedItem("wand.and.stars", "HD Export")
-            }
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 18.scaled)
-        .padding(.horizontal, 16.scaled)
-        .background(Color.white.opacity(0.15))
-        .cornerRadius(16)
-    }
-
-    private func includedItem(_ icon: String, _ label: String) -> some View {
-        VStack(spacing: 6.scaled) {
-            Image(systemName: icon)
-                .font(.system(size: 22.scaled))
-                .foregroundColor(.white)
-            Text(label)
-                .font(.system(size: 12.scaled, weight: .medium))
-                .foregroundColor(.white.opacity(0.9))
         }
     }
 
